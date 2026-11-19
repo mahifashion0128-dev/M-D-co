@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mahi and Devans Co. - Factory Manager</title>
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-    <meta name="theme-color" content="#ffffff">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -43,9 +40,14 @@
         <div class="font-bold text-xl flex items-center gap-2">
             <i class="fa-solid fa-industry text-yellow-400"></i> Mahi and Devans Co.
         </div>
-        <div class="flex items-center gap-2 bg-indigo-800 px-3 py-1 rounded-lg border border-indigo-700">
-            <i class="fa-solid fa-calendar-days text-yellow-400"></i>
-            <input type="month" id="app_month" onchange="refreshAllData()" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 bg-indigo-800 px-3 py-1 rounded-lg border border-indigo-700">
+                <i class="fa-solid fa-calendar-days text-yellow-400"></i>
+                <input type="month" id="app_month" onchange="refreshAllData()" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+            </div>
+            <button onclick="syncFromSheet(true)" class="sync-badge flex items-center gap-1.5 bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-600 text-xs font-bold transition" title="Google Sheet se latest data laayein">
+                <i class="fa-solid fa-rotate"></i> <span class="sync-status-text">Checking...</span>
+            </button>
         </div>
         <div class="flex space-x-6 font-medium text-sm">
             <button onclick="switchTab('dashboard')" class="hover:text-yellow-300 transition">Dashboard & Analytics</button>
@@ -56,17 +58,22 @@
         </div>
     </nav>
 
-    <!-- Mobile Month Selector -->
-    <div class="md:hidden bg-indigo-900 p-3 flex justify-between items-center text-white">
-        <div class="font-bold"><i class="fa-solid fa-industry text-yellow-400"></i> Mahi & Devans Co.</div>
-        <input type="month" id="app_month_mob" onchange="document.getElementById('app_month').value=this.value; refreshAllData();" class="bg-indigo-800 text-white p-1 rounded font-bold border border-indigo-700 text-sm">
+    <!-- Mobile Header & Month Selector -->
+    <div class="md:hidden bg-indigo-900 p-3 flex justify-between items-center text-white gap-2">
+        <div class="font-bold text-sm truncate"><i class="fa-solid fa-industry text-yellow-400"></i> Mahi & Devans</div>
+        <div class="flex items-center gap-1.5">
+            <button onclick="syncFromSheet(true)" class="sync-badge bg-indigo-800 px-2 py-1 rounded border border-indigo-600 text-[11px] font-bold flex items-center gap-1">
+                <i class="fa-solid fa-rotate"></i> <span class="sync-status-text">Sync</span>
+            </button>
+            <input type="month" id="app_month_mob" onchange="document.getElementById('app_month').value=this.value; refreshAllData();" class="bg-indigo-800 text-white p-1 rounded font-bold border border-indigo-700 text-xs">
+        </div>
     </div>
 
     <main class="p-4 md:p-6 max-w-7xl mx-auto z-10 relative">
 
         <!-- 1. DASHBOARD & ANALYTICS -->
         <section id="dashboard" class="tab-content active">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-6">
                 <h2 class="text-2xl font-bold text-slate-800">Dashboard (<span id="dash_month_label"></span>)</h2>
                 <div class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg font-bold shadow-sm">
                     Estimated Net Pagar: <span id="dash_total_pagar" class="text-xl">₹0</span>
@@ -229,7 +236,7 @@
         <section id="master" class="tab-content">
             <h2 class="text-2xl font-bold mb-6 text-slate-800">Master Data & Settings</h2>
             <div class="flex flex-wrap gap-2 mb-4">
-                <button onclick="openMaster('m_admin')" class="bg-gray-800 text-white font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-lock"></i> Security</button>
+                <button onclick="openMaster('m_admin')" class="bg-gray-800 text-white font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-lock"></i> Security & Sync</button>
                 <button onclick="openMaster('m_cat')" class="bg-sky-100 text-sky-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-tags"></i> Categories / Rules</button>
                 <button onclick="openMaster('m_worker')" class="bg-indigo-100 text-indigo-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-users"></i> Workers</button>
                 <button onclick="openMaster('m_design')" class="bg-emerald-100 text-emerald-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-pen-nib"></i> Layered Designs</button>
@@ -243,7 +250,20 @@
                         <input type="password" id="admin_pass" placeholder="Enter New Password" required class="w-full border p-2 rounded bg-slate-50">
                         <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded font-bold">Set Password</button>
                     </form>
-                    <p class="text-xs text-gray-500">Default password is: <b>1234</b>. Iske bina koi entry edit ya delete nahi kar payega.</p>
+                    <p class="text-xs text-gray-500 mb-6">Default password is: <b>1234</b>. Iske bina koi entry edit ya delete nahi kar payega.</p>
+
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-lg mb-2 text-indigo-800"><i class="fa-solid fa-cloud"></i> Mobile & PC Live Cloud Sync</h3>
+                        <p class="text-xs text-gray-600 mb-3">Har Save/Edit/Delete par data Google Sheet mein apne aap sync hota hai. Agar manually sync karna ho toh neeche button dabayein:</p>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="button" onclick="syncFromSheet(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-bold text-sm">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> Sheet se Data Lao (Download)
+                            </button>
+                            <button type="button" onclick="syncToSheet(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-bold text-sm">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Is Device ka Data Sheet me Bhejo (Upload)
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div id="m_cat" class="master-panel">
@@ -404,12 +424,110 @@
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl opacity-0 z-[110] font-medium"><span id="toastMsg">Saved!</span></div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-Z5kgHCgxH37DyvPk8Ljc24-9eYZDF6EC0Pr9R431gAUlLJSW0-p0jRX9OWFr4kFQuQ/exec'; 
+        // YAHAN APNA GOOGLE APPS SCRIPT WEB APP URL PASTE KAREIN
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw69t3R29UVOYoY7V8ljsptyelErlw66g3ukZsF4mT4huuLgoOzLnM4vu8zUSpop5vv/exec'; 
+
         let adminPassword = localStorage.getItem('karkhana_adminPass') || '1234';
-        
         let workerTypes = []; let workers = []; let designs = []; let machineRules = [];
         let attendance = []; let advanceData = [];
         let bonusChart; let compareChart; let currentReportType = 'company';
+
+        function isCloudConfigured() {
+            return SCRIPT_URL && SCRIPT_URL.startsWith('https://script.google.com/');
+        }
+
+        function setSyncBadge(text, colorClass) {
+            document.querySelectorAll('.sync-status-text').forEach(el => el.innerText = text);
+            document.querySelectorAll('.sync-badge').forEach(el => {
+                el.classList.remove('text-emerald-300', 'text-yellow-300', 'text-red-300', 'text-gray-300');
+                el.classList.add(colorClass);
+            });
+        }
+
+        function saveAllLocal() {
+            localStorage.setItem('karkhana_adminPass', adminPassword);
+            localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes));
+            localStorage.setItem('karkhana_workers', JSON.stringify(workers));
+            localStorage.setItem('karkhana_designs', JSON.stringify(designs));
+            localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules));
+            localStorage.setItem('karkhana_att', JSON.stringify(attendance));
+            localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
+        }
+
+        // ====== 2-WAY CLOUD SYNC (MOBILE <-> SHEET <-> PC) ======
+        async function syncToSheet(showNotify = false) {
+            if (!isCloudConfigured()) {
+                setSyncBadge('Local Only', 'text-gray-300');
+                if (showNotify) alert('Pehle code mein apna Google Apps Script URL paste karein!');
+                return;
+            }
+            setSyncBadge('Saving...', 'text-yellow-300');
+            try {
+                let payload = {
+                    adminPassword, workerTypes, workers, designs, machineRules, attendance, advanceData,
+                    updatedAt: new Date().toISOString()
+                };
+                let res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                let result = await res.json();
+                if (result.status === 'ok') {
+                    setSyncBadge('🟢 Synced', 'text-emerald-300');
+                    if (showNotify) showToast('Sheet mein data upload ho gaya!');
+                } else {
+                    throw new Error(result.message || 'Save failed');
+                }
+            } catch (err) {
+                console.error('Sync Push Error:', err);
+                setSyncBadge('🔴 Sync Err', 'text-red-300');
+                if (showNotify) showToast('Sheet sync fail hua! Internet ya URL check karein.');
+            }
+        }
+
+        async function syncFromSheet(showNotify = false) {
+            if (!isCloudConfigured()) {
+                setSyncBadge('Local Only', 'text-gray-300');
+                if (showNotify) alert('Pehle code mein apna Google Apps Script URL paste karein!');
+                return;
+            }
+            setSyncBadge('Syncing...', 'text-yellow-300');
+            try {
+                let res = await fetch(SCRIPT_URL + '?t=' + Date.now());
+                let result = await res.json();
+                if (result.status === 'ok' && result.data) {
+                    let d = result.data;
+                    if (d.adminPassword) adminPassword = d.adminPassword;
+                    if (Array.isArray(d.workerTypes) && d.workerTypes.length) workerTypes = d.workerTypes;
+                    if (Array.isArray(d.workers)) workers = d.workers;
+                    if (Array.isArray(d.designs)) designs = d.designs;
+                    if (Array.isArray(d.machineRules)) machineRules = d.machineRules;
+                    if (Array.isArray(d.attendance)) attendance = d.attendance;
+                    if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
+
+                    saveAllLocal();
+                    let prevW1 = document.getElementById('h_worker1').value;
+                    refreshDropdowns();
+                    if (prevW1 && workers.some(w => w.id === prevW1)) document.getElementById('h_worker1').value = prevW1;
+                    renderMasterLists();
+                    refreshAllData();
+                    setSyncBadge('🟢 Synced', 'text-emerald-300');
+                    if (showNotify) showToast('Latest data sync ho gaya!');
+                } else if (result.status === 'empty') {
+                    // Agar Sheet khali hai aur is device me data hai, to automatic upload karega
+                    if (workers.length > 0 || attendance.length > 0 || advanceData.length > 0) {
+                        await syncToSheet(showNotify);
+                    } else {
+                        setSyncBadge('🟢 Ready', 'text-emerald-300');
+                    }
+                }
+            } catch (err) {
+                console.error('Sync Pull Error:', err);
+                setSyncBadge('🔴 Offline', 'text-red-300');
+                if (showNotify) showToast('Sheet se connect nahi ho paya!');
+            }
+        }
 
         // SAFE DATA LOADER
         function getSafeData(key, defaultVal) {
@@ -439,10 +557,7 @@
             attendance.forEach(a => { if(a && !a.id) { a.id = "A_OLD_" + Math.random().toString(36).substr(2, 9); changed = true; } });
             designs.forEach(d => { if(d && !d.id) { d.id = "D_OLD_" + Math.random().toString(36).substr(2, 9); changed = true; } });
             machineRules.forEach(m => { if(m && !m.id) { m.id = "MR_OLD_" + Math.random().toString(36).substr(2, 9); changed = true; } });
-            if(changed) { 
-                localStorage.setItem('karkhana_upad', JSON.stringify(advanceData)); localStorage.setItem('karkhana_att', JSON.stringify(attendance)); 
-                localStorage.setItem('karkhana_designs', JSON.stringify(designs)); localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules)); 
-            }
+            if(changed) saveAllLocal();
         }
 
         function initApp() {
@@ -451,9 +566,18 @@
             let mStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('app_month').value = mStr; if(document.getElementById('app_month_mob')) document.getElementById('app_month_mob').value = mStr;
             refreshDropdowns(); renderMasterLists(); refreshAllData(); showWorkerSummary();
+            // Open hote hi Sheet se latest data le aayega
+            syncFromSheet(false);
         }
 
-        function saveAdminPassword(e) { e.preventDefault(); adminPassword = document.getElementById('admin_pass').value; localStorage.setItem('karkhana_adminPass', adminPassword); showToast("Password Updated!"); document.getElementById('admin_pass').value=''; }
+        // Jab aap Mobile/PC par wapas is tab mein aayenge, data apne aap sync ho jayega
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && isCloudConfigured()) {
+                syncFromSheet(false);
+            }
+        });
+
+        function saveAdminPassword(e) { e.preventDefault(); adminPassword = document.getElementById('admin_pass').value; localStorage.setItem('karkhana_adminPass', adminPassword); showToast("Password Updated!"); document.getElementById('admin_pass').value=''; syncToSheet(); }
         function getSelMonth() { return document.getElementById('app_month').value; }
         function getMonthName(ymStr) { if(!ymStr) return ""; let d = new Date(ymStr + "-01"); return d.toLocaleString('en-IN', { month: 'long', year: 'numeric' }); }
         function getDaysInMonth(ymStr) { if(!ymStr) return 30; let p = ymStr.split('-'); return new Date(p[0], p[1], 0).getDate(); }
@@ -549,14 +673,14 @@
             if(n) {
                 if(id) { workerTypes = workerTypes.map(t => t.id === id ? {id, name: n, hasProduction: h} : t); showToast("Category Updated!"); }
                 else { workerTypes.push({ id: "C_"+Date.now(), name: n, hasProduction: h }); showToast("Category Added!"); }
-                localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); cancelEditCategory(); refreshDropdowns(); renderMasterLists();
+                localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); cancelEditCategory(); refreshDropdowns(); renderMasterLists(); syncToSheet();
             }
         }
         function editWorkerType(id) { let t = workerTypes.find(x => x && x.id === id); if(!t || !checkAdmin()) return; document.getElementById('c_edit_id').value = t.id; document.getElementById('c_name').value = t.name; document.getElementById('c_hasProd').value = t.hasProduction ? 'true' : 'false'; document.getElementById('c_form_title').innerText = "Update Category"; document.getElementById('c_btn_save').innerText = "Update"; document.getElementById('c_btn_save').classList.replace('bg-sky-600', 'bg-emerald-600'); document.getElementById('c_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function cancelEditCategory() { document.getElementById('c_edit_id').value = ''; document.getElementById('c_form').reset(); document.getElementById('c_form_title').innerText = "Manage Worker Categories"; document.getElementById('c_btn_save').innerText = "Save"; document.getElementById('c_btn_save').classList.replace('bg-emerald-600', 'bg-sky-600'); document.getElementById('c_btn_cancel').classList.add('hidden'); }
-        function deleteWorkerType(id) { if(!checkAdmin() || !confirm("Delete Category?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); }
+        function deleteWorkerType(id) { if(!checkAdmin() || !confirm("Delete Category?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
         
-        function saveWorker(e) { e.preventDefault(); let id = document.getElementById('w_edit_id').value; let payload = { id: id ? id : "W_" + Date.now(), name: document.getElementById('w_name').value, type: document.getElementById('w_type').value, fixSalary: parseFloat(document.getElementById('w_salary').value), rule: document.getElementById('w_rule').value }; if(id) { workers = workers.map(w => w.id === id ? payload : w); showToast("Worker Updated!"); } else { workers.push(payload); showToast("Worker Added!"); } localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); }
+        function saveWorker(e) { e.preventDefault(); let id = document.getElementById('w_edit_id').value; let payload = { id: id ? id : "W_" + Date.now(), name: document.getElementById('w_name').value, type: document.getElementById('w_type').value, fixSalary: parseFloat(document.getElementById('w_salary').value), rule: document.getElementById('w_rule').value }; if(id) { workers = workers.map(w => w.id === id ? payload : w); showToast("Worker Updated!"); } else { workers.push(payload); showToast("Worker Added!"); } localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
         function editWorker(id) { 
             let w = workers.find(x => x && x.id === id); if(!w || !checkAdmin()) return; 
             document.getElementById('w_edit_id').value = w.id; document.getElementById('w_name').value = w.name; 
@@ -564,27 +688,27 @@
             document.getElementById('w_salary').value = w.fixSalary; document.getElementById('w_rule').value = w.rule; document.getElementById('w_form_title').innerText = "Update Worker"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); 
         }
         function cancelEditWorker() { document.getElementById('w_edit_id').value = ''; document.getElementById('w_form').reset(); document.getElementById('w_form_title').innerText = "Add / Update Worker"; document.getElementById('w_btn_save').innerText = "Save Worker"; document.getElementById('w_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('w_btn_cancel').classList.add('hidden'); refreshDropdowns(); }
-        function deleteWorker(id) { if(!checkAdmin() || !confirm("Delete Worker?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); }
+        function deleteWorker(id) { if(!checkAdmin() || !confirm("Delete Worker?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
         
         function saveDesign(e) { 
             e.preventDefault(); let id = document.getElementById('d_edit_id').value; let g = (id) => parseFloat(document.getElementById(id).value) || 0; 
             let payload = { id: id ? id : "D_"+Date.now(), code: document.getElementById('d_code').value, stitches: g('d_stitch'), fixBonus: g('d_fixBonus'), sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'), fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3') };
             if(id) { designs = designs.map(d => d.id === id ? payload : d); showToast("Design Updated!"); } else { designs.push(payload); showToast("Design Added!"); }
-            localStorage.setItem('karkhana_designs', JSON.stringify(designs)); cancelEditDesign(); refreshDropdowns(); renderMasterLists(); 
+            localStorage.setItem('karkhana_designs', JSON.stringify(designs)); cancelEditDesign(); refreshDropdowns(); renderMasterLists(); syncToSheet();
         }
         function editDesign(id) { let d = designs.find(x => x && x.id === id); if(!d || !checkAdmin()) return; document.getElementById('d_edit_id').value = d.id; ['d_code','d_stitch','d_fixBonus','s_lim1','s_bon1','s_lim2','s_bon2','s_lim3','s_bon3','f_lim1','f_bon1','f_lim2','f_bon2','f_lim3','f_bon3'].forEach(k => document.getElementById(k).value = d[k==='d_stitch'?'stitches':k] || ''); document.getElementById('d_form_title').innerText = "Update Design"; document.getElementById('d_btn_save').innerText = "Update Rules"; document.getElementById('d_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function cancelEditDesign() { document.getElementById('d_edit_id').value = ''; document.getElementById('d_form').reset(); document.getElementById('d_form_title').innerText = "Add Design & Layered Bonus"; document.getElementById('d_btn_save').innerText = "Save Design Rules"; document.getElementById('d_btn_cancel').classList.add('hidden'); }
-        function deleteDesign(id) { if(!checkAdmin() || !confirm("Delete Design?")) return; designs = designs.filter(d => d.id !== id); localStorage.setItem('karkhana_designs', JSON.stringify(designs)); refreshDropdowns(); renderMasterLists(); }
+        function deleteDesign(id) { if(!checkAdmin() || !confirm("Delete Design?")) return; designs = designs.filter(d => d.id !== id); localStorage.setItem('karkhana_designs', JSON.stringify(designs)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
         
         function saveMachineRule(e) { 
             e.preventDefault(); let id = document.getElementById('m_edit_id').value; let g = (id) => parseFloat(document.getElementById(id).value) || 0; let n = document.getElementById('m_name').value.trim();
             let payload = { id: id ? id : "MR_"+Date.now(), name: n, fixSal: g('m_fixSal'), min: g('m_min'), rate: g('m_rate'), mLim1: g('m_lim1'), mBon1: g('m_bon1'), mLim2: g('m_lim2'), mBon2: g('m_bon2'), mLim3: g('m_lim3'), mBon3: g('m_bon3') };
             if(id) { machineRules = machineRules.map(m => m.id === id ? payload : m); showToast("Rule Updated!"); } else { machineRules.push(payload); showToast("Rule Saved!"); }
-            localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules)); cancelEditMachineRule(); refreshDropdowns(); renderMasterLists(); 
+            localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules)); cancelEditMachineRule(); refreshDropdowns(); renderMasterLists(); syncToSheet();
         }
         function editMachineRule(id) { let m = machineRules.find(x => x && x.id === id); if(!m || !checkAdmin()) return; document.getElementById('m_edit_id').value = m.id; ['m_name','m_fixSal','m_min','m_rate','m_lim1','m_bon1','m_lim2','m_bon2','m_lim3','m_bon3'].forEach(k => document.getElementById(k).value = m[k] || ''); document.getElementById('m_form_title').innerText = "Update Machine Rule"; document.getElementById('m_btn_save').innerText = "Update"; document.getElementById('m_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function cancelEditMachineRule() { document.getElementById('m_edit_id').value = ''; document.getElementById('m_form').reset(); document.getElementById('m_form_title').innerText = "Machine Rates & Layer Bonus"; document.getElementById('m_btn_save').innerText = "Save Machine Rule"; document.getElementById('m_btn_cancel').classList.add('hidden'); }
-        function deleteRule(id) { if(!checkAdmin() || !confirm("Delete Machine Rule?")) return; machineRules = machineRules.filter(r => r.id !== id); localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules)); refreshDropdowns(); renderMasterLists(); }
+        function deleteRule(id) { if(!checkAdmin() || !confirm("Delete Machine Rule?")) return; machineRules = machineRules.filter(r => r.id !== id); localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
 
         function renderMasterLists() {
             try {
@@ -603,8 +727,6 @@
         }
 
         // ====== ATTENDANCE (CREATE, EDIT, DELETE) ======
-        function sendToGoogleSheet(sheetName, rowData) { if(SCRIPT_URL && SCRIPT_URL !== 'MERA_COPIED_URL_YAHAN_PASTE_KAREIN') { fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sheet: sheetName, rowData: rowData }) }); } }
-
         function saveAttendance(e) {
             e.preventDefault();
             let editId = document.getElementById('h_edit_id').value;
@@ -651,17 +773,15 @@
                 if(mode === 'Shared50' && isMachineWorker) {
                     let w2 = document.getElementById('h_worker2').value;
                     attendance.push({ ...baseEntry, workerId: w1, finalBonus: finalBonus/2 }); attendance.push({ ...baseEntry, id: "A_"+Date.now()+1, workerId: w2, finalBonus: finalBonus/2 });
-                    sendToGoogleSheet("Haziri", [date, (workers.find(w=>w.id===w1)||{}).name || '', status, mode, machine, qty, designCode, frame, customBonus/2, finalBonus/2, note]);
-                    sendToGoogleSheet("Haziri", [date, (workers.find(w=>w.id===w2)||{}).name || '', status, mode, machine, qty, designCode, frame, customBonus/2, finalBonus/2, note]);
                 } else { 
                     attendance.push({ ...baseEntry, workerId: w1, finalBonus: finalBonus }); 
-                    sendToGoogleSheet("Haziri", [date, (workers.find(w=>w.id===w1)||{}).name || '', status, mode, machine, qty, designCode, frame, customBonus, finalBonus, note]);
                 }
                 showToast("Saved!"); 
             }
             localStorage.setItem('karkhana_att', JSON.stringify(attendance));
             cancelEditAttendance(w1);
             refreshAllData(); showWorkerSummary();
+            syncToSheet();
         }
 
         function triggerEditAttendance(id) {
@@ -682,6 +802,7 @@
             if(document.getElementById('h_edit_id').value === id) cancelEditAttendance(keepWorker);
             showToast("Attendance Deleted!");
             refreshAllData();
+            syncToSheet();
         }
 
         function cancelEditAttendance(keepWorkerId) {
@@ -699,8 +820,9 @@
         function saveAdvance(e) {
             e.preventDefault(); let editId = document.getElementById('u_edit_id').value, date = document.getElementById('u_date').value, workerId = document.getElementById('u_worker').value, amount = parseFloat(document.getElementById('u_amount').value) || 0, note = document.getElementById('u_note').value || "-";
             if(editId) { advanceData = advanceData.map(u => u.id === editId ? {id: editId, date, workerId, amount, note} : u); showToast("Advance Updated!"); } 
-            else { advanceData.push({ id: "U_"+Date.now(), date, workerId, amount, note }); showToast("Advance Saved!"); sendToGoogleSheet("Upad", [date, (workers.find(w=>w.id===workerId)||{}).name || '', amount, "-", note]);}
+            else { advanceData.push({ id: "U_"+Date.now(), date, workerId, amount, note }); showToast("Advance Saved!"); }
             localStorage.setItem('karkhana_upad', JSON.stringify(advanceData)); cancelEditAdvance(); refreshAllData();
+            syncToSheet();
         }
 
         function triggerEditAdvance(id) {
@@ -716,6 +838,7 @@
             if(document.getElementById('u_edit_id').value === id) cancelEditAdvance();
             showToast("Advance Deleted!");
             refreshAllData();
+            syncToSheet();
         }
 
         function cancelEditAdvance() {
