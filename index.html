@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahi and Devans Co. - Factory Manager</title>
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-    <meta name="theme-color" content="#ffffff">
+    <title>Karkhana Pagar Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { padding-bottom: 80px; background-color: #f8fafc; font-family: sans-serif; }
-        @media (min-width: 768px) { body { padding-bottom: 0; padding-top: 70px; } }
+        @media (min-width: 768px) { body { padding-bottom: 0; padding-top: 76px; } }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         #toast { pointer-events: none; transition: opacity 0.3s ease; }
         .master-panel { display: none; }
         .modal { display: none; }
         .modal.active { display: flex; }
+
+        /* Clean Chart Horizontal Scrollbar */
+        .chart-scroll::-webkit-scrollbar { height: 6px; }
+        .chart-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 999px; }
+        .chart-scroll::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 999px; }
+        .chart-scroll::-webkit-scrollbar-thumb:hover { background: #6366f1; }
         
-        /* A4 Size PDF Perfect Fit (Medium Size Fix) */
+        /* A4 Size PDF Perfect Fit (Medium Size) */
         .payslip-box { 
             display: none; 
             width: 190mm;
@@ -39,9 +42,12 @@
 <body>
 
     <!-- Desktop Navbar & Month Selector -->
-    <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-4 justify-between items-center">
-        <div class="font-bold text-xl flex items-center gap-2">
-            <i class="fa-solid fa-industry text-yellow-400"></i> Mahi and Devans Co.
+    <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-3 justify-between items-center">
+        <div class="flex flex-col">
+            <div class="font-bold text-xl flex items-center gap-2 leading-tight">
+                <i class="fa-solid fa-industry text-yellow-400"></i> Karkhana Pagar Pro
+            </div>
+            <span class="text-[11px] text-indigo-200 ml-7">mahifashion0128@gmail.com</span>
         </div>
         <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 bg-indigo-800 px-3 py-1 rounded-lg border border-indigo-700">
@@ -63,8 +69,11 @@
 
     <!-- Mobile Header & Month Selector -->
     <div class="md:hidden bg-indigo-900 p-3 flex justify-between items-center text-white gap-2">
-        <div class="font-bold text-sm truncate"><i class="fa-solid fa-industry text-yellow-400"></i> Mahi & Devans</div>
-        <div class="flex items-center gap-1.5">
+        <div class="min-w-0">
+            <div class="font-bold text-sm truncate"><i class="fa-solid fa-industry text-yellow-400"></i> Karkhana Pagar Pro</div>
+            <div class="text-[10px] text-indigo-200 truncate">mahifashion0128@gmail.com</div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
             <button onclick="syncFromSheet(true)" class="sync-badge bg-indigo-800 px-2 py-1 rounded border border-indigo-600 text-[11px] font-bold flex items-center gap-1">
                 <i class="fa-solid fa-rotate"></i> <span class="sync-status-text">Sync</span>
             </button>
@@ -84,8 +93,9 @@
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Analytics & Comparing Chart with Slider -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
                         <h3 class="font-bold text-lg text-indigo-800"><i class="fa-solid fa-chart-line"></i> Analytics & Comparing</h3>
                         <select id="compareChartSelect" onchange="updateCompareChart()" class="border p-2 rounded-lg bg-slate-50 text-sm font-semibold">
                             <option value="worker">Worker vs Worker (Production)</option>
@@ -93,14 +103,34 @@
                             <option value="month">Month vs Month (Total Pagar)</option>
                         </select>
                     </div>
-                    <div class="relative h-64 w-full"><canvas id="compareChart"></canvas></div>
-                </div>
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-indigo-800"><i class="fa-solid fa-chart-pie"></i> Month Bonus</h3>
-                        <select id="chartWorkerSelect" onchange="updateChart()" class="border p-1.5 rounded-lg bg-slate-50 text-xs font-semibold"></select>
+                    <div id="compareChartScroll" class="chart-scroll overflow-x-auto pb-1" onscroll="syncSliderFromScroll('compareChartScroll', 'compareChartSlider')">
+                        <div id="compareChartInner" class="relative h-64" style="min-width: 100%;">
+                            <canvas id="compareChart"></canvas>
+                        </div>
                     </div>
-                    <div class="relative h-64 w-full"><canvas id="bonusChart"></canvas></div>
+                    <div id="compareChartSliderWrap" class="hidden mt-3 flex items-center gap-2">
+                        <button type="button" onclick="nudgeScroll('compareChartScroll', -240)" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold border border-indigo-200"><i class="fa-solid fa-chevron-left"></i></button>
+                        <input type="range" id="compareChartSlider" min="0" max="100" value="0" oninput="syncScrollFromSlider('compareChartScroll', this.value)" class="w-full accent-indigo-600 cursor-pointer h-2 rounded-lg">
+                        <button type="button" onclick="nudgeScroll('compareChartScroll', 240)" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold border border-indigo-200"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Month Bonus Chart with Slider -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                        <h3 class="font-bold text-lg text-indigo-800"><i class="fa-solid fa-chart-pie"></i> Month Bonus</h3>
+                        <select id="chartWorkerSelect" onchange="updateChart()" class="border p-1.5 rounded-lg bg-slate-50 text-xs font-semibold max-w-[140px]"></select>
+                    </div>
+                    <div id="bonusChartScroll" class="chart-scroll overflow-x-auto pb-1" onscroll="syncSliderFromScroll('bonusChartScroll', 'bonusChartSlider')">
+                        <div id="bonusChartInner" class="relative h-64" style="min-width: 100%;">
+                            <canvas id="bonusChart"></canvas>
+                        </div>
+                    </div>
+                    <div id="bonusChartSliderWrap" class="hidden mt-3 flex items-center gap-2">
+                        <button type="button" onclick="nudgeScroll('bonusChartScroll', -200)" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold border border-indigo-200"><i class="fa-solid fa-chevron-left"></i></button>
+                        <input type="range" id="bonusChartSlider" min="0" max="100" value="0" oninput="syncScrollFromSlider('bonusChartScroll', this.value)" class="w-full accent-indigo-600 cursor-pointer h-2 rounded-lg">
+                        <button type="button" onclick="nudgeScroll('bonusChartScroll', 200)" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold border border-indigo-200"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
                 </div>
             </div>
 
@@ -248,16 +278,24 @@
 
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                 <div id="m_admin" class="master-panel block">
+                    <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg mb-5 text-sm text-indigo-900">
+                        <b>App Name:</b> Karkhana Pagar Pro &nbsp;|&nbsp; <b>Owner Email:</b> mahifashion0128@gmail.com
+                    </div>
+
                     <h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Admin Security (Password for Editing / Deleting)</h3>
-                    <form onsubmit="saveAdminPassword(event)" class="flex gap-2 mb-4 max-w-sm">
+                    <form onsubmit="saveAdminPassword(event)" class="flex gap-2 mb-3 max-w-sm">
                         <input type="password" id="admin_pass" placeholder="Enter New Password" required class="w-full border p-2 rounded bg-slate-50">
                         <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded font-bold">Set Password</button>
                     </form>
                     <p class="text-xs text-gray-500 mb-6">Default password is: <b>1234</b>. Iske bina koi entry edit ya delete nahi kar payega.</p>
 
                     <div class="border-t pt-4">
-                        <h3 class="font-bold text-lg mb-2 text-indigo-800"><i class="fa-solid fa-cloud"></i> Mobile & PC Live Cloud Sync</h3>
-                        <p class="text-xs text-gray-600 mb-3">Har Save/Edit/Delete par data Google Sheet mein apne aap sync hota hai. Agar manually sync karna ho toh neeche button dabayein:</p>
+                        <h3 class="font-bold text-lg mb-2 text-indigo-800"><i class="fa-solid fa-cloud"></i> Google Sheet Live Sync (mahifashion0128@gmail.com)</h3>
+                        <form onsubmit="saveScriptUrl(event)" class="flex flex-col md:flex-row gap-2 mb-3">
+                            <input type="url" id="sheet_url_input" placeholder="Paste Google Apps Script Web App URL (https://script.google.com/macros/s/.../exec)" class="w-full border p-2 rounded bg-slate-50 text-sm">
+                            <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded font-bold text-sm shrink-0">Save Link</button>
+                        </form>
+                        <p class="text-xs text-gray-600 mb-3">Har Save/Edit/Delete par data Google Sheet mein apne aap sync hota hai. Manually sync karne ke liye:</p>
                         <div class="flex flex-wrap gap-3">
                             <button type="button" onclick="syncFromSheet(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-bold text-sm">
                                 <i class="fa-solid fa-cloud-arrow-down"></i> Sheet se Data Lao (Download)
@@ -291,7 +329,7 @@
                     <h3 class="font-bold text-lg mb-4 text-indigo-700 border-b pb-2" id="w_form_title">Add / Update Worker</h3>
                     <form id="w_form" onsubmit="saveWorker(event)" class="space-y-3 mb-4">
                         <input type="hidden" id="w_edit_id">
-                        <input type="text" id="w_name" placeholder="Worker Name" required class="w-full border p-2 rounded bg-slate-50">
+                        <input type="text" id="w_name" placeholder="Worker Name (Unique hona chahiye)" required class="w-full border p-2 rounded bg-slate-50">
                         <select id="w_type" class="w-full border p-2 rounded bg-slate-50"></select>
                         <input type="number" id="w_salary" placeholder="Fixed Salary (₹)" required class="w-full border p-2 rounded bg-slate-50">
                         <select id="w_rule" class="w-full border p-2 rounded bg-slate-50 font-semibold text-indigo-800">
@@ -388,15 +426,16 @@
 
     <!-- Hidden A4 PDF Box -->
     <div id="payslip-container" class="payslip-box">
-        <div style="text-align:center; margin-bottom: 20px;">
-            <h1 style="font-size: 28px; font-weight: bold; margin:0; color: #312e81;">Mahi and Devans Co.</h1>
-            <p style="font-size: 16px; margin: 5px 0;">Salary & Performance Statement | Month: <span id="slip_month" style="font-weight:bold;"></span></p>
+        <div style="text-align:center; margin-bottom: 18px;">
+            <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #312e81;">Karkhana Pagar Pro</h1>
+            <p style="font-size: 12px; margin: 2px 0; color: #475569;">mahifashion0128@gmail.com</p>
+            <p style="font-size: 15px; margin: 6px 0 0 0;">Salary & Performance Statement | Month: <span id="slip_month" style="font-weight:bold;"></span></p>
         </div>
-        <div style="display:flex; justify-content: space-between; border: 2px solid black; padding: 10px; margin-bottom: 20px; background-color: #f3f4f6;">
-            <div><p style="margin:2px 0;"><strong>Name:</strong> <span id="slip_name"></span></p><p style="margin:2px 0;"><strong>Category:</strong> <span id="slip_rule"></span></p></div>
+        <div style="display:flex; justify-content: space-between; border: 2px solid black; padding: 10px; margin-bottom: 16px; background-color: #f3f4f6;">
+            <div><p style="margin:2px 0;"><strong>Name:</strong> <span id="slip_name"></span></p><p style="margin:2px 0;"><strong>Rule:</strong> <span id="slip_rule"></span></p></div>
             <div style="text-align:right;"><p style="margin:2px 0;"><strong>Fixed Salary:</strong> ₹<span id="slip_salary"></span></p><p style="margin:2px 0;"><strong>Effective Days:</strong> <span id="slip_days"></span></p></div>
         </div>
-        <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">Daily Production & Salary Log</h3>
+        <h3 style="font-size: 15px; font-weight: bold; margin-bottom: 5px;">Daily Production & Salary Log</h3>
         <table>
             <thead style="background-color: #e5e7eb;">
                 <tr><th>Date</th><th>Machine/Design (Status)</th><th>Stitches/Frame</th><th>Base Sal/Day (₹)</th><th>Bonus (₹)</th><th>Remarks</th></tr>
@@ -408,9 +447,9 @@
             <tr><td style="font-weight:bold; color: green;">Total Bonus (Machine + Tiered)</td><td style="text-align:right; font-weight:bold; color: green;" id="slip_bonus">0</td></tr>
             <tr><td style="font-weight:bold; color: #4f46e5;">Pichla Baki (Previous Month Due/Advance)</td><td style="text-align:right; font-weight:bold;" id="slip_prev">0</td></tr>
             <tr><td style="font-weight:bold; color: red;">Total Advance (Upad) Deducted</td><td style="text-align:right; font-weight:bold; color: red;" id="slip_upad">0</td></tr>
-            <tr style="background-color: #fef08a;"><th style="text-align:left; font-size: 18px;">Net Salary Payable</th><th style="text-align:right; font-size: 20px;" id="slip_net">0</th></tr>
+            <tr style="background-color: #fef08a;"><th style="text-align:left; font-size: 17px;">Net Salary Payable</th><th style="text-align:right; font-size: 19px;" id="slip_net">0</th></tr>
         </table>
-        <div style="display:flex; justify-content: space-between; margin-top: 50px;">
+        <div style="display:flex; justify-content: space-between; margin-top: 45px;">
             <p style="font-weight:bold; border-top: 1px solid black; padding-top: 5px;">Manager Signature</p>
             <p style="font-weight:bold; border-top: 1px solid black; padding-top: 5px;">Worker Signature</p>
         </div>
@@ -418,25 +457,44 @@
 
     <!-- Mobile Nav -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t flex justify-around text-xs font-medium z-[100] pb-2 pt-2 shadow">
-        <button onclick="switchTab('dashboard')" class="flex flex-col items-center p-2 text-indigo-700"><i class="fa-solid fa-chart-pie mb-1"></i> Dash</button>
-        <button onclick="switchTab('attendance')" class="flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-calendar-check mb-1"></i> Haziri</button>
-        <button onclick="switchTab('advance')" class="flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-wallet mb-1"></i> Advance</button>
-        <button onclick="switchTab('reports')" class="flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-file-pdf mb-1"></i> Reports</button>
-        <button onclick="switchTab('master')" class="flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-gear mb-1"></i> Master</button>
+        <button onclick="switchTab('dashboard', this)" class="mob-nav-btn flex flex-col items-center p-2 text-indigo-700"><i class="fa-solid fa-chart-pie mb-1"></i> Dash</button>
+        <button onclick="switchTab('attendance', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-calendar-check mb-1"></i> Haziri</button>
+        <button onclick="switchTab('advance', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-wallet mb-1"></i> Advance</button>
+        <button onclick="switchTab('reports', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-file-pdf mb-1"></i> Reports</button>
+        <button onclick="switchTab('master', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-gear mb-1"></i> Master</button>
     </nav>
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl opacity-0 z-[110] font-medium"><span id="toastMsg">Saved!</span></div>
 
     <script>
-        // YAHAN APNA GOOGLE APPS SCRIPT WEB APP URL PASTE KAREIN
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw69t3R29UVOYoY7V8ljsptyelErlw66g3ukZsF4mT4huuLgoOzLnM4vu8zUSpop5vv/exec'; 
+        // YAHAN APNA GOOGLE APPS SCRIPT WEB APP URL PASTE KAREIN (ya Settings -> Security & Sync me dalein)
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw69t3R29UVOYoY7V8ljsptyelErlw66g3ukZsF4mT4huuLgoOzLnM4vu8zUSpop5vv/exec'; 
 
         let adminPassword = localStorage.getItem('karkhana_adminPass') || '1234';
         let workerTypes = []; let workers = []; let designs = []; let machineRules = [];
         let attendance = []; let advanceData = [];
         let bonusChart; let compareChart; let currentReportType = 'company';
 
+        function getScriptUrl() {
+            let saved = (localStorage.getItem('karkhana_scriptUrl') || '').trim();
+            if (saved && saved.startsWith('https://script.google.com/')) return saved;
+            return DEFAULT_SCRIPT_URL;
+        }
+
         function isCloudConfigured() {
-            return SCRIPT_URL && SCRIPT_URL.startsWith('https://script.google.com/');
+            let url = getScriptUrl();
+            return url && url.startsWith('https://script.google.com/');
+        }
+
+        function saveScriptUrl(e) {
+            e.preventDefault();
+            let val = document.getElementById('sheet_url_input').value.trim();
+            if (!val.startsWith('https://script.google.com/')) {
+                alert('Sahi Google Apps Script Web App URL dalein (jo https://script.google.com/... se shuru ho).');
+                return;
+            }
+            localStorage.setItem('karkhana_scriptUrl', val);
+            showToast('Google Sheet Link Saved! Syncing...');
+            syncFromSheet(true);
         }
 
         function setSyncBadge(text, colorClass) {
@@ -457,20 +515,85 @@
             localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
         }
 
+        // ====== CHART SLIDER HELPERS ======
+        function setupChartSlider(scrollId, innerId, sliderWrapId, sliderId, itemCount, isPie = false) {
+            const scrollEl = document.getElementById(scrollId);
+            const innerEl = document.getElementById(innerId);
+            const wrapEl = document.getElementById(sliderWrapId);
+            const sliderEl = document.getElementById(sliderId);
+            if (!scrollEl || !innerEl || !wrapEl || !sliderEl) return;
+
+            if (isPie) {
+                innerEl.style.width = '100%';
+                wrapEl.classList.add('hidden');
+                scrollEl.scrollLeft = 0;
+                return;
+            }
+
+            const barSlotWidth = 65; // Har worker bar ke liye 65px jagah
+            const neededWidth = itemCount * barSlotWidth;
+            const visibleWidth = scrollEl.clientWidth || Math.min(window.innerWidth - 70, 500);
+
+            if (neededWidth > visibleWidth) {
+                innerEl.style.width = neededWidth + 'px';
+                wrapEl.classList.remove('hidden');
+                sliderEl.max = Math.max(1, neededWidth - visibleWidth);
+                sliderEl.value = 0;
+                scrollEl.scrollLeft = 0;
+            } else {
+                innerEl.style.width = '100%';
+                wrapEl.classList.add('hidden');
+                scrollEl.scrollLeft = 0;
+            }
+        }
+
+        function syncScrollFromSlider(scrollId, val) {
+            const el = document.getElementById(scrollId);
+            if (el) el.scrollLeft = Number(val);
+        }
+
+        function syncSliderFromScroll(scrollId, sliderId) {
+            const el = document.getElementById(scrollId);
+            const sl = document.getElementById(sliderId);
+            if (el && sl) {
+                const maxScroll = Math.max(1, el.scrollWidth - el.clientWidth);
+                sl.max = maxScroll;
+                sl.value = el.scrollLeft;
+            }
+        }
+
+        function nudgeScroll(scrollId, amount) {
+            const el = document.getElementById(scrollId);
+            if (el) el.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (document.getElementById('dashboard').classList.contains('active')) {
+                    updateCompareChart();
+                    updateChart();
+                }
+            }, 200);
+        });
+
         // ====== 2-WAY CLOUD SYNC (MOBILE <-> SHEET <-> PC) ======
         async function syncToSheet(showNotify = false) {
             if (!isCloudConfigured()) {
                 setSyncBadge('Local Only', 'text-gray-300');
-                if (showNotify) alert('Pehle code mein apna Google Apps Script URL paste karein!');
+                if (showNotify) alert('Pehle Settings > Security & Sync mein apna Google Apps Script URL paste karein!');
                 return;
             }
             setSyncBadge('Saving...', 'text-yellow-300');
             try {
                 let payload = {
+                    appName: 'Karkhana Pagar Pro',
+                    ownerEmail: 'mahifashion0128@gmail.com',
                     adminPassword, workerTypes, workers, designs, machineRules, attendance, advanceData,
                     updatedAt: new Date().toISOString()
                 };
-                let res = await fetch(SCRIPT_URL, {
+                let res = await fetch(getScriptUrl(), {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
@@ -492,12 +615,12 @@
         async function syncFromSheet(showNotify = false) {
             if (!isCloudConfigured()) {
                 setSyncBadge('Local Only', 'text-gray-300');
-                if (showNotify) alert('Pehle code mein apna Google Apps Script URL paste karein!');
+                if (showNotify) alert('Pehle Settings > Security & Sync mein apna Google Apps Script URL paste karein!');
                 return;
             }
             setSyncBadge('Syncing...', 'text-yellow-300');
             try {
-                let res = await fetch(SCRIPT_URL + '?t=' + Date.now());
+                let res = await fetch(getScriptUrl() + '?t=' + Date.now());
                 let result = await res.json();
                 if (result.status === 'ok' && result.data) {
                     let d = result.data;
@@ -518,7 +641,6 @@
                     setSyncBadge('🟢 Synced', 'text-emerald-300');
                     if (showNotify) showToast('Latest data sync ho gaya!');
                 } else if (result.status === 'empty') {
-                    // Agar Sheet khali hai aur is device me data hai, to automatic upload karega
                     if (workers.length > 0 || attendance.length > 0 || advanceData.length > 0) {
                         await syncToSheet(showNotify);
                     } else {
@@ -565,15 +687,14 @@
 
         function initApp() {
             loadDataSafely();
+            if (isCloudConfigured()) document.getElementById('sheet_url_input').value = getScriptUrl();
             let today = new Date(); document.getElementById('h_date').valueAsDate = today; document.getElementById('u_date').valueAsDate = today;
             let mStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('app_month').value = mStr; if(document.getElementById('app_month_mob')) document.getElementById('app_month_mob').value = mStr;
             refreshDropdowns(); renderMasterLists(); refreshAllData(); showWorkerSummary();
-            // Open hote hi Sheet se latest data le aayega
             syncFromSheet(false);
         }
 
-        // Jab aap Mobile/PC par wapas is tab mein aayenge, data apne aap sync ho jayega
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && isCloudConfigured()) {
                 syncFromSheet(false);
@@ -660,9 +781,14 @@
             }).join('');
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active')); document.getElementById(tabId).classList.add('active');
-            if(window.innerWidth < 768 && typeof event !== 'undefined' && event.currentTarget) { document.querySelectorAll('nav.md\\:hidden button').forEach(b => { b.classList.remove('text-indigo-700'); b.classList.add('text-slate-500'); }); event.currentTarget.classList.add('text-indigo-700'); }
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(btnEl) {
+                document.querySelectorAll('.mob-nav-btn').forEach(b => { b.classList.remove('text-indigo-700'); b.classList.add('text-slate-500'); });
+                btnEl.classList.remove('text-slate-500');
+                btnEl.classList.add('text-indigo-700');
+            }
             if(tabId === 'dashboard') { renderDashboard(); updateChart(); updateCompareChart(); }
             if(tabId === 'advance') { renderAdvanceStatement(); }
             if(tabId === 'reports') { setReportType(currentReportType); }
@@ -683,7 +809,37 @@
         function cancelEditCategory() { document.getElementById('c_edit_id').value = ''; document.getElementById('c_form').reset(); document.getElementById('c_form_title').innerText = "Manage Worker Categories"; document.getElementById('c_btn_save').innerText = "Save"; document.getElementById('c_btn_save').classList.replace('bg-emerald-600', 'bg-sky-600'); document.getElementById('c_btn_cancel').classList.add('hidden'); }
         function deleteWorkerType(id) { if(!checkAdmin() || !confirm("Delete Category?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
         
-        function saveWorker(e) { e.preventDefault(); let id = document.getElementById('w_edit_id').value; let payload = { id: id ? id : "W_" + Date.now(), name: document.getElementById('w_name').value, type: document.getElementById('w_type').value, fixSalary: parseFloat(document.getElementById('w_salary').value), rule: document.getElementById('w_rule').value }; if(id) { workers = workers.map(w => w.id === id ? payload : w); showToast("Worker Updated!"); } else { workers.push(payload); showToast("Worker Added!"); } localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
+        // WORKER SAVE WITH DUPLICATE NAME CHECK
+        function saveWorker(e) {
+            e.preventDefault();
+            let id = document.getElementById('w_edit_id').value;
+            let cleanName = document.getElementById('w_name').value.trim().replace(/\s+/g, ' ');
+            if (!cleanName) {
+                alert("Worker ka naam likhna zaroori hai!");
+                return;
+            }
+
+            let isDuplicate = workers.some(w => 
+                w && w.id !== id && (w.name || '').trim().replace(/\s+/g, ' ').toLowerCase() === cleanName.toLowerCase()
+            );
+            if (isDuplicate) {
+                alert(`"${cleanName}" naam ka worker pehle se add hai!\nSame naam doosri baar add nahi ho sakta. Kripya alag naam ya surname/number jodein (jaise "${cleanName} 2").`);
+                return;
+            }
+
+            let payload = {
+                id: id ? id : "W_" + Date.now(),
+                name: cleanName,
+                type: document.getElementById('w_type').value,
+                fixSalary: parseFloat(document.getElementById('w_salary').value),
+                rule: document.getElementById('w_rule').value
+            };
+            if(id) { workers = workers.map(w => w.id === id ? payload : w); showToast("Worker Updated!"); }
+            else { workers.push(payload); showToast("Worker Added!"); }
+            localStorage.setItem('karkhana_workers', JSON.stringify(workers));
+            cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
+        }
+
         function editWorker(id) { 
             let w = workers.find(x => x && x.id === id); if(!w || !checkAdmin()) return; 
             document.getElementById('w_edit_id').value = w.id; document.getElementById('w_name').value = w.name; 
@@ -885,7 +1041,7 @@
             return (pastEarned + pastBonus) - pastUpad;
         }
 
-        // ====== DASHBOARD & CHARTS ======
+        // ====== DASHBOARD & CHARTS (WITH SLIDER SUPPORT) ======
         function renderDashboard() {
             let selM = getSelMonth(); let totPagarAll = 0; let posList = '', negList = '';
             let workerStats = workers.map(w => {
@@ -916,16 +1072,68 @@
                 let wAtt = attendance.filter(a => a && a.workerId === selectedW && a.date && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date));
                 wAtt.forEach(a => { labels.push(a.date.slice(5)); dataPoints.push(a.finalBonus || 0); });
             }
+
+            setupChartSlider('bonusChartScroll', 'bonusChartInner', 'bonusChartSliderWrap', 'bonusChartSlider', labels.length, false);
+
             if(bonusChart) bonusChart.destroy();
-            bonusChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Bonus (₹)', data: dataPoints, backgroundColor: '#4f46e5' }] }, options: { responsive: true, maintainAspectRatio: false } });
+            bonusChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{ label: 'Bonus (₹)', data: dataPoints, backgroundColor: '#4f46e5', borderRadius: 4, maxBarThickness: 38 }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            setTimeout(() => syncSliderFromScroll('bonusChartScroll', 'bonusChartSlider'), 60);
         }
 
         function updateCompareChart() {
+            if(!document.getElementById('compareChart')) return;
             let ctx = document.getElementById('compareChart').getContext('2d'), type = document.getElementById('compareChartSelect').value, selM = getSelMonth(), labels = [], dataPoints = [];
-            if(type === 'worker') { workers.forEach(w => { let wAtt = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)); labels.push(w.name); dataPoints.push(calculateEarnedSalary(w, calcEffDays(wAtt), selM) + wAtt.reduce((sum, a) => sum + (a.finalBonus || 0), 0)); });
-            } else if (type === 'machine') { let mProd = {}; attendance.filter(a => a && a.date && a.date.startsWith(selM)).forEach(a => { mProd[a.machine] = (mProd[a.machine] || 0) + (a.qty || 0); }); labels = Object.keys(mProd); dataPoints = Object.values(mProd);
-            } else if (type === 'month') { let mTotals = {}; attendance.forEach(a => { if(a && a.date){ let month = a.date.substring(0,7); let w = workers.find(x => x.id === a.workerId); if(w) { mTotals[month] = (mTotals[month]||0) + (a.finalBonus||0) + (calculateEarnedSalary(w, calcEffDays([a]), month)); } }}); labels = Object.keys(mTotals).sort(); dataPoints = labels.map(l => mTotals[l]); }
-            if(compareChart) compareChart.destroy(); compareChart = new Chart(ctx, { type: type === 'machine' ? 'pie' : 'bar', data: { labels: labels, datasets: [{ label: type === 'worker' ? 'Total Salary Earned' : (type === 'machine' ? 'Total Stitches' : 'Pagar Exp/Month'), data: dataPoints, backgroundColor: ['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#ec4899'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+            if(type === 'worker') {
+                workers.forEach(w => { let wAtt = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)); labels.push(w.name); dataPoints.push(Math.round(calculateEarnedSalary(w, calcEffDays(wAtt), selM) + wAtt.reduce((sum, a) => sum + (a.finalBonus || 0), 0))); });
+            } else if (type === 'machine') {
+                let mProd = {}; attendance.filter(a => a && a.date && a.date.startsWith(selM)).forEach(a => { mProd[a.machine] = (mProd[a.machine] || 0) + (a.qty || 0); }); labels = Object.keys(mProd); dataPoints = Object.values(mProd);
+            } else if (type === 'month') {
+                let mTotals = {}; attendance.forEach(a => { if(a && a.date){ let month = a.date.substring(0,7); let w = workers.find(x => x.id === a.workerId); if(w) { mTotals[month] = (mTotals[month]||0) + (a.finalBonus||0) + (calculateEarnedSalary(w, calcEffDays([a]), month)); } }}); labels = Object.keys(mTotals).sort(); dataPoints = labels.map(l => Math.round(mTotals[l]));
+            }
+
+            let isPie = (type === 'machine');
+            setupChartSlider('compareChartScroll', 'compareChartInner', 'compareChartSliderWrap', 'compareChartSlider', labels.length, isPie);
+
+            if(compareChart) compareChart.destroy();
+            let chartOptions = { responsive: true, maintainAspectRatio: false };
+            if (!isPie) {
+                chartOptions.scales = {
+                    x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } },
+                    y: { beginAtZero: true }
+                };
+            }
+
+            compareChart = new Chart(ctx, {
+                type: isPie ? 'pie' : 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: type === 'worker' ? 'Total Salary Earned (₹)' : (type === 'machine' ? 'Total Stitches' : 'Pagar Exp/Month (₹)'),
+                        data: dataPoints,
+                        backgroundColor: ['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#ec4899'],
+                        borderRadius: isPie ? 0 : 4,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: chartOptions
+            });
+            if (!isPie) {
+                setTimeout(() => syncSliderFromScroll('compareChartScroll', 'compareChartSlider'), 60);
+            }
         }
 
         function showUpadModal(wId) {
@@ -998,7 +1206,7 @@
             document.getElementById('slip_upad').innerText = '-₹' + tUpd.toFixed(0); document.getElementById('slip_net').innerText = '₹' + ((base + bon) - tUpd + pichlaBaki).toFixed(0);
             
             let el = document.getElementById('payslip-container'); el.style.display = 'block';
-            html2pdf().set({ margin: 10, filename: `${w.name}_Payslip_${selM}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { el.style.display = 'none'; });
+            html2pdf().set({ margin: 10, filename: `KarkhanaPagarPro_${w.name}_${selM}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { el.style.display = 'none'; });
         }
         function showToast(msg) { let t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('opacity-0'); setTimeout(() => t.classList.add('opacity-0'), 3000); }
         initApp();
