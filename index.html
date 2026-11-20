@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mahi and Devansh co.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,9 +44,10 @@
     <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-3 justify-between items-center">
         <div class="flex flex-col">
             <div class="font-bold text-xl flex items-center gap-2 leading-tight">
-                <img src="logo.png" class="w-8 h-8 rounded-full bg-white p-0.5 shadow object-contain" alt="Mahi and Devansh co."> Mahi and Devansh co.
+                <img src="logo.png" onerror="this.style.display='none'" class="w-8 h-8 rounded-full bg-white p-0.5 shadow object-contain" alt="Logo">
+                Mahi and Devansh co.
             </div>
-            <span class="text-[11px] text-indigo-200 ml-7">mahifashion0128@gmail.com</span>
+            <span class="text-[11px] text-indigo-200 ml-1">mahifashion0128@gmail.com</span>
         </div>
         <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 bg-indigo-800 px-3 py-1 rounded-lg border border-indigo-700">
@@ -68,9 +69,12 @@
 
     <!-- Mobile Header -->
     <div class="md:hidden bg-indigo-900 p-3 flex justify-between items-center text-white gap-2">
-        <div class="min-w-0">
-            <div class="font-bold text-sm truncate"><<img src="logo.png" class="w-8 h-8 rounded-full bg-white p-0.5 shadow object-contain" alt="Mahi and Devansh co."> Mahi and Devansh co.</div>
-            <div class="text-[10px] text-indigo-200 truncate">mahifashion0128@gmail.com</div>
+        <div class="flex items-center gap-2 min-w-0">
+            <img src="logo.png" onerror="this.style.display='none'" class="w-7 h-7 rounded-full bg-white p-0.5 shadow object-contain shrink-0" alt="Logo">
+            <div class="min-w-0">
+                <div class="font-bold text-sm truncate">Mahi and Devansh co.</div>
+                <div class="text-[10px] text-indigo-200 truncate">mahifashion0128@gmail.com</div>
+            </div>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
             <button onclick="syncFromSheet(true)" class="sync-badge bg-indigo-800 px-2 py-1 rounded border border-indigo-600 text-[11px] font-bold flex items-center gap-1">
@@ -84,11 +88,40 @@
 
         <!-- 1. DASHBOARD -->
         <section id="dashboard" class="tab-content active">
-            <div class="flex flex-wrap justify-between items-center gap-2 mb-6">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-5">
                 <h2 class="text-2xl font-bold text-slate-800">Dashboard (<span id="dash_month_label"></span>)</h2>
                 <div class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg font-bold shadow-sm">
                     Estimated Net Pagar: <span id="dash_total_pagar" class="text-xl">₹0</span>
                 </div>
+            </div>
+
+            <!-- NEW: DAILY DATE & WORKER MONTH PRODUCTION EXPLORER -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-indigo-200 mb-6">
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-lg text-indigo-900"><i class="fa-solid fa-magnifying-glass-chart text-indigo-600"></i> Daily Production & Worker Month Search</h3>
+                    <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-bold">
+                        <button type="button" id="btn_dsearch_date" onclick="switchDashSearchMode('date')" class="px-3 py-1.5 rounded-md bg-indigo-600 text-white transition">📅 Date-Wise Day Production</button>
+                        <button type="button" id="btn_dsearch_worker" onclick="switchDashSearchMode('worker')" class="px-3 py-1.5 rounded-md text-slate-600 hover:text-indigo-700 transition">👷 Worker Month Production</button>
+                    </div>
+                </div>
+
+                <!-- Date Search Bar -->
+                <div id="dash_search_date_bar" class="flex flex-wrap items-center gap-3 mb-4">
+                    <label class="text-xs font-bold text-slate-700">Select Date:</label>
+                    <input type="date" id="dash_filter_date" onchange="renderDashExplorer()" class="border border-indigo-300 p-2 rounded-lg bg-indigo-50 font-bold text-sm">
+                    <button type="button" onclick="setDashToday()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-xs font-bold border">Today</button>
+                </div>
+
+                <!-- Worker Search Bar -->
+                <div id="dash_search_worker_bar" class="hidden flex flex-wrap items-center gap-3 mb-4">
+                    <div class="relative flex-1 min-w-[220px] max-w-md">
+                        <input type="text" id="dash_filter_worker_txt" onkeyup="renderDashExplorer()" placeholder="🔍 Worker ka Naam ya ID likhein (e.g. Ramesh ya W01)..." class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 text-sm font-semibold outline-none">
+                    </div>
+                    <select id="dash_filter_worker_sel" onchange="document.getElementById('dash_filter_worker_txt').value=this.value; renderDashExplorer();" class="border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold max-w-xs"></select>
+                </div>
+
+                <!-- Explorer Output -->
+                <div id="dash_explorer_output"></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -134,7 +167,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <h3 class="font-bold text-lg mb-3 text-emerald-700 bg-emerald-100 p-2 rounded-lg"><i class="fa-solid fa-wallet"></i> Pagar Baki Hai (Net Payable)</h3>
+                    <h3 class="font-bold text-lg mb-3 text-emerald-700 bg-emerald-100 p-2 rounded-lg"><i class="fa-solid fa-wallet"></i> Pagar Baki Hai (Active Net Payable)</h3>
                     <div id="dashListPositive" class="space-y-3"></div>
                 </div>
                 <div>
@@ -166,7 +199,7 @@
                         <div><label class="block text-sm font-semibold mb-1">Date *</label><input type="date" id="h_date" required class="w-full border p-2.5 rounded-lg bg-slate-50"></div>
 
                         <div>
-                            <label class="block text-sm font-semibold mb-1">Primary Worker (ID / Name) *</label>
+                            <label class="block text-sm font-semibold mb-1">Primary Worker (Active Only) *</label>
                             <input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search by ID or Name..." class="w-full border border-b-0 p-2 text-xs rounded-t-lg bg-indigo-50 outline-none">
                             <select id="h_worker1" required onchange="showWorkerSummary()" class="w-full border p-2.5 rounded-b-lg bg-slate-50"></select>
                             <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-1"></div>
@@ -276,7 +309,7 @@
                         <select id="bulk_att_cat" onchange="renderBulkAttendanceTable()" class="w-full border p-2 rounded-lg bg-slate-50 text-sm font-semibold"></select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Search Worker (ID / Name)</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Search Active Worker</label>
                         <input type="text" id="bulk_att_search" onkeyup="filterBulkAttRows(this.value)" placeholder="🔍 ID ya Naam search karein..." class="w-full border p-2 rounded-lg bg-indigo-50 text-sm outline-none">
                     </div>
                     <div class="flex gap-2">
@@ -286,7 +319,7 @@
                 </div>
 
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-3 text-xs text-amber-900 flex flex-wrap justify-between items-center gap-2">
-                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> <b>Tip:</b> Stitches/Hours dalte hi tick (✅) apne aap lag jayega. Fixed workers pehle se tick rehte hain.</span>
+                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> <b>Note:</b> Sirf <b>Active</b> workers dikh rahe hain. Inactive/Chutti wale workers ko Settings se wapas Active kar sakte hain.</span>
                     <span id="bulk_att_count_badge" class="bg-indigo-600 text-white px-2.5 py-1 rounded-full font-bold">Selected: 0</span>
                 </div>
 
@@ -338,7 +371,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         <div><label class="block text-sm font-semibold mb-1">Date *</label><input type="date" id="u_date" required class="w-full border p-2.5 rounded-lg bg-slate-50"></div>
                         <div>
-                            <label class="block text-sm font-semibold mb-1">Worker (ID / Name) *</label>
+                            <label class="block text-sm font-semibold mb-1">Worker (Active Only) *</label>
                             <input type="text" id="search_uw" onkeyup="filterWorkerSelect(this.value, 'u_worker')" placeholder="🔍 Search ID or Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none">
                             <select id="u_worker" required class="w-full border p-2.5 rounded-b-lg bg-slate-50"></select>
                         </div>
@@ -372,7 +405,7 @@
                     <table class="w-full text-left text-sm border-collapse">
                         <thead class="bg-amber-50 sticky top-0">
                             <tr>
-                                <th class="p-2.5 border-b">Worker ID & Name</th>
+                                <th class="p-2.5 border-b">Active Worker ID & Name</th>
                                 <th class="p-2.5 border-b w-36 text-red-700">Amount (₹)</th>
                                 <th class="p-2.5 border-b">Alag Reason (Optional)</th>
                             </tr>
@@ -403,7 +436,7 @@
             </div>
         </section>
 
-        <!-- 4. REPORTS (COMPANY + WORKER-WISE + MACHINE NO.-WISE SEPARATE) -->
+        <!-- 4. REPORTS -->
         <section id="reports" class="tab-content">
             <h2 class="text-2xl font-bold mb-4 text-slate-800">Month-Wise Reports & Analysis</h2>
             <div class="flex space-x-2 mb-4 overflow-x-auto pb-2">
@@ -420,7 +453,7 @@
             <div class="flex flex-wrap gap-2 mb-4">
                 <button onclick="openMaster('m_admin')" class="bg-gray-800 text-white font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-lock"></i> Security & Sync</button>
                 <button onclick="openMaster('m_cat')" class="bg-sky-100 text-sky-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-tags"></i> Categories</button>
-                <button onclick="openMaster('m_worker')" class="bg-indigo-100 text-indigo-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-users"></i> Workers & ID</button>
+                <button onclick="openMaster('m_worker')" class="bg-indigo-100 text-indigo-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-users"></i> Workers & Pagar History</button>
                 <button onclick="openMaster('m_machno')" class="bg-teal-100 text-teal-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-hashtag"></i> Machine No.</button>
                 <button onclick="openMaster('m_design')" class="bg-emerald-100 text-emerald-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-pen-nib"></i> Layered Designs</button>
                 <button onclick="openMaster('m_rule')" class="bg-amber-100 text-amber-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-gears"></i> Machine Rules</button>
@@ -478,7 +511,7 @@
                     </div>
                 </div>
 
-                <!-- Workers & Worker ID -->
+                <!-- Workers, Active Status & Salary History -->
                 <div id="m_worker" class="master-panel">
                     <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-2 mb-4">
                         <h3 class="font-bold text-lg text-indigo-700" id="w_form_title">Add / Update Worker</h3>
@@ -504,7 +537,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-amber-900 mb-1">Har line mein likhein: <b>Worker ID, Naam, Salary</b> (ya sirf <b>Naam, Salary</b> — ID auto banega)</label>
+                            <label class="block text-xs font-bold text-amber-900 mb-1">Har line mein likhein: <b>Worker ID, Naam, Salary</b> (ya sirf <b>Naam, Salary</b>)</label>
                             <textarea id="bw_text" rows="5" placeholder="101, Suresh Patel, 18000&#10;102, Mahesh Bhai, 16500&#10;Kiran Kumar, 20000" class="w-full border border-amber-300 p-2.5 rounded-lg bg-white text-sm font-mono"></textarea>
                         </div>
                         <button type="button" onclick="saveBulkWorkers()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-lg font-bold text-sm w-full">
@@ -514,35 +547,74 @@
 
                     <form id="w_form" onsubmit="saveWorker(event)" class="space-y-3 mb-4">
                         <input type="hidden" id="w_edit_id">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                             <div>
                                 <label class="block text-xs font-bold text-indigo-800 mb-1">Worker ID *</label>
-                                <input type="text" id="w_code" placeholder="e.g. W01 ya 101" required class="w-full border border-indigo-300 p-2 rounded bg-indigo-50 font-bold">
+                                <input type="text" id="w_code" placeholder="e.g. W01" required class="w-full border border-indigo-300 p-2 rounded bg-indigo-50 font-bold">
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Worker Name *</label>
-                                <input type="text" id="w_name" placeholder="Worker Name (Unique hona chahiye)" required class="w-full border p-2 rounded bg-slate-50">
+                                <input type="text" id="w_name" placeholder="Worker Name (Unique)" required class="w-full border p-2 rounded bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-800 mb-1">Work Status *</label>
+                                <select id="w_active" class="w-full border border-emerald-300 p-2 rounded bg-emerald-50 font-bold text-emerald-900">
+                                    <option value="true">🟢 Active (Kaam Par)</option>
+                                    <option value="false">🔴 Inactive (Chutti / Chhod Diya)</option>
+                                </select>
                             </div>
                         </div>
-                        <select id="w_type" class="w-full border p-2 rounded bg-slate-50"></select>
-                        <input type="number" id="w_salary" placeholder="Fixed Salary (₹)" required class="w-full border p-2 rounded bg-slate-50">
-                        <select id="w_rule" class="w-full border p-2 rounded bg-slate-50 font-semibold text-indigo-800">
-                            <option value="30Days">Rule: 30/31 Days (No Leaves Allowed)</option>
-                            <option value="SundayOff">Rule: Sundays Off (No Salary Cut)</option>
-                            <option value="2Leaves">Rule: 2 Leaves Allowed (No Salary Cut)</option>
-                        </select>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Category *</label>
+                                <select id="w_type" class="w-full border p-2 rounded bg-slate-50"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Salary Rule *</label>
+                                <select id="w_rule" class="w-full border p-2 rounded bg-slate-50 font-semibold text-indigo-800">
+                                    <option value="30Days">Rule: 30/31 Days (No Leaves Allowed)</option>
+                                    <option value="SundayOff">Rule: Sundays Off (No Salary Cut)</option>
+                                    <option value="2Leaves">Rule: 2 Leaves Allowed (No Salary Cut)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- SALARY & EFFECTIVE MONTH (FOR SALARY HISTORY) -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-xl bg-amber-50/70 border border-amber-200">
+                            <div>
+                                <label class="block text-xs font-bold text-amber-900 mb-1">Fixed Salary (₹) *</label>
+                                <input type="number" id="w_salary" placeholder="e.g. 18000" required class="w-full border border-amber-300 p-2 rounded bg-white font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-amber-900 mb-1">Effective From Month *</label>
+                                <input type="month" id="w_sal_from" required class="w-full border border-amber-300 p-2 rounded bg-white font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-amber-900 mb-1">Update Date (Record Ke Liye)</label>
+                                <input type="date" id="w_sal_date" class="w-full border border-amber-300 p-2 rounded bg-white text-sm">
+                            </div>
+                            <p class="md:col-span-3 text-[11px] text-amber-800">
+                                <i class="fa-solid fa-circle-info"></i> <b>Pagar History Rule:</b> Naya pagar chune hue <b>Effective Month</b> se aage ke mahino mein lagega; pichle mahino mein purana pagar hi rahega.
+                            </p>
+                        </div>
+
                         <div class="flex gap-2">
-                            <button type="submit" class="bg-indigo-600 text-white w-full py-2 rounded font-bold" id="w_btn_save">Save Worker</button>
+                            <button type="submit" class="bg-indigo-600 text-white w-full py-2.5 rounded font-bold" id="w_btn_save">Save Worker</button>
                             <button type="button" onclick="cancelEditWorker()" class="hidden bg-gray-400 text-white px-4 rounded font-bold" id="w_btn_cancel">Cancel</button>
                         </div>
                     </form>
+
                     <div class="mt-4 border-t pt-4">
-                        <h4 class="font-bold text-gray-700 mb-2">Saved Workers List (<span id="worker_count_lbl">0</span>):</h4>
-                        <div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="workerList"></div>
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                            <h4 class="font-bold text-gray-700">Saved Workers List (<span id="worker_count_lbl">0</span>):</h4>
+                            <input type="text" onkeyup="filterMasterWorkers(this.value)" placeholder="🔍 Filter worker list..." class="border p-1.5 rounded bg-slate-50 text-xs w-48">
+                        </div>
+                        <div class="max-h-72 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="workerList"></div>
                     </div>
                 </div>
 
-                <!-- NEW: MACHINE NUMBERS MANAGEMENT -->
+                <!-- Machine Numbers -->
                 <div id="m_machno" class="master-panel">
                     <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-2 mb-4">
                         <h3 class="font-bold text-lg text-teal-700" id="mn_form_title"><i class="fa-solid fa-hashtag"></i> Manage Machine Numbers</h3>
@@ -554,37 +626,21 @@
                     <div id="bulk_machno_box" class="hidden mb-5 p-4 rounded-xl border-2 border-teal-300 bg-teal-50 space-y-3">
                         <div class="font-bold text-sm text-teal-900">Ek Sath Machine Numbers Banayein</div>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-teal-900 mb-1">Prefix (e.g. M-)</label>
-                                <input type="text" id="mn_prefix" value="M-" placeholder="M-" class="w-full border border-teal-300 p-2 rounded bg-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-teal-900 mb-1">Start No.</label>
-                                <input type="number" id="mn_start" value="1" min="1" class="w-full border border-teal-300 p-2 rounded bg-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-teal-900 mb-1">End No.</label>
-                                <input type="number" id="mn_end" value="13" min="1" class="w-full border border-teal-300 p-2 rounded bg-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-teal-900 mb-1">Default Type (Optional)</label>
-                                <select id="mn_bulk_type" class="w-full border border-teal-300 p-2 rounded bg-white text-sm"></select>
-                            </div>
+                            <div><label class="block text-xs font-bold text-teal-900 mb-1">Prefix (e.g. M-)</label><input type="text" id="mn_prefix" value="M-" class="w-full border border-teal-300 p-2 rounded bg-white text-sm"></div>
+                            <div><label class="block text-xs font-bold text-teal-900 mb-1">Start No.</label><input type="number" id="mn_start" value="1" min="1" class="w-full border border-teal-300 p-2 rounded bg-white text-sm"></div>
+                            <div><label class="block text-xs font-bold text-teal-900 mb-1">End No.</label><input type="number" id="mn_end" value="13" min="1" class="w-full border border-teal-300 p-2 rounded bg-white text-sm"></div>
+                            <div><label class="block text-xs font-bold text-teal-900 mb-1">Default Type</label><select id="mn_bulk_type" class="w-full border border-teal-300 p-2 rounded bg-white text-sm"></select></div>
                         </div>
-                        <button type="button" onclick="generateMachineNumbers()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-bold text-sm w-full">
-                            Generate Machine Numbers
-                        </button>
+                        <button type="button" onclick="generateMachineNumbers()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-bold text-sm w-full">Generate Machine Numbers</button>
                     </div>
 
                     <form id="mn_form" onsubmit="saveMachineNumber(event)" class="flex flex-col md:flex-row gap-2 mb-4">
                         <input type="hidden" id="mn_edit_id">
-                        <input type="text" id="mn_no" placeholder="Machine Number (e.g. M-1, M-2, No.5)" required class="w-full md:w-1/3 border p-2 rounded bg-slate-50 font-bold">
+                        <input type="text" id="mn_no" placeholder="Machine Number (e.g. M-1, M-2)" required class="w-full md:w-1/3 border p-2 rounded bg-slate-50 font-bold">
                         <select id="mn_default_type" class="w-full md:w-1/2 border p-2 rounded bg-slate-50 text-sm"></select>
                         <button type="submit" id="mn_btn_save" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded font-bold shrink-0">Save M/C No.</button>
                         <button type="button" id="mn_btn_cancel" onclick="cancelEditMachineNumber()" class="hidden bg-gray-400 text-white px-4 py-2 rounded font-bold">Cancel</button>
                     </form>
-                    <p class="text-xs text-gray-500 mb-3">Agar aap Machine No. ke sath uska <b>Default Machine Type</b> jod denge, toh Attendance mein Machine No. select karte hi Machine Type apne aap bhar jayega.</p>
-
                     <div class="mt-4 border-t pt-4">
                         <h4 class="font-bold text-gray-700 mb-2">Saved Machine Numbers (<span id="machno_count_lbl">0</span>):</h4>
                         <div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="machineNumberList"></div>
@@ -630,14 +686,8 @@
                         </div>
 
                         <div id="m_single_rate_box" class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Min Target Stitches</label>
-                                <input type="number" id="m_min" placeholder="e.g. 185000" class="w-full border p-2 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1">Rate / 1000 Stitches (₹)</label>
-                                <input type="number" step="0.01" id="m_rate" placeholder="e.g. 1.75" class="w-full border p-2 rounded">
-                            </div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Min Target Stitches</label><input type="number" id="m_min" placeholder="e.g. 185000" class="w-full border p-2 rounded"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Rate / 1000 Stitches (₹)</label><input type="number" step="0.01" id="m_rate" placeholder="e.g. 1.75" class="w-full border p-2 rounded"></div>
                         </div>
 
                         <div id="m_slab_rate_box" class="hidden border-2 border-indigo-200 p-3 rounded-xl bg-indigo-50/70">
@@ -763,6 +813,19 @@
         </div>
     </div>
 
+    <!-- Salary History Modal -->
+    <div id="salHistModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-[120] items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div class="bg-indigo-700 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="salHistModalTitle">Salary Revision History</h3>
+                <button onclick="document.getElementById('salHistModal').classList.remove('active')" class="font-bold text-xl">&times;</button>
+            </div>
+            <div class="p-4 max-h-80 overflow-y-auto">
+                <table class="w-full text-sm text-left border"><thead class="bg-indigo-50"><tr><th class="p-2 border-b">Effective From Month</th><th class="p-2 border-b">Updated On Date</th><th class="p-2 border-b text-right">Fixed Salary (₹)</th></tr></thead><tbody id="salHistModalBody"></tbody></table>
+            </div>
+        </div>
+    </div>
+
     <div id="analysisModal" class="modal fixed inset-0 bg-black bg-opacity-50 z-[120] items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="bg-indigo-600 text-white p-4 flex justify-between items-center shrink-0">
@@ -778,7 +841,8 @@
     <!-- Hidden A4 PDF Box: WORKER PAYSLIP -->
     <div id="payslip-container" class="payslip-box">
         <div style="text-align:center; margin-bottom: 18px;">
-            <img src="logo.png" style="width:55px; height:55px; object-fit:contain; margin:0 auto 6px auto; display:block;" alt="Logo"> <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #312e81;">Mahi and Devansh co.</h1> font-weight: bold; margin:0; color: #312e81;">Mahi and Devansh co.</h1>
+            <img src="logo.png" onerror="this.style.display='none'" style="width:55px; height:55px; object-fit:contain; margin:0 auto 6px auto; display:block;" alt="Logo">
+            <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #312e81;">Mahi and Devansh co.</h1>
             <p style="font-size: 12px; margin: 2px 0; color: #475569;">mahifashion0128@gmail.com</p>
             <p style="font-size: 15px; margin: 6px 0 0 0;">Worker Salary & Performance Statement | Month: <span id="slip_month" style="font-weight:bold;"></span></p>
         </div>
@@ -790,7 +854,7 @@
             </div>
             <div style="text-align:right;">
                 <p style="margin:2px 0;"><strong>Category:</strong> <span id="slip_cat"></span></p>
-                <p style="margin:2px 0;"><strong>Fixed Salary:</strong> ₹<span id="slip_salary"></span></p>
+                <p style="margin:2px 0;"><strong>Month Salary Rate:</strong> ₹<span id="slip_salary"></span></p>
                 <p style="margin:2px 0;"><strong>Effective Days:</strong> <span id="slip_days"></span></p>
             </div>
         </div>
@@ -817,7 +881,8 @@
     <!-- Hidden A4 PDF Box: MACHINE NUMBER REPORT -->
     <div id="machine-pdf-container" class="payslip-box">
         <div style="text-align:center; margin-bottom: 18px;">
-            <img src="logo.png" style="width:55px; height:55px; object-fit:contain; margin:0 auto 6px auto; display:block;" alt="Logo"> <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #312e81;">Mahi and Devansh co.</h1> font-weight: bold; margin:0; color: #0f766e;">Mahi and Devansh co.</h1>
+            <img src="logo.png" onerror="this.style.display='none'" style="width:55px; height:55px; object-fit:contain; margin:0 auto 6px auto; display:block;" alt="Logo">
+            <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #0f766e;">Mahi and Devansh co.</h1>
             <p style="font-size: 12px; margin: 2px 0; color: #475569;">mahifashion0128@gmail.com</p>
             <p style="font-size: 15px; margin: 6px 0 0 0;">Machine Production Report | Month: <span id="mslip_month" style="font-weight:bold;"></span></p>
         </div>
@@ -873,6 +938,7 @@
         let workerTypes = []; let workers = []; let designs = []; let machineRules = [];
         let attendance = []; let advanceData = [];
         let bonusChart; let compareChart; let currentReportType = 'company';
+        let dashSearchMode = 'date';
 
         function getScriptUrl() {
             let saved = (localStorage.getItem('karkhana_scriptUrl') || '').trim();
@@ -911,9 +977,12 @@
             localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
         }
 
-        // ====== WORKER ID HELPER ======
+        // ====== WORKER ID, ACTIVE STATUS & SALARY HISTORY HELPERS ======
         function getWorkerCode(w) { return (w && w.code) ? w.code : (w ? w.id : '-'); }
         function getWorkerLabel(w) { return w ? `[${getWorkerCode(w)}] ${w.name}` : 'Unknown'; }
+        function isWorkerActive(w) { return w && w.isActive !== false; }
+        function getActiveWorkers() { return workers.filter(w => isWorkerActive(w)); }
+
         function getNextWorkerCode() {
             let maxNum = 0;
             workers.forEach(w => {
@@ -921,6 +990,51 @@
                 if (m) maxNum = Math.max(maxNum, parseInt(m[0], 10));
             });
             return 'W' + String(maxNum + 1).padStart(2, '0');
+        }
+
+        // Returns the exact salary applicable for a specific YYYY-MM month
+        function getWorkerSalaryForMonth(worker, monthStr) {
+            if (!worker) return 0;
+            if (!Array.isArray(worker.salaryHistory) || worker.salaryHistory.length === 0) {
+                return parseFloat(worker.fixSalary) || 0;
+            }
+            let sorted = [...worker.salaryHistory].sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
+            if (!monthStr) return parseFloat(sorted[sorted.length - 1].salary) || 0;
+
+            let chosen = null;
+            for (let i = 0; i < sorted.length; i++) {
+                if ((sorted[i].effectiveMonth || '') <= monthStr) {
+                    chosen = sorted[i];
+                }
+            }
+            // If querying a month older than the earliest recorded history entry, use earliest entry
+            if (!chosen) chosen = sorted[0];
+            return parseFloat(chosen.salary) || 0;
+        }
+
+        function getLatestSalaryRecord(worker) {
+            if (!worker) return { salary: 0, effectiveMonth: '', updatedDate: '' };
+            if (!Array.isArray(worker.salaryHistory) || worker.salaryHistory.length === 0) {
+                return { salary: parseFloat(worker.fixSalary) || 0, effectiveMonth: '', updatedDate: '' };
+            }
+            let sorted = [...worker.salaryHistory].sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
+            return sorted[sorted.length - 1];
+        }
+
+        function showSalaryHistoryModal(wId) {
+            let w = workers.find(x => x && x.id === wId);
+            if (!w) return;
+            document.getElementById('salHistModalTitle').innerText = `[${getWorkerCode(w)}] ${w.name} — Pagar Update History`;
+            let hist = Array.isArray(w.salaryHistory) && w.salaryHistory.length
+                ? [...w.salaryHistory].sort((a, b) => (b.effectiveMonth || '').localeCompare(a.effectiveMonth || ''))
+                : [{ effectiveMonth: 'Initial', updatedDate: '-', salary: w.fixSalary }];
+            document.getElementById('salHistModalBody').innerHTML = hist.map((h, idx) => `
+                <tr class="border-b ${idx === 0 ? 'bg-emerald-50/60 font-bold' : ''}">
+                    <td class="p-2.5">${h.effectiveMonth === 'Initial' ? 'Starting Salary' : getMonthName(h.effectiveMonth) + ' (' + h.effectiveMonth + ')'}</td>
+                    <td class="p-2.5 text-xs text-slate-600">${h.updatedDate || '-'}</td>
+                    <td class="p-2.5 text-right text-emerald-700 font-bold">₹${h.salary}</td>
+                </tr>`).join('');
+            document.getElementById('salHistModal').classList.add('active');
         }
 
         // ====== MACHINE STITCH RATE SLABS ======
@@ -1024,11 +1138,11 @@
                     if (Array.isArray(d.attendance)) attendance = d.attendance;
                     if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
 
-                    ensureWorkerCodes();
+                    migrateWorkersData();
                     saveAllLocal();
                     let prevW1 = document.getElementById('h_worker1').value;
                     refreshDropdowns();
-                    if (prevW1 && workers.some(w => w.id === prevW1)) document.getElementById('h_worker1').value = prevW1;
+                    if (prevW1 && getActiveWorkers().some(w => w.id === prevW1)) document.getElementById('h_worker1').value = prevW1;
                     renderMasterLists(); refreshAllData();
                     setSyncBadge('🟢 Synced', 'text-emerald-300');
                     if (showNotify) showToast('Latest data sync ho gaya!');
@@ -1042,16 +1156,19 @@
             }
         }
 
-        // ====== DATA LOADER ======
+        // ====== DATA LOADER & MIGRATION ======
         function getSafeData(key, defaultVal) {
             try { let data = JSON.parse(localStorage.getItem(key)); if (Array.isArray(data)) return data.filter(i => i !== null && i !== undefined); return data || defaultVal; } catch(e) { return defaultVal; }
         }
 
-        function ensureWorkerCodes() {
+        function migrateWorkersData() {
             let changed = false;
             workers.forEach((w, i) => {
-                if (w && !w.code) {
-                    w.code = 'W' + String(i + 1).padStart(2, '0');
+                if (!w) return;
+                if (!w.code) { w.code = 'W' + String(i + 1).padStart(2, '0'); changed = true; }
+                if (w.isActive === undefined) { w.isActive = true; changed = true; }
+                if (!Array.isArray(w.salaryHistory) || w.salaryHistory.length === 0) {
+                    w.salaryHistory = [{ effectiveMonth: '2020-01', updatedDate: '', salary: parseFloat(w.fixSalary) || 0 }];
                     changed = true;
                 }
             });
@@ -1086,13 +1203,13 @@
                 ];
             }
 
-            workers = getSafeData('karkhana_workers', [{ id: "W1", code: "W01", name: "Ramesh Bhai", type: "Machine Worker", fixSalary: 18000, rule: "30Days" }]);
+            workers = getSafeData('karkhana_workers', [{ id: "W1", code: "W01", name: "Ramesh Bhai", type: "Machine Worker", fixSalary: 18000, rule: "30Days", isActive: true, salaryHistory: [{ effectiveMonth: '2020-01', updatedDate: '', salary: 18000 }] }]);
             designs = getSafeData('karkhana_designs', []);
             machineRules = getSafeData('karkhana_machineRules', [{ id: 'MR1', name: 'Type 25', rateMode: 'single', min: 185000, rate: 1.75, rateSlabs: [] }]);
             attendance = getSafeData('karkhana_att', []);
             advanceData = getSafeData('karkhana_upad', []);
 
-            let changed = ensureWorkerCodes();
+            let changed = migrateWorkersData();
             advanceData.forEach(u => { if (u && !u.id) { u.id = "U_OLD_" + Math.random().toString(36).substr(2, 9); changed = true; } });
             attendance.forEach(a => { if (a && !a.id) { a.id = "A_OLD_" + Math.random().toString(36).substr(2, 9); changed = true; } });
             designs.forEach(d => { if (d && !d.id) { d.id = "D_OLD_" + Math.random().toString(36).substr(2, 9); changed = true; } });
@@ -1104,10 +1221,11 @@
             loadDataSafely();
             if (isCloudConfigured()) document.getElementById('sheet_url_input').value = getScriptUrl();
             let today = new Date();
-            ['h_date', 'u_date', 'bulk_att_date', 'bulk_upad_date'].forEach(id => { let el = document.getElementById(id); if (el) el.valueAsDate = today; });
+            ['h_date', 'u_date', 'bulk_att_date', 'bulk_upad_date', 'dash_filter_date', 'w_sal_date'].forEach(id => { let el = document.getElementById(id); if (el) el.valueAsDate = today; });
             let mStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('app_month').value = mStr;
             if (document.getElementById('app_month_mob')) document.getElementById('app_month_mob').value = mStr;
+            document.getElementById('w_sal_from').value = mStr;
             refreshDropdowns(); renderMasterLists(); refreshAllData(); showWorkerSummary();
             document.getElementById('w_code').value = getNextWorkerCode();
             syncFromSheet(false);
@@ -1141,16 +1259,18 @@
             let selM = getSelMonth();
             document.getElementById('dash_month_label').innerText = getMonthName(selM);
             document.getElementById('upad_statement_month').innerText = getMonthName(selM);
+            renderDashExplorer();
             renderDashboard(); updateChart(); updateCompareChart(); renderAdvanceStatement();
             if (document.getElementById('reports').classList.contains('active')) setReportType(currentReportType);
             showWorkerSummary();
         }
 
+        // Only Active workers appear in Attendance & Advance dropdowns
         function filterWorkerSelect(query, selectId) {
             let q = query.toLowerCase();
-            let html = workers.filter(w => w && ((w.name || '').toLowerCase().includes(q) || getWorkerCode(w).toLowerCase().includes(q)))
+            let html = getActiveWorkers().filter(w => (w.name || '').toLowerCase().includes(q) || getWorkerCode(w).toLowerCase().includes(q))
                 .map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name} (${w.type})</option>`).join('');
-            document.getElementById(selectId).innerHTML = html || '<option value="">No match</option>';
+            document.getElementById(selectId).innerHTML = html || '<option value="">No active worker match</option>';
             if (selectId === 'h_worker1') showWorkerSummary();
         }
 
@@ -1174,22 +1294,27 @@
         }
 
         function autoSelectMachineType(noSelectId, typeSelectId) {
-            let noEl = document.getElementById(noSelectId);
-            let typeEl = document.getElementById(typeSelectId);
+            let noEl = document.getElementById(noSelectId), typeEl = document.getElementById(typeSelectId);
             if (!noEl || !typeEl) return;
             let mn = machineNumbers.find(m => m && m.no === noEl.value);
-            if (mn && mn.defaultType) {
-                let exists = Array.from(typeEl.options).some(o => o.value === mn.defaultType);
-                if (exists) typeEl.value = mn.defaultType;
+            if (mn && mn.defaultType && Array.from(typeEl.options).some(o => o.value === mn.defaultType)) {
+                typeEl.value = mn.defaultType;
             }
         }
 
         function refreshDropdowns() {
             try {
-                let wHtml = workers.map(w => w ? `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name || 'Unnamed'} (${w.type || 'N/A'})</option>` : '').join('');
-                ['h_worker1', 'h_worker2', 'u_worker'].forEach(id => { try { document.getElementById(id).innerHTML = wHtml; } catch(e){} });
+                let activeW = getActiveWorkers();
+                let activeHtml = activeW.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name || 'Unnamed'} (${w.type || 'N/A'})</option>`).join('');
+                ['h_worker1', 'h_worker2', 'u_worker'].forEach(id => { try { document.getElementById(id).innerHTML = activeHtml || '<option value="">No Active Worker</option>'; } catch(e){} });
 
-                try { document.getElementById('chartWorkerSelect').innerHTML = `<option value="ALL">All Workers</option>` + workers.map(w => w ? `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>` : '').join(''); } catch(e){}
+                // Dashboard search dropdown includes all workers so past production can still be searched
+                try {
+                    document.getElementById('dash_filter_worker_sel').innerHTML = `<option value="">-- Quick Pick Worker --</option>` +
+                        workers.map(w => `<option value="${getWorkerCode(w)}">[${getWorkerCode(w)}] ${w.name}${!isWorkerActive(w) ? ' (Inactive)' : ''}</option>`).join('');
+                } catch(e){}
+
+                try { document.getElementById('chartWorkerSelect').innerHTML = `<option value="ALL">Active Workers</option>` + activeW.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join(''); } catch(e){}
 
                 let dHtml = `<option value="">Manual Entry</option>` + designs.map(d => d ? `<option value="${d.code}">${d.code || 'N/A'} (${d.stitches || 0} St)</option>` : '').join('');
                 try { document.getElementById('h_design').innerHTML = dHtml; } catch(e){}
@@ -1228,9 +1353,155 @@
                     let tHtml = workerTypes.map(t => { if (!t) return ''; let n = typeof t === 'string' ? t : (t.name || 'Unnamed'); return `<option value="${n}">${n}</option>`; }).join('');
                     document.getElementById('w_type').innerHTML = tHtml;
                     document.getElementById('bw_type').innerHTML = tHtml;
-                    document.getElementById('bulk_att_cat').innerHTML = `<option value="ALL">All Categories (${workers.length})</option>` + tHtml;
+                    document.getElementById('bulk_att_cat').innerHTML = `<option value="ALL">All Active Categories (${activeW.length})</option>` + tHtml;
                 } catch(e){}
             } catch(e) { console.error("Dropdown Error:", e); }
+        }
+
+        // ====== DASHBOARD EXPLORER (DATE-WISE DAY PRODUCTION & WORKER MONTH PRODUCTION) ======
+        function switchDashSearchMode(mode) {
+            dashSearchMode = mode;
+            let bD = document.getElementById('btn_dsearch_date'), bW = document.getElementById('btn_dsearch_worker');
+            let barD = document.getElementById('dash_search_date_bar'), barW = document.getElementById('dash_search_worker_bar');
+            if (mode === 'date') {
+                barD.classList.remove('hidden'); barW.classList.add('hidden');
+                bD.classList.add('bg-indigo-600', 'text-white'); bD.classList.remove('text-slate-600');
+                bW.classList.remove('bg-indigo-600', 'text-white'); bW.classList.add('text-slate-600');
+            } else {
+                barW.classList.remove('hidden'); barD.classList.add('hidden');
+                bW.classList.add('bg-indigo-600', 'text-white'); bW.classList.remove('text-slate-600');
+                bD.classList.remove('bg-indigo-600', 'text-white'); bD.classList.add('text-slate-600');
+            }
+            renderDashExplorer();
+        }
+
+        function setDashToday() {
+            document.getElementById('dash_filter_date').valueAsDate = new Date();
+            renderDashExplorer();
+        }
+
+        function renderDashExplorer() {
+            let out = document.getElementById('dash_explorer_output');
+            if (!out) return;
+
+            if (dashSearchMode === 'date') {
+                let dStr = document.getElementById('dash_filter_date').value;
+                if (!dStr) { out.innerHTML = '<p class="text-xs text-gray-400">Date select karein.</p>'; return; }
+                let dayAtt = attendance.filter(a => a && a.date === dStr);
+                if (dayAtt.length === 0) {
+                    out.innerHTML = `<div class="p-4 text-center text-sm text-gray-400 bg-slate-50 rounded-lg border"><b>${dStr}</b> ko koi Haziri ya Production entry nahi mili.</div>`;
+                    return;
+                }
+
+                let totSt = 0, totAlt = 0, totFr = 0, totBon = 0;
+                let rowsHtml = dayAtt.map(a => {
+                    let w = workers.find(x => x && x.id === a.workerId);
+                    let wLbl = w ? `<span class="text-indigo-600 font-bold">[${getWorkerCode(w)}]</span> ${w.name}` : 'Unknown';
+                    let pm = getPaymentMode(a.mode);
+                    let isAlt = (a.machine === 'ALTER' || pm.bonusType === 'alter');
+                    let isM = (a.machine && a.machine !== 'NONE');
+
+                    if (isM) {
+                        if (isAlt) totAlt += (a.qty || 0); else totSt += (a.qty || 0);
+                        totFr += (a.frame || 0);
+                    }
+                    totBon += (a.finalBonus || 0);
+
+                    let mDet = !isM ? '<span class="text-gray-400">Fixed Worker</span>' : `${a.machineNo ? `<span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${a.machineNo}</span>` : ''}${a.machine} / ${a.design}`;
+                    let qDet = !isM ? '-' : `${(a.qty || 0).toLocaleString('en-IN')} ${isAlt ? 'hr' : 'st'}`;
+                    let fDet = !isM ? '-' : (a.frame || 0);
+
+                    if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') {
+                        let ePm = getPaymentMode(a.extraMode), eAlt = (a.extraMachine === 'ALTER' || ePm.bonusType === 'alter');
+                        if (eAlt) totAlt += (a.extraQty || 0); else totSt += (a.extraQty || 0);
+                        totFr += (a.extraFrame || 0);
+                        mDet += `<div class="text-[11px] text-amber-700 font-semibold mt-0.5">+ Extra: ${a.extraMachineNo ? '['+a.extraMachineNo+'] ' : ''}${a.extraMachine} / ${a.extraDesign||'-'}</div>`;
+                        qDet += `<div class="text-[11px] text-amber-700 font-semibold mt-0.5">${(a.extraQty || 0).toLocaleString('en-IN')} ${eAlt ? 'hr' : 'st'}</div>`;
+                        fDet += `<div class="text-[11px] text-amber-700 font-semibold mt-0.5">${a.extraFrame || 0}</div>`;
+                    }
+
+                    return `<tr class="border-b hover:bg-slate-50">
+                        <td class="p-2.5 font-semibold">${wLbl}</td>
+                        <td class="p-2.5 font-bold ${a.status==='Absent'?'text-red-600':'text-slate-700'}">${a.status}</td>
+                        <td class="p-2.5 text-xs">${mDet}</td>
+                        <td class="p-2.5 text-right font-bold">${qDet}</td>
+                        <td class="p-2.5 text-right">${fDet}</td>
+                        <td class="p-2.5 text-right font-bold text-emerald-600">₹${(a.finalBonus || 0).toFixed(0)}</td>
+                    </tr>`;
+                }).join('');
+
+                out.innerHTML = `
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-200"><div class="text-[11px] font-bold text-indigo-700">Present Entries (${dStr})</div><div class="text-lg font-black text-indigo-900">${dayAtt.filter(a=>a.status!=='Absent').length} / ${dayAtt.length}</div></div>
+                        <div class="p-3 bg-teal-50 rounded-lg border border-teal-200"><div class="text-[11px] font-bold text-teal-700">Day Total Stitches</div><div class="text-lg font-black text-teal-900">${totSt.toLocaleString('en-IN')}${totAlt>0 ? ` <span class="text-xs">(+${totAlt}hr)</span>` : ''}</div></div>
+                        <div class="p-3 bg-sky-50 rounded-lg border border-sky-200"><div class="text-[11px] font-bold text-sky-700">Day Total Frames</div><div class="text-lg font-black text-sky-900">${totFr}</div></div>
+                        <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200"><div class="text-[11px] font-bold text-emerald-700">Day Total Bonus</div><div class="text-lg font-black text-emerald-800">₹${totBon.toFixed(0)}</div></div>
+                    </div>
+                    <div class="overflow-x-auto max-h-64 border rounded-lg">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-slate-100 sticky top-0"><tr><th class="p-2.5 border-b">Worker (ID)</th><th class="p-2.5 border-b">Status</th><th class="p-2.5 border-b">Machine & Design</th><th class="p-2.5 border-b text-right">Stitches / Hrs</th><th class="p-2.5 border-b text-right">Frame</th><th class="p-2.5 border-b text-right">Bonus</th></tr></thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>`;
+            } else {
+                let q = (document.getElementById('dash_filter_worker_txt').value || '').trim().toLowerCase();
+                let selM = getSelMonth();
+                if (!q) {
+                    out.innerHTML = `<div class="p-4 text-center text-xs text-gray-500 bg-slate-50 rounded-lg border">Kisi bhi worker ka <b>Naam</b> ya <b>Worker ID</b> likhein (ya dropdown se chunein) — uske <b>${getMonthName(selM)}</b> ka poora production aur pagar summary dikh jayega.</div>`;
+                    return;
+                }
+
+                let matched = workers.filter(w => w && ((w.name || '').toLowerCase().includes(q) || getWorkerCode(w).toLowerCase().includes(q)));
+                if (matched.length === 0) {
+                    out.innerHTML = `<div class="p-4 text-center text-sm text-red-500 bg-red-50 rounded-lg border">"${q}" se match hota koi worker nahi mila.</div>`;
+                    return;
+                }
+
+                out.innerHTML = matched.slice(0, 5).map(w => {
+                    let wA = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date));
+                    let wU = advanceData.filter(u => u && u.workerId === w.id && u.date && u.date.startsWith(selM));
+                    let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0);
+                    let wSt = 0, wAlt = 0, wFr = 0;
+                    wA.forEach(a => {
+                        let pm = getPaymentMode(a.mode), isAlt = (a.machine === 'ALTER' || pm.bonusType === 'alter');
+                        if (a.machine && a.machine !== 'NONE') { if (isAlt) wAlt += (a.qty || 0); else wSt += (a.qty || 0); wFr += (a.frame || 0); }
+                        if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') {
+                            let ePm = getPaymentMode(a.extraMode), eAlt = (a.extraMachine === 'ALTER' || ePm.bonusType === 'alter');
+                            if (eAlt) wAlt += (a.extraQty || 0); else wSt += (a.extraQty || 0); wFr += (a.extraFrame || 0);
+                        }
+                    });
+
+                    return `<div class="border border-indigo-200 rounded-xl p-4 mb-3 bg-indigo-50/30">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                            <div>
+                                <span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-xs font-bold mr-1.5">${getWorkerCode(w)}</span>
+                                <span class="font-bold text-base text-slate-900">${w.name}</span>
+                                <span class="text-xs text-gray-500 ml-1">(${w.type})</span>
+                                ${!isWorkerActive(w) ? '<span class="ml-2 bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded font-bold">Inactive</span>' : ''}
+                            </div>
+                            <div class="text-xs font-bold text-indigo-800">Month Salary Rate: ₹${getWorkerSalaryForMonth(w, selM)}</div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
+                            <div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Stitches</div><div class="text-sm font-black text-teal-800">${wSt.toLocaleString('en-IN')}${wAlt>0?` (+${wAlt}hr)`:''}</div></div>
+                            <div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Frames</div><div class="text-sm font-black text-sky-800">${wFr}</div></div>
+                            <div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Days & Base</div><div class="text-sm font-black text-indigo-800">${eff}d (₹${base.toFixed(0)})</div></div>
+                            <div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Bonus</div><div class="text-sm font-black text-emerald-700">₹${bon.toFixed(0)}</div></div>
+                            <div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Month Upad</div><div class="text-sm font-black text-red-600">₹${upd.toFixed(0)}</div></div>
+                        </div>
+                        <div class="overflow-x-auto max-h-48 border rounded-lg bg-white">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 border-b">Date</th><th class="p-2 border-b">Status</th><th class="p-2 border-b">M/C No. & Type / Design</th><th class="p-2 border-b text-right">Stitches/Hrs</th><th class="p-2 border-b text-right">Frame</th><th class="p-2 border-b text-right">Bonus</th></tr></thead>
+                                <tbody>${wA.length ? wA.map(a => {
+                                    let isM = (a.machine && a.machine !== 'NONE'), pm = getPaymentMode(a.mode), isAlt = (a.machine === 'ALTER' || pm.bonusType === 'alter');
+                                    let det = !isM ? 'Fixed Worker' : `${a.machineNo ? '['+a.machineNo+'] ' : ''}${a.machine}/${a.design}`;
+                                    if (a.hasExtraMachine && a.extraMachine) det += ` <span class="text-amber-700 font-bold">+ Extra [${a.extraMachineNo||'-'}] ${a.extraMachine} (${a.extraQty||0})</span>`;
+                                    return `<tr class="border-b"><td class="p-2">${a.date}</td><td class="p-2 font-bold">${a.status}</td><td class="p-2">${det}</td><td class="p-2 text-right font-bold">${isM ? (a.qty||0).toLocaleString('en-IN') + (isAlt?' hr':' st') : '-'}</td><td class="p-2 text-right">${isM ? (a.frame||0) : '-'}</td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`;
+                                }).join('') : `<tr><td colspan="6" class="p-3 text-center text-gray-400">Is mahine koi entry nahi hai.</td></tr>`}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
         }
 
         function toggleWorker2() {
@@ -1292,14 +1563,14 @@
                 document.querySelectorAll('.mob-nav-btn').forEach(b => { b.classList.remove('text-indigo-700'); b.classList.add('text-slate-500'); });
                 btnEl.classList.remove('text-slate-500'); btnEl.classList.add('text-indigo-700');
             }
-            if (tabId === 'dashboard') { renderDashboard(); updateChart(); updateCompareChart(); }
+            if (tabId === 'dashboard') { renderDashExplorer(); renderDashboard(); updateChart(); updateCompareChart(); }
             if (tabId === 'advance') { renderAdvanceStatement(); if (!document.getElementById('upad_bulk_view').classList.contains('hidden')) renderBulkUpadTable(); }
             if (tabId === 'reports') { setReportType(currentReportType); }
             if (tabId === 'attendance') { showWorkerSummary(); if (!document.getElementById('att_bulk_view').classList.contains('hidden')) renderBulkAttendanceTable(); }
         }
         function openMaster(panelId) { document.querySelectorAll('.master-panel').forEach(p => p.style.display = 'none'); document.getElementById(panelId).style.display = 'block'; }
 
-        // ====== BULK ATTENDANCE ======
+        // ====== BULK ATTENDANCE (ACTIVE WORKERS ONLY) ======
         function switchAttMode(mode) {
             let sView = document.getElementById('att_single_view'), bView = document.getElementById('att_bulk_view'), bS = document.getElementById('btn_att_single'), bB = document.getElementById('btn_att_bulk');
             if (mode === 'bulk') {
@@ -1319,8 +1590,8 @@
             let tbody = document.getElementById('bulk_att_body'); if (!tbody) return;
             let dateStr = document.getElementById('bulk_att_date').value || new Date().toISOString().slice(0, 10);
             let catFilter = document.getElementById('bulk_att_cat').value || 'ALL';
-            let filteredWorkers = workers.filter(w => w && (catFilter === 'ALL' || w.type === catFilter));
-            if (filteredWorkers.length === 0) { tbody.innerHTML = `<tr><td colspan="12" class="p-4 text-center text-gray-400">Koi worker nahi mila.</td></tr>`; updateBulkSelectedCount(); return; }
+            let filteredWorkers = getActiveWorkers().filter(w => catFilter === 'ALL' || w.type === catFilter);
+            if (filteredWorkers.length === 0) { tbody.innerHTML = `<tr><td colspan="12" class="p-4 text-center text-gray-400">Koi Active worker nahi mila.</td></tr>`; updateBulkSelectedCount(); return; }
 
             let bulkModes = paymentModes.filter(pm => pm && !pm.isShared);
             let pmOpts = (bulkModes.length ? bulkModes : paymentModes).map(pm => `<option value="${pm.id}">${pm.name}</option>`).join('');
@@ -1445,7 +1716,7 @@
             renderBulkAttendanceTable(); refreshAllData(); syncToSheet();
         }
 
-        // ====== BULK ADVANCE ======
+        // ====== BULK ADVANCE (ACTIVE WORKERS ONLY) ======
         function switchUpadMode(mode) {
             let sView = document.getElementById('upad_single_view'), bView = document.getElementById('upad_bulk_view'), bS = document.getElementById('btn_upad_single'), bB = document.getElementById('btn_upad_bulk');
             if (mode === 'bulk') {
@@ -1461,7 +1732,7 @@
         }
         function renderBulkUpadTable() {
             let tbody = document.getElementById('bulk_upad_body'); if (!tbody) return;
-            tbody.innerHTML = workers.map(w => `
+            tbody.innerHTML = getActiveWorkers().map(w => `
                 <tr class="bulk-upad-row hover:bg-amber-50/40" data-wid="${w.id}">
                     <td class="p-2.5 font-bold text-slate-800"><span class="text-indigo-600 text-xs">[${getWorkerCode(w)}]</span> ${w.name} <span class="text-xs font-normal text-gray-500">(${w.type})</span></td>
                     <td class="p-2"><input type="number" min="0" class="bu-amt w-full border border-red-200 p-1.5 rounded-lg bg-red-50/50 font-bold text-red-700" placeholder="0" oninput="updateBulkUpadTotal()"></td>
@@ -1488,12 +1759,14 @@
             renderBulkUpadTable(); refreshAllData(); syncToSheet();
         }
 
-        // ====== BULK ADD WORKERS (Supports ID, Name, Salary OR Name, Salary) ======
+        // ====== BULK ADD WORKERS ======
         function saveBulkWorkers() {
             let raw = (document.getElementById('bw_text').value || '').trim();
             if (!raw) { alert("Pehle box mein workers ki list likhein!"); return; }
             let defType = document.getElementById('bw_type').value || (workerTypes[0] ? workerTypes[0].name : 'Machine Worker');
             let defRule = document.getElementById('bw_rule').value || '30Days';
+            let effMonth = getSelMonth() || new Date().toISOString().slice(0, 7);
+            let todayStr = new Date().toISOString().slice(0, 10);
             let lines = raw.split(/\r?\n/), addedCount = 0, skippedDup = 0, skippedInvalid = 0, baseTs = Date.now();
 
             lines.forEach((line, idx) => {
@@ -1515,7 +1788,10 @@
                 let isDupCode = workers.some(w => w && getWorkerCode(w).toLowerCase() === code.toLowerCase());
                 if (isDupName || isDupCode) { skippedDup++; return; }
 
-                workers.push({ id: `W_${baseTs}_${idx}`, code, name, type: defType, fixSalary: salary, rule: defRule });
+                workers.push({
+                    id: `W_${baseTs}_${idx}`, code, name, type: defType, fixSalary: salary, rule: defRule, isActive: true,
+                    salaryHistory: [{ effectiveMonth: effMonth, updatedDate: todayStr, salary }]
+                });
                 addedCount++;
             });
 
@@ -1531,14 +1807,9 @@
         // ====== MACHINE NUMBERS CRUD ======
         function saveMachineNumber(e) {
             e.preventDefault();
-            let id = document.getElementById('mn_edit_id').value;
-            let no = document.getElementById('mn_no').value.trim().replace(/\s+/g, ' ');
-            let defaultType = document.getElementById('mn_default_type').value || '';
+            let id = document.getElementById('mn_edit_id').value, no = document.getElementById('mn_no').value.trim().replace(/\s+/g, ' '), defaultType = document.getElementById('mn_default_type').value || '';
             if (!no) return;
-
-            let isDup = machineNumbers.some(m => m && m.id !== id && (m.no || '').toLowerCase() === no.toLowerCase());
-            if (isDup) { alert(`"${no}" Machine Number pehle se add hai!`); return; }
-
+            if (machineNumbers.some(m => m && m.id !== id && (m.no || '').toLowerCase() === no.toLowerCase())) { alert(`"${no}" Machine Number pehle se add hai!`); return; }
             let payload = { id: id ? id : 'MN_' + Date.now(), no, defaultType };
             if (id) { machineNumbers = machineNumbers.map(m => m.id === id ? payload : m); showToast("Machine Number Updated!"); }
             else { machineNumbers.push(payload); showToast("Machine Number Added!"); }
@@ -1547,20 +1818,14 @@
         }
         function editMachineNumber(id) {
             let m = machineNumbers.find(x => x && x.id === id); if (!m || !checkAdmin()) return;
-            document.getElementById('mn_edit_id').value = m.id;
-            document.getElementById('mn_no').value = m.no;
-            document.getElementById('mn_default_type').value = m.defaultType || '';
-            document.getElementById('mn_form_title').innerText = "Update Machine Number";
-            document.getElementById('mn_btn_save').innerText = "Update";
-            document.getElementById('mn_btn_cancel').classList.remove('hidden');
+            document.getElementById('mn_edit_id').value = m.id; document.getElementById('mn_no').value = m.no; document.getElementById('mn_default_type').value = m.defaultType || '';
+            document.getElementById('mn_form_title').innerText = "Update Machine Number"; document.getElementById('mn_btn_save').innerText = "Update"; document.getElementById('mn_btn_cancel').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         function cancelEditMachineNumber() {
-            document.getElementById('mn_edit_id').value = '';
-            document.getElementById('mn_form').reset();
+            document.getElementById('mn_edit_id').value = ''; document.getElementById('mn_form').reset();
             document.getElementById('mn_form_title').innerHTML = '<i class="fa-solid fa-hashtag"></i> Manage Machine Numbers';
-            document.getElementById('mn_btn_save').innerText = "Save M/C No.";
-            document.getElementById('mn_btn_cancel').classList.add('hidden');
+            document.getElementById('mn_btn_save').innerText = "Save M/C No."; document.getElementById('mn_btn_cancel').classList.add('hidden');
         }
         function deleteMachineNumber(id) {
             if (!checkAdmin() || !confirm("Delete Machine Number?")) return;
@@ -1569,10 +1834,7 @@
             refreshDropdowns(); renderMasterLists(); syncToSheet();
         }
         function generateMachineNumbers() {
-            let prefix = document.getElementById('mn_prefix').value || '';
-            let start = parseInt(document.getElementById('mn_start').value, 10);
-            let end = parseInt(document.getElementById('mn_end').value, 10);
-            let defType = document.getElementById('mn_bulk_type').value || '';
+            let prefix = document.getElementById('mn_prefix').value || '', start = parseInt(document.getElementById('mn_start').value, 10), end = parseInt(document.getElementById('mn_end').value, 10), defType = document.getElementById('mn_bulk_type').value || '';
             if (isNaN(start) || isNaN(end) || end < start || (end - start) > 200) { alert("Sahi Start aur End number dalein!"); return; }
             let added = 0, baseTs = Date.now();
             for (let i = start; i <= end; i++) {
@@ -1582,13 +1844,8 @@
                     added++;
                 }
             }
-            if (added > 0) {
-                localStorage.setItem('karkhana_machineNumbers', JSON.stringify(machineNumbers));
-                refreshDropdowns(); renderMasterLists(); syncToSheet();
-                showToast(`✅ ${added} Machine Numbers Added!`);
-            } else {
-                alert("Yeh sabhi Machine Numbers pehle se add hain!");
-            }
+            if (added > 0) { localStorage.setItem('karkhana_machineNumbers', JSON.stringify(machineNumbers)); refreshDropdowns(); renderMasterLists(); syncToSheet(); showToast(`✅ ${added} Machine Numbers Added!`); }
+            else alert("Yeh sabhi Machine Numbers pehle se add hain!");
         }
 
         // ====== OTHER MASTER CRUD ======
@@ -1648,12 +1905,17 @@
         function cancelEditCategory() { document.getElementById('c_edit_id').value = ''; document.getElementById('c_form').reset(); document.getElementById('c_form_title').innerText = "Manage Worker Categories"; document.getElementById('c_btn_save').innerText = "Save"; document.getElementById('c_btn_save').classList.replace('bg-emerald-600', 'bg-sky-600'); document.getElementById('c_btn_cancel').classList.add('hidden'); }
         function deleteWorkerType(id) { if (!checkAdmin() || !confirm("Delete Category?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
 
-        // WORKER SAVE WITH UNIQUE WORKER ID & NAME CHECK
+        // WORKER SAVE WITH ACTIVE STATUS & MONTH-WISE SALARY HISTORY
         function saveWorker(e) {
             e.preventDefault();
             let id = document.getElementById('w_edit_id').value;
             let cleanCode = document.getElementById('w_code').value.trim().replace(/\s+/g, '');
             let cleanName = document.getElementById('w_name').value.trim().replace(/\s+/g, ' ');
+            let isActive = document.getElementById('w_active').value === 'true';
+            let newSal = parseFloat(document.getElementById('w_salary').value) || 0;
+            let effMonth = document.getElementById('w_sal_from').value || getSelMonth();
+            let updDate = document.getElementById('w_sal_date').value || new Date().toISOString().slice(0, 10);
+
             if (!cleanCode || !cleanName) { alert("Worker ID aur Name dono likhna zaroori hai!"); return; }
 
             if (workers.some(w => w && w.id !== id && getWorkerCode(w).toLowerCase() === cleanCode.toLowerCase())) {
@@ -1665,11 +1927,55 @@
                 return;
             }
 
-            let payload = { id: id ? id : "W_" + Date.now(), code: cleanCode, name: cleanName, type: document.getElementById('w_type').value, fixSalary: parseFloat(document.getElementById('w_salary').value), rule: document.getElementById('w_rule').value };
-            if (id) { workers = workers.map(w => w.id === id ? payload : w); showToast("Worker Updated!"); }
-            else { workers.push(payload); showToast("Worker Added!"); }
+            if (id) {
+                let existing = workers.find(w => w && w.id === id);
+                let hist = (existing && Array.isArray(existing.salaryHistory)) ? [...existing.salaryHistory] : [];
+                let currentSalForEff = getWorkerSalaryForMonth(existing, effMonth);
+
+                if (hist.length === 0 || currentSalForEff !== newSal) {
+                    let sameMonthIdx = hist.findIndex(h => h.effectiveMonth === effMonth);
+                    if (sameMonthIdx >= 0) {
+                        hist[sameMonthIdx] = { effectiveMonth: effMonth, updatedDate: updDate, salary: newSal };
+                    } else {
+                        hist.push({ effectiveMonth: effMonth, updatedDate: updDate, salary: newSal });
+                    }
+                    hist.sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
+                }
+
+                let payload = {
+                    id, code: cleanCode, name: cleanName,
+                    type: document.getElementById('w_type').value,
+                    fixSalary: newSal,
+                    rule: document.getElementById('w_rule').value,
+                    isActive,
+                    salaryHistory: hist
+                };
+                workers = workers.map(w => w.id === id ? payload : w);
+                showToast("Worker & Pagar Updated!");
+            } else {
+                let payload = {
+                    id: "W_" + Date.now(), code: cleanCode, name: cleanName,
+                    type: document.getElementById('w_type').value,
+                    fixSalary: newSal,
+                    rule: document.getElementById('w_rule').value,
+                    isActive,
+                    salaryHistory: [{ effectiveMonth: effMonth, updatedDate: updDate, salary: newSal }]
+                };
+                workers.push(payload);
+                showToast("Worker Added!");
+            }
             localStorage.setItem('karkhana_workers', JSON.stringify(workers));
             cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
+        }
+
+        function toggleWorkerActiveQuick(id) {
+            if (!checkAdmin()) return;
+            let w = workers.find(x => x && x.id === id);
+            if (!w) return;
+            w.isActive = !isWorkerActive(w);
+            localStorage.setItem('karkhana_workers', JSON.stringify(workers));
+            showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive (Chutti)'}`);
+            refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
         }
 
         function editWorker(id) {
@@ -1677,22 +1983,36 @@
             document.getElementById('w_edit_id').value = w.id;
             document.getElementById('w_code').value = getWorkerCode(w);
             document.getElementById('w_name').value = w.name;
+            document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false';
             let sel = document.getElementById('w_type');
             if (!Array.from(sel.options).some(o => o.value === w.type) && w.type) { let opt = document.createElement('option'); opt.value = w.type; opt.text = w.type + " (Deleted)"; sel.appendChild(opt); }
             sel.value = w.type;
-            document.getElementById('w_salary').value = w.fixSalary; document.getElementById('w_rule').value = w.rule;
-            document.getElementById('w_form_title').innerText = "Update Worker"; document.getElementById('w_btn_save').innerText = "Update Worker";
+            document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth());
+            document.getElementById('w_sal_from').value = getSelMonth();
+            document.getElementById('w_sal_date').valueAsDate = new Date();
+            document.getElementById('w_rule').value = w.rule;
+            document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker";
             document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         function cancelEditWorker() {
             document.getElementById('w_edit_id').value = ''; document.getElementById('w_form').reset();
             document.getElementById('w_code').value = getNextWorkerCode();
+            document.getElementById('w_active').value = 'true';
+            document.getElementById('w_sal_from').value = getSelMonth();
+            document.getElementById('w_sal_date').valueAsDate = new Date();
             document.getElementById('w_form_title').innerText = "Add / Update Worker"; document.getElementById('w_btn_save').innerText = "Save Worker";
             document.getElementById('w_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('w_btn_cancel').classList.add('hidden');
             refreshDropdowns();
         }
-        function deleteWorker(id) { if (!checkAdmin() || !confirm("Delete Worker?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
+        function deleteWorker(id) { if (!checkAdmin() || !confirm("Delete Worker permanently?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
+
+        function filterMasterWorkers(q) {
+            let query = (q || '').toLowerCase();
+            document.querySelectorAll('#workerList .m-worker-row').forEach(el => {
+                el.style.display = (el.dataset.key || '').includes(query) ? '' : 'none';
+            });
+        }
 
         function saveDesign(e) {
             e.preventDefault(); let id = document.getElementById('d_edit_id').value, g = (k) => parseFloat(document.getElementById(k).value) || 0;
@@ -1773,12 +2093,33 @@
                 let cList = document.getElementById('categoryList');
                 if (cList) cList.innerHTML = workerTypes.map(t => !t ? '' : `<div class="p-3 border-b flex justify-between items-center"><div><b>${t.name}</b> <br><span class="text-xs text-gray-500">(${t.hasProduction ? 'Needs Production Info' : 'Fixed/Status Only'})</span></div><div><button type="button" onclick="editWorkerType('${t.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorkerType('${t.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
 
-                let wcLbl = document.getElementById('worker_count_lbl'); if (wcLbl) wcLbl.innerText = workers.length;
+                let wcLbl = document.getElementById('worker_count_lbl'); if (wcLbl) wcLbl.innerText = `${getActiveWorkers().length} Active / ${workers.length} Total`;
                 let wList = document.getElementById('workerList');
-                if (wList) wList.innerHTML = workers.map(w => !w ? '' : `<div class="p-3 border-b flex justify-between items-center hover:bg-indigo-50">
-                    <div><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1.5">${getWorkerCode(w)}</span><b>${w.name}</b> (${w.type}) <span class="text-xs text-indigo-500">[${w.rule}]</span> <span class="text-xs text-emerald-700 font-bold ml-1">₹${w.fixSalary}</span></div>
-                    <div class="whitespace-nowrap"><button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div>
-                </div>`).join('');
+                if (wList) wList.innerHTML = workers.map(w => {
+                    if (!w) return '';
+                    let active = isWorkerActive(w);
+                    let latest = getLatestSalaryRecord(w);
+                    let histCount = Array.isArray(w.salaryHistory) ? w.salaryHistory.length : 1;
+                    let key = `${getWorkerCode(w)} ${w.name} ${active ? 'active' : 'inactive'}`.toLowerCase();
+                    let dateInfo = latest.updatedDate ? ` (From ${latest.effectiveMonth}, Upd: ${latest.updatedDate})` : (latest.effectiveMonth && latest.effectiveMonth !== '2020-01' ? ` (From ${latest.effectiveMonth})` : '');
+                    return `<div class="m-worker-row p-3 border-b flex flex-wrap justify-between items-center gap-2 ${active ? 'hover:bg-indigo-50' : 'bg-red-50/50 opacity-80'}" data-key="${key}">
+                        <div>
+                            <span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1">${getWorkerCode(w)}</span>
+                            <b>${w.name}</b> <span class="text-xs text-gray-600">(${w.type})</span>
+                            <button type="button" onclick="toggleWorkerActiveQuick('${w.id}')" class="ml-1.5 px-2 py-0.5 rounded text-[10px] font-bold ${active ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700'}" title="Tap to change Active/Inactive">
+                                ${active ? '🟢 Active' : '🔴 Inactive'}
+                            </button>
+                            <div class="text-xs mt-1">
+                                <span class="text-emerald-700 font-bold">₹${latest.salary}</span><span class="text-[11px] text-gray-500">${dateInfo}</span>
+                                <button type="button" onclick="showSalaryHistoryModal('${w.id}')" class="ml-2 text-[11px] text-indigo-600 underline font-semibold">📜 Pagar History (${histCount})</button>
+                            </div>
+                        </div>
+                        <div class="whitespace-nowrap">
+                            <button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4" title="Edit / Update Pagar"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                }).join('');
 
                 let dList = document.getElementById('designList');
                 if (dList) dList.innerHTML = designs.map(d => !d ? '' : `<div class="p-3 border-b flex justify-between items-center text-xs"><div><b class="text-sm">${d.code}</b> (${d.stitches||0} St, Fix: ₹${d.fixBonus||0})<br><span class="text-gray-500">Layers: S(${d.sLim1||0},${d.sLim2||0},${d.sLim3||0}), F(${d.fLim1||0},${d.fLim2||0},${d.fLim3||0})</span></div><div><button type="button" onclick="editDesign('${d.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteDesign('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
@@ -1895,7 +2236,13 @@
             if (!checkAdmin()) return; let a = attendance.find(x => x && x.id === id); if (!a) return;
             switchAttMode('single');
             document.getElementById('h_edit_id').value = a.id; document.getElementById('h_date').value = a.date; document.getElementById('h_status').value = a.status || 'Full';
-            document.getElementById('h_worker1').value = a.workerId; document.getElementById('h_mode').value = a.mode || 'Normal';
+            let wSel = document.getElementById('h_worker1');
+            if (!Array.from(wSel.options).some(o => o.value === a.workerId)) {
+                let wObj = workers.find(x => x && x.id === a.workerId);
+                if (wObj) { let opt = document.createElement('option'); opt.value = wObj.id; opt.text = `[${getWorkerCode(wObj)}] ${wObj.name} (Inactive)`; wSel.appendChild(opt); }
+            }
+            wSel.value = a.workerId;
+            document.getElementById('h_mode').value = a.mode || 'Normal';
             if (a.machineNo) document.getElementById('h_machine_no').value = a.machineNo;
             document.getElementById('h_machine').value = a.machine === 'NONE' ? '' : a.machine; document.getElementById('h_design').value = a.design === '-' ? '' : a.design;
             document.getElementById('h_qty').value = a.qty || ''; document.getElementById('h_frame').value = a.frame || ''; document.getElementById('h_custom').value = a.customBonus || 0; document.getElementById('h_note').value = a.note === '-' ? '' : a.note;
@@ -1923,7 +2270,8 @@
         function cancelEditAttendance(keepWorkerId) {
             document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date();
             document.getElementById('h_has_extra').checked = false;
-            if (keepWorkerId) document.getElementById('h_worker1').value = keepWorkerId;
+            refreshDropdowns();
+            if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId;
             if (paymentModes.some(p => p.id === 'ExtraStitch')) document.getElementById('h_extra_mode').value = 'ExtraStitch';
             document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600');
             document.getElementById('h_btn_cancel').classList.add('hidden');
@@ -1940,7 +2288,14 @@
         function triggerEditAdvance(id) {
             if (!checkAdmin()) return; let u = advanceData.find(x => x && x.id === id); if (!u) return;
             switchUpadMode('single');
-            document.getElementById('u_edit_id').value = u.id; document.getElementById('u_date').value = u.date; document.getElementById('u_worker').value = u.workerId; document.getElementById('u_amount').value = u.amount; document.getElementById('u_note').value = u.note;
+            document.getElementById('u_edit_id').value = u.id; document.getElementById('u_date').value = u.date;
+            let wSel = document.getElementById('u_worker');
+            if (!Array.from(wSel.options).some(o => o.value === u.workerId)) {
+                let wObj = workers.find(x => x && x.id === u.workerId);
+                if (wObj) { let opt = document.createElement('option'); opt.value = wObj.id; opt.text = `[${getWorkerCode(wObj)}] ${wObj.name} (Inactive)`; wSel.appendChild(opt); }
+            }
+            wSel.value = u.workerId;
+            document.getElementById('u_amount').value = u.amount; document.getElementById('u_note').value = u.note;
             document.getElementById('u_btn_save').innerText = "Update Advance"; document.getElementById('u_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         function deleteAdvance(id) {
@@ -1950,7 +2305,7 @@
             if (document.getElementById('u_edit_id').value === id) cancelEditAdvance();
             showToast("Advance Deleted!"); refreshAllData(); syncToSheet();
         }
-        function cancelEditAdvance() { document.getElementById('u_edit_id').value = ''; document.getElementById('upad_form').reset(); document.getElementById('u_date').valueAsDate = new Date(); document.getElementById('u_btn_save').innerText = "Save Advance"; document.getElementById('u_btn_cancel').classList.add('hidden'); }
+        function cancelEditAdvance() { document.getElementById('u_edit_id').value = ''; document.getElementById('upad_form').reset(); document.getElementById('u_date').valueAsDate = new Date(); refreshDropdowns(); document.getElementById('u_btn_save').innerText = "Save Advance"; document.getElementById('u_btn_cancel').classList.add('hidden'); }
         function renderAdvanceStatement() {
             let selM = getSelMonth(), sortedAdv = advanceData.filter(u => u && u.date && u.date.startsWith(selM)).sort((a,b) => new Date(b.date) - new Date(a.date));
             document.getElementById('advanceStatementBody').innerHTML = !sortedAdv.length
@@ -1970,7 +2325,7 @@
                 }).join('');
         }
 
-        // ====== SALARY CALCULATIONS ======
+        // ====== SALARY CALCULATIONS (MONTH-SPECIFIC SALARY HISTORY) ======
         function calcEffDays(wAtt) {
             return wAtt.reduce((sum, a) => {
                 let val = (a.status || 'Full') === 'Full' ? 1 : (a.status === 'Half' ? 0.5 : 0);
@@ -1982,7 +2337,8 @@
             let tDays = getDaysInMonth(monthStr), divisor = tDays;
             if (worker.rule === 'SundayOff') { let s = 0, [y, m] = monthStr.split('-'); for (let i = 1; i <= tDays; i++) { if (new Date(y, m - 1, i).getDay() === 0) s++; } divisor = tDays - s; }
             else if (worker.rule === '2Leaves') divisor = tDays - 2;
-            return (worker.fixSalary / (divisor <= 0 ? 1 : divisor)) * effDays;
+            let monthSal = getWorkerSalaryForMonth(worker, monthStr);
+            return (monthSal / (divisor <= 0 ? 1 : divisor)) * effDays;
         }
         function calculatePreviousBalance(worker, currentMonthStr) {
             let pastAtt = attendance.filter(a => a && a.workerId === worker.id && a.date && a.date.substring(0,7) < currentMonthStr);
@@ -2034,7 +2390,15 @@
         // ====== DASHBOARD & CHARTS ======
         function renderDashboard() {
             let selM = getSelMonth(), totPagarAll = 0, posList = '', negList = '';
-            let workerStats = workers.map(w => {
+            // Show active workers, plus any inactive worker who still has attendance/advance in selected month
+            let visibleWorkers = workers.filter(w => {
+                if (isWorkerActive(w)) return true;
+                let hasMonthActivity = attendance.some(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)) ||
+                                       advanceData.some(u => u && u.workerId === w.id && u.date && u.date.startsWith(selM));
+                return hasMonthActivity;
+            });
+
+            let workerStats = visibleWorkers.map(w => {
                 let wAtt = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM));
                 let wAdv = advanceData.filter(u => u && u.workerId === w.id && u.date && u.date.startsWith(selM));
                 let earnedSalary = calculateEarnedSalary(w, calcEffDays(wAtt), selM), totalBonus = wAtt.reduce((s, a) => s + (a.finalBonus || 0), 0), totalUpad = wAdv.reduce((s, u) => s + (u.amount || 0), 0);
@@ -2045,7 +2409,8 @@
 
             document.getElementById('dash_total_pagar').innerText = '₹' + totPagarAll.toFixed(0);
             workerStats.sort((a, b) => b.net - a.net).forEach(stat => {
-                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between border-l-4 ${stat.isNegative ? 'border-red-500' : 'border-emerald-500'}"><span class="font-bold cursor-pointer" onclick="showUpadModal('${stat.w.id}')"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(stat.w)}]</span>${stat.w.name} <i class="fa-solid fa-circle-info text-gray-400 text-xs"></i></span><span class="font-bold ${stat.isNegative ? 'text-red-600' : 'text-emerald-700'}">₹${stat.net.toFixed(0)}</span></div>`;
+                let inactTag = !isWorkerActive(stat.w) ? ' <span class="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded">Inactive</span>' : '';
+                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between border-l-4 ${stat.isNegative ? 'border-red-500' : 'border-emerald-500'}"><span class="font-bold cursor-pointer" onclick="showUpadModal('${stat.w.id}')"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(stat.w)}]</span>${stat.w.name}${inactTag} <i class="fa-solid fa-circle-info text-gray-400 text-xs"></i></span><span class="font-bold ${stat.isNegative ? 'text-red-600' : 'text-emerald-700'}">₹${stat.net.toFixed(0)}</span></div>`;
                 if (stat.isNegative) negList += card; else posList += card;
             });
             document.getElementById('dashListPositive').innerHTML = posList || '<p class="text-sm text-gray-500">No data</p>';
@@ -2056,7 +2421,7 @@
             if (!document.getElementById('bonusChart')) return;
             let ctx = document.getElementById('bonusChart').getContext('2d'), selEl = document.getElementById('chartWorkerSelect'), selectedW = selEl ? selEl.value : 'ALL', selM = getSelMonth(), labels = [], dataPoints = [];
             if (selectedW === 'ALL') {
-                workers.forEach(w => { labels.push(`[${getWorkerCode(w)}] ${w.name}`); dataPoints.push(attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)).reduce((s, a) => s + (a.finalBonus || 0), 0)); });
+                getActiveWorkers().forEach(w => { labels.push(`[${getWorkerCode(w)}] ${w.name}`); dataPoints.push(attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)).reduce((s, a) => s + (a.finalBonus || 0), 0)); });
             } else {
                 attendance.filter(a => a && a.workerId === selectedW && a.date && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date)).forEach(a => { labels.push(a.date.slice(5)); dataPoints.push(a.finalBonus || 0); });
             }
@@ -2070,7 +2435,7 @@
             if (!document.getElementById('compareChart')) return;
             let ctx = document.getElementById('compareChart').getContext('2d'), type = document.getElementById('compareChartSelect').value, selM = getSelMonth(), labels = [], dataPoints = [];
             if (type === 'worker') {
-                workers.forEach(w => { let wAtt = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)); labels.push(`[${getWorkerCode(w)}] ${w.name}`); dataPoints.push(Math.round(calculateEarnedSalary(w, calcEffDays(wAtt), selM) + wAtt.reduce((s, a) => s + (a.finalBonus || 0), 0))); });
+                getActiveWorkers().forEach(w => { let wAtt = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)); labels.push(`[${getWorkerCode(w)}] ${w.name}`); dataPoints.push(Math.round(calculateEarnedSalary(w, calcEffDays(wAtt), selM) + wAtt.reduce((s, a) => s + (a.finalBonus || 0), 0))); });
             } else if (type === 'machineNo') {
                 let mData = buildMachineReportData(selM);
                 Object.values(mData).forEach(m => { if (m.entries.length > 0 || m.no !== 'Unassigned') { labels.push(m.no); dataPoints.push(Math.round(m.totalStitches)); } });
@@ -2105,7 +2470,7 @@
             document.getElementById('upadModal').classList.add('active');
         }
 
-        // ====== SEPARATE REPORTS (COMPANY | WORKER ID | MACHINE NUMBER) ======
+        // ====== SEPARATE REPORTS ======
         function setReportType(type) {
             currentReportType = type; let selM = getSelMonth(), html = '';
             document.querySelectorAll('#reports .rep-tab-btn').forEach(b => { b.classList.remove('bg-indigo-600', 'text-white'); b.classList.add('bg-white', 'border', 'text-slate-700'); });
@@ -2132,11 +2497,13 @@
                         let wA = attendance.filter(a => a && a.workerId === w.id && a.date && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date));
                         let wU = advanceData.filter(u => u && u.workerId === w.id && u.date && u.date.startsWith(selM));
                         let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), tUpd = wU.reduce((s, u) => s + (u.amount || 0), 0), pichlaBaki = calculatePreviousBalance(w, selM), net = (base + bon) - tUpd + pichlaBaki;
+                        let monthSalRate = getWorkerSalaryForMonth(w, selM);
                         let key = `${getWorkerCode(w)} ${w.name}`.toLowerCase();
+                        let inactBadge = !isWorkerActive(w) ? '<span class="ml-1.5 bg-red-100 text-red-700 text-[10px] px-1.5 py-0.5 rounded font-bold">Inactive</span>' : '';
                         return `<div class="worker-rep-card border rounded-lg mb-3" data-key="${key}">
                             <div class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer hover:bg-indigo-50/40" onclick="document.getElementById('det_${w.id}').classList.toggle('hidden')">
                                 <div>
-                                    <h3 class="font-bold text-lg"><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs mr-2">${getWorkerCode(w)}</span>${w.name} <span class="text-xs font-normal text-gray-500">(${w.type})</span></h3>
+                                    <h3 class="font-bold text-lg"><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs mr-2">${getWorkerCode(w)}</span>${w.name} <span class="text-xs font-normal text-gray-500">(${w.type} • Rate: ₹${monthSalRate})</span>${inactBadge}</h3>
                                     <span class="text-xs text-slate-600">Days: <b>${eff}</b> | Base: ₹${base.toFixed(0)} | Bonus: <b class="text-emerald-700">₹${bon.toFixed(0)}</b> | Upad: <b class="text-red-600">₹${tUpd.toFixed(0)}</b> | Net: <b class="text-indigo-800">₹${net.toFixed(0)}</b></span>
                                 </div>
                                 <div class="text-indigo-600"><i class="fa-solid fa-chevron-down"></i></div>
@@ -2169,7 +2536,7 @@
                         <div class="p-3 bg-sky-50 border border-sky-200 rounded-lg"><div class="text-xs font-bold text-sky-700">Total Frames</div><div class="text-lg md:text-xl font-black text-sky-900">${grandFrames}</div></div>
                         <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg"><div class="text-xs font-bold text-emerald-700">Total Machine Bonus</div><div class="text-lg md:text-xl font-black text-emerald-800">₹${grandBonus.toFixed(0)}</div></div>
                     </div>` +
-                    (list.length === 0 ? '<p class="text-center text-gray-400 p-4">Koi Machine Number nahi mila. Settings > Machine No. mein add karein.</p>' : list.map((m, idx) => {
+                    (list.length === 0 ? '<p class="text-center text-gray-400 p-4">Koi Machine Number nahi mila.</p>' : list.map((m, idx) => {
                         let safeId = 'mrep_' + idx;
                         let typesStr = m.types.size ? Array.from(m.types).join(', ') : (m.defaultType || 'Not Run Yet');
                         let encNo = encodeURIComponent(m.no);
@@ -2233,19 +2600,20 @@
             document.getElementById('analysisModal').classList.add('active');
         }
 
-        // ====== PDF GENERATION (WORKER & MACHINE SEPARATE) ======
+        // ====== PDF GENERATION ======
         function downloadWorkerPDF(wId) {
             let selM = getSelMonth(), w = workers.find(x => x.id === wId);
             let wA = attendance.filter(a => a && a.workerId === wId && a.date && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date));
             let wU = advanceData.filter(u => u && u.workerId === wId && u.date && u.date.startsWith(selM));
             let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), tUpd = wU.reduce((s, u) => s + (u.amount || 0), 0), pichlaBaki = calculatePreviousBalance(w, selM);
+            let monthSal = getWorkerSalaryForMonth(w, selM);
 
             document.getElementById('slip_month').innerText = getMonthName(selM);
             document.getElementById('slip_code').innerText = getWorkerCode(w);
             document.getElementById('slip_name').innerText = w.name;
             document.getElementById('slip_cat').innerText = w.type || '-';
             document.getElementById('slip_rule').innerText = w.rule;
-            document.getElementById('slip_salary').innerText = w.fixSalary;
+            document.getElementById('slip_salary').innerText = monthSal;
             document.getElementById('slip_days').innerText = eff;
 
             document.getElementById('slip_daily_logs').innerHTML = !wA.length ? `<tr><td colspan="6" style="text-align:center;">No Data.</td></tr>` : wA.map(a => {
@@ -2264,7 +2632,7 @@
                     if (w.rule === 'SundayOff') { let s = 0, [y, m] = selM.split('-'); for (let i = 1; i <= d; i++) { if (new Date(y, m - 1, i).getDay() === 0) s++; } div = d - s; }
                     else if (w.rule === '2Leaves') div = d - 2;
                     let mult = (pm.dayMult !== undefined && !isNaN(pm.dayMult)) ? pm.dayMult : 1;
-                    dayBase = ((w.fixSalary / (div <= 0 ? 1 : div)) * (stat === 'Full' ? 1 : 0.5)) * mult;
+                    dayBase = ((monthSal / (div <= 0 ? 1 : div)) * (stat === 'Full' ? 1 : 0.5)) * mult;
                 }
                 return `<tr><td>${a.date}</td><td>${detStr}<br><span style="font-size:10px;">(${a.status}, ${pm.name})</span></td><td>${qtyStr}</td><td>₹${dayBase.toFixed(0)}</td><td>₹${(a.finalBonus||0).toFixed(0)}</td><td style="color:red; font-size:11px;">${a.note!=='-'?a.note:''}</td></tr>`;
             }).join('');
