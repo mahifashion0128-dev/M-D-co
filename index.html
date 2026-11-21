@@ -410,8 +410,30 @@
                     <h3 class="font-bold text-lg mb-4 text-emerald-700 border-b pb-2" id="d_form_title">Add / Update Design</h3>
                     <form id="d_form" onsubmit="saveDesign(event)" class="space-y-4 mb-4">
                         <input type="hidden" id="d_edit_id">
-                        <div class="grid grid-cols-2 gap-3"><input type="text" id="d_code" placeholder="Design No." required class="border p-2 rounded"><input type="number" id="d_stitch" placeholder="Base Stitches" required class="border p-2 rounded"><input type="number" id="d_fixBonus" placeholder="Fixed Basic Bonus (₹)" class="col-span-2 border p-2 rounded"></div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
+                       <input type="text" id="d_code" placeholder="Main Design No. (e.g. 1370)" required class="border p-2 rounded font-bold bg-emerald-50">
+                       <input type="number" id="d_stitch" placeholder="Plain Stitches (1370)" class="border p-2 rounded">
+                       </div>
+
+<!-- MULTIPLE VARIANTS (-C, -P, -B) EK SATH -->
+<div id="d_variants_box" class="border border-emerald-200 bg-emerald-50/50 p-3 rounded-lg space-y-2">
+    <div class="text-xs font-bold text-emerald-800">Extra Parts / Variants (Khali chhod sakte hain):</div>
+    <div class="grid grid-cols-2 gap-2">
+        <input type="text" id="d_suf1" value="-C" placeholder="Suffix (e.g. -C)" class="border p-1.5 rounded bg-white text-sm font-bold">
+        <input type="number" id="d_st1" placeholder="Stitches for -C (e.g. 35360)" class="border p-1.5 rounded bg-white text-sm">
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+        <input type="text" id="d_suf2" value="-P" placeholder="Suffix (e.g. -P)" class="border p-1.5 rounded bg-white text-sm font-bold">
+        <input type="number" id="d_st2" placeholder="Stitches for -P (e.g. 25620)" class="border p-1.5 rounded bg-white text-sm">
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+        <input type="text" id="d_suf3" value="" placeholder="3rd Suffix (e.g. -B / -A)" class="border p-1.5 rounded bg-white text-sm font-bold">
+        <input type="number" id="d_st3" placeholder="Stitches for 3rd Part" class="border p-1.5 rounded bg-white text-sm">
+    </div>
+</div>
+
+<input type="number" id="d_fixBonus" placeholder="Fixed Basic Bonus (₹)" class="w-full border p-2 rounded">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="border p-3 rounded bg-blue-50"><h4 class="font-bold text-blue-800 text-sm mb-2">Stitch Bonus Layers</h4><div class="flex gap-2 mb-2"><input type="number" id="s_lim1" placeholder="T1 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon1" placeholder="T1 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2 mb-2"><input type="number" id="s_lim2" placeholder="T2 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon2" placeholder="T2 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2"><input type="number" id="s_lim3" placeholder="T3 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon3" placeholder="T3 ₹" class="w-1/2 p-1.5 rounded"></div></div>
                             <div class="border p-3 rounded bg-amber-50"><h4 class="font-bold text-amber-800 text-sm mb-2">Frame Bonus Layers</h4><div class="flex gap-2 mb-2"><input type="number" id="f_lim1" placeholder="T1 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon1" placeholder="T1 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2 mb-2"><input type="number" id="f_lim2" placeholder="T2 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon2" placeholder="T2 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2"><input type="number" id="f_lim3" placeholder="T3 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon3" placeholder="T3 ₹" class="w-1/2 p-1.5 rounded"></div></div>
                         </div>
