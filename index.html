@@ -1101,6 +1101,7 @@
         }
 
         function refreshDropdowns() {
+            workers.sort((a, b) => getWorkerCode(a).localeCompare(getWorkerCode(b), undefined, { numeric: true, sensitivity: 'base' }));
             let activeW = getActiveWorkers(), activeHtml = activeW.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name} (${w.type})</option>`).join('');
             ['h_worker1', 'h_worker2', 'u_worker'].forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = activeHtml || '<option value="">No Active Worker</option>'; });
             let dws = document.getElementById('dash_filter_worker_sel'); if (dws) dws.innerHTML = `<option value="">-- Quick Pick Worker --</option>` + workers.map(w => `<option value="${getWorkerCode(w)}">[${getWorkerCode(w)}] ${w.name}${!isWorkerActive(w) ? ' (Inactive)' : ''}</option>`).join('');
