@@ -1075,26 +1075,41 @@
             if (add) { localStorage.setItem('karkhana_workers', JSON.stringify(workers)); document.getElementById('bw_text').value = ''; document.getElementById('w_code').value = getNextWorkerCode(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
             alert(`Added: ${add}, Skipped Duplicate: ${dup}`);
         }
-        function saveWorker(e) {
-            e.preventDefault();
-            let id = document.getElementById('w_edit_id').value, code = document.getElementById('w_code').value.trim().replace(/\s+/g, ''), name = document.getElementById('w_name').value.trim().replace(/\s+/g, ' '), isActive = document.getElementById('w_active').value === 'true', newSal = parseFloat(document.getElementById('w_salary').value) || 0, effM = document.getElementById('w_sal_from').value || getSelMonth(), updD = document.getElementById('w_sal_date').value || new Date().toISOString().slice(0, 10);
-            if (workers.some(w => w.id !== id && getWorkerCode(w).toLowerCase() === code.toLowerCase())) { alert(`ID "${code}" already exists!`); return; }
-            if (workers.some(w => w.id !== id && w.name.toLowerCase() === name.toLowerCase())) { alert(`Name "${name}" already exists!`); return; }
-            if (id) {
-                let ex = workers.find(w => w.id === id), hist = Array.isArray(ex?.salaryHistory) ? [...ex.salaryHistory] : [];
-                if (!hist.length || getWorkerSalaryForMonth(ex, effM) !== newSal) {
-                    let idx = hist.findIndex(h => h.effectiveMonth === effM);
-                    if (idx >= 0) hist[idx] = { effectiveMonth: effM, updatedDate: updD, salary: newSal }; else hist.push({ effectiveMonth: effM, updatedDate: updD, salary: newSal });
-                    hist.sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
-                }
-                workers = workers.map(w => w.id === id ? { id, code, name, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, isActive, salaryHistory: hist } : w);
-                showToast("Worker Updated!");
-            } else {
-                workers.push({ id: "W_" + Date.now(), code, name, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, isActive, salaryHistory: [{ effectiveMonth: effM, updatedDate: updD, salary: newSal }] });
-                showToast("Worker Added!");
+function saveDesign(e) {
+    e.preventDefault();
+    let id = document.getElementById('d_edit_id').value;
+    let g = k => parseFloat(document.getElementById(k).value) || 0;
+    let baseCode = document.getElementById('d_code').value.trim();
+    let commonRules = {
+        fixBonus: g('d_fixBonus'),
+        sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'),
+        fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3')
+    };
+
+    if (id) {
+        let p = { id, code: baseCode, stitches: g('d_stitch'), ...commonRules };
+        designs = designs.map(d => d.id === id ? p : d);
+        showToast("Design Updated!");
+    } else {
+        let toAdd = [];
+        let ts = Date.now();
+        if (g('d_stitch') > 0) toAdd.push({ id: `D_${ts}_0`, code: baseCode, stitches: g('d_stitch'), ...commonRules });
+
+        [[1, 'd_suf1', 'd_st1'], [2, 'd_suf2', 'd_st2'], [3, 'd_suf3', 'd_st3']].forEach(([idx, sufId, stId]) => {
+            let suf = (document.getElementById(sufId)?.value || '').trim();
+            let st = g(stId);
+            if (suf && st > 0) {
+                toAdd.push({ id: `D_${ts}_${idx}`, code: baseCode + suf, stitches: st, ...commonRules });
             }
-            localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
-        }
+        });
+
+        if (!toAdd.length) { alert("Kam se kam 1 part ke Stitches dalein!"); return; }
+        designs.push(...toAdd);
+        showToast(`✅ ${toAdd.length} Design(s) Saved!`);
+    }
+    localStorage.setItem('karkhana_designs', JSON.stringify(designs));
+    cancelEditDesign(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet();
+}
         function toggleWorkerActiveQuick(id) { if (!checkAdmin()) return; let w = workers.find(x => x.id === id); if (!w) return; w.isActive = !isWorkerActive(w); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive'}`); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
         function editWorker(id) { let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return; document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule; document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function cancelEditWorker() { document.getElementById('w_edit_id').value = ''; document.getElementById('w_form').reset(); document.getElementById('w_code').value = getNextWorkerCode(); document.getElementById('w_active').value = 'true'; document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_form_title').innerText = "Add / Update Worker"; document.getElementById('w_btn_save').innerText = "Save Worker"; document.getElementById('w_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('w_btn_cancel').classList.add('hidden'); }
