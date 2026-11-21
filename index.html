@@ -26,11 +26,12 @@
     </style>
 </head>
 <body>
+
     <!-- LOGIN PASSWORD SCREEN -->
     <div id="login_screen" class="fixed inset-0 bg-indigo-950 z-[9999] flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center border border-indigo-200">
-            <img src="logo.png?v=2" onerror="this.style.display='none'" class="w-16 h-16 mx-auto mb-3 rounded-full bg-white p-1 shadow border object-contain" alt="Logo">
-            <h1 class="text-2xl font-black text-indigo-900">Mahi and Devansh co.</h1>
+            <img src="logo.png?v=3" onerror="this.style.display='none'" class="w-40 h-auto mx-auto mb-3 object-contain" alt="Logo">
+            <h1 class="text-xl font-black text-indigo-900">Mahi and Devansh co.</h1>
             <p class="text-xs text-slate-500 mb-5">App kholne ke liye Password dalein</p>
             <form onsubmit="handleAppLogin(event)" class="space-y-3">
                 <input type="password" id="login_pass_input" placeholder="Enter Password..." required autofocus class="w-full border-2 border-indigo-200 focus:border-indigo-600 p-3 rounded-xl text-center text-lg font-bold tracking-widest outline-none bg-slate-50">
@@ -59,6 +60,7 @@
             <button onclick="syncFromSheet(true)" class="sync-badge flex items-center gap-1.5 bg-indigo-800 hover:bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-600 text-xs font-bold transition">
                 <i class="fa-solid fa-rotate"></i> <span class="sync-status-text">Checking...</span>
             </button>
+            <button onclick="lockApp()" class="bg-red-600/90 hover:bg-red-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition" title="Lock App"><i class="fa-solid fa-lock"></i></button>
         </div>
         <div class="flex space-x-6 font-medium text-sm">
             <button onclick="switchTab('dashboard')" class="hover:text-yellow-300 transition">Dashboard</button>
@@ -83,6 +85,7 @@
                 <i class="fa-solid fa-rotate"></i> <span class="sync-status-text">Sync</span>
             </button>
             <input type="month" id="app_month_mob" onchange="document.getElementById('app_month').value=this.value; refreshAllData();" class="bg-indigo-800 text-white p-1 rounded font-bold border border-indigo-700 text-xs">
+            <button onclick="lockApp()" class="bg-red-600 px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-lock"></i></button>
         </div>
     </div>
 
@@ -104,6 +107,7 @@
                 <button type="button" id="dbtn_d_balance" onclick="openDashPanel('d_balance')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-wallet"></i> Pagar Balance</button>
             </div>
 
+            <!-- PANEL 1: DAILY PRODUCTION, NOTES & PENDING HAZIRI -->
             <div id="d_daily" class="dash-panel block bg-white p-5 rounded-xl shadow-sm border border-indigo-200">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-slate-100">
                     <h3 class="font-bold text-lg text-indigo-900"><i class="fa-solid fa-clipboard-list text-indigo-600"></i> Daily Production & Notes</h3>
@@ -112,14 +116,22 @@
                         <input type="date" id="dash_filter_date" onchange="renderDailyProductionPanel()" class="border border-indigo-300 p-2 rounded-lg bg-indigo-50 font-bold text-sm">
                         <button type="button" onclick="shiftDashDate(1)" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold border"><i class="fa-solid fa-chevron-right"></i></button>
                         <button type="button" onclick="setDashToday()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-2 rounded-lg text-xs font-bold">Today</button>
+                        <select id="dash_filter_shift" onchange="renderDailyProductionPanel()" class="border border-indigo-300 p-2 rounded-lg bg-slate-50 text-xs font-bold">
+                            <option value="ALL">All Shifts</option>
+                            <option value="Day">☀️ Day Shift</option>
+                            <option value="Night">🌙 Night Shift</option>
+                        </select>
                         <label class="flex items-center gap-1.5 text-xs font-bold text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200 cursor-pointer select-none">
                             <input type="checkbox" id="dash_only_notes" onchange="renderDailyProductionPanel()" class="accent-red-600 w-4 h-4"> Only With Notes
                         </label>
                     </div>
                 </div>
+                <!-- Pending Haziri Alert Box -->
+                <div id="dash_pending_box" class="mb-4"></div>
                 <div id="dash_daily_output"></div>
             </div>
 
+            <!-- PANEL 2: WORKER MONTH SEARCH -->
             <div id="d_worker" class="dash-panel bg-white p-5 rounded-xl shadow-sm border border-indigo-200">
                 <h3 class="font-bold text-lg text-indigo-900 mb-3"><i class="fa-solid fa-user-check text-indigo-600"></i> Worker Month Production & Notes Search</h3>
                 <div class="flex flex-wrap items-center gap-3 mb-4 pb-3 border-b border-slate-100">
@@ -129,6 +141,7 @@
                 <div id="dash_worker_output"></div>
             </div>
 
+            <!-- PANEL 3: ANALYTICS -->
             <div id="d_charts" class="dash-panel">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
@@ -167,6 +180,7 @@
                 </div>
             </div>
 
+            <!-- PANEL 4: PAGAR BALANCE -->
             <div id="d_balance" class="dash-panel">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-emerald-200">
@@ -181,10 +195,10 @@
             </div>
         </section>
 
-        <!-- 2. ATTENDANCE -->
+        <!-- 2. ATTENDANCE (NEW CLEAN STEP-BY-STEP LAYOUT) -->
         <section id="attendance" class="tab-content">
             <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-                <h2 class="text-2xl font-bold text-slate-800">Attendance, Machine & Mix Bonus</h2>
+                <h2 class="text-2xl font-bold text-slate-800">Attendance & Production Entry</h2>
                 <div class="flex bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
                     <button type="button" id="btn_att_single" onclick="switchAttMode('single')" class="px-4 py-2 rounded-lg text-sm font-bold bg-indigo-600 text-white transition"><i class="fa-solid fa-user"></i> Single Entry</button>
                     <button type="button" id="btn_att_bulk" onclick="switchAttMode('bulk')" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-indigo-700 transition"><i class="fa-solid fa-bolt text-amber-500"></i> Bulk Entry (Ek Sath)</button>
@@ -192,58 +206,123 @@
             </div>
 
             <div id="att_single_view">
-                <form id="att_form" onsubmit="saveAttendance(event)" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <form id="att_form" onsubmit="saveAttendance(event)" class="space-y-4">
                     <input type="hidden" id="h_edit_id">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                        <div><label class="block text-sm font-semibold mb-1">Date *</label><input type="date" id="h_date" required class="w-full border p-2.5 rounded-lg bg-slate-50"></div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">Primary Worker (Active Only) *</label>
-                            <input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search by ID or Name..." class="w-full border border-b-0 p-2 text-xs rounded-t-lg bg-indigo-50 outline-none">
-                            <select id="h_worker1" required onchange="showWorkerSummary()" class="w-full border p-2.5 rounded-b-lg bg-slate-50"></select>
-                            <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-1"></div>
-                        </div>
-                        <div><label class="block text-sm font-semibold mb-1 text-indigo-700">Attendance Status *</label>
-                        <select id="h_status" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold"><option value="Full">Full Day (Full Salary)</option><option value="Half">Half Day (Half Salary)</option><option value="Absent">Absent (No Base Salary)</option></select></div>
-                        <div class="machine-only-field"><label class="block text-sm font-semibold mb-1">Payment Mode *</label><select id="h_mode" onchange="toggleWorker2()" class="w-full border p-2.5 rounded-lg bg-slate-50"></select></div>
-                        <div id="worker2_div" class="hidden machine-only-field">
-                            <label class="block text-sm font-semibold mb-1 text-indigo-600">Secondary Worker (50%) *</label>
-                            <input type="text" id="search_w2" onkeyup="filterWorkerSelect(this.value, 'h_worker2')" placeholder="🔍 Search..." class="w-full border border-indigo-300 border-b-0 p-2 text-xs rounded-t-lg bg-indigo-100 outline-none">
-                            <select id="h_worker2" class="w-full border border-indigo-300 p-2.5 rounded-b-lg bg-indigo-50"></select>
-                        </div>
-                        <div class="machine-only-field"><label class="block text-sm font-semibold mb-1 text-indigo-700">Machine Number *</label><select id="h_machine_no" onchange="autoSelectMachineType('h_machine_no', 'h_machine')" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold"></select></div>
-                        <div class="machine-only-field"><label class="block text-sm font-semibold mb-1">Machine Type *</label><select id="h_machine" class="w-full border p-2.5 rounded-lg bg-slate-50"></select></div>
-                        <div class="machine-only-field"><label class="block text-sm font-semibold mb-1 text-emerald-600">Custom/Extra Bonus (₹)</label><input type="number" id="h_custom" value="0" class="w-full border p-2.5 rounded-lg bg-emerald-50"></div>
 
-                        <div class="machine-only-field md:col-span-2 lg:col-span-3 border-2 border-indigo-200 bg-indigo-50/50 rounded-xl p-4">
-                            <div class="flex flex-wrap justify-between items-center gap-2 mb-3 pb-2 border-b border-indigo-200">
-                                <span class="font-bold text-sm text-indigo-900"><i class="fa-solid fa-layer-group text-indigo-600"></i> Design & Production (Multiple Designs Add Karein)</span>
-                                <button type="button" onclick="addAttDesignRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Design</button>
+                    <!-- STEP 1: BASIC INFO -->
+                    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-xs font-black uppercase tracking-wider text-indigo-700 mb-3 flex items-center gap-2 border-b pb-2">
+                            <span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">1</span> Basic Details (Date, Shift, Worker & Haziri)
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Date *</label>
+                                <input type="date" id="h_date" required onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm">
                             </div>
-                            <div id="h_design_rows" class="space-y-2.5"></div>
-                            <div id="h_design_totals" class="mt-2.5 pt-2 border-t border-indigo-200 text-xs font-bold text-indigo-800 flex flex-wrap gap-4"></div>
-                        </div>
-
-                        <div class="machine-only-field md:col-span-2 lg:col-span-3 border-2 border-amber-300 bg-amber-50 rounded-xl p-4">
-                            <label class="flex items-center gap-2.5 cursor-pointer font-bold text-amber-900 select-none">
-                                <input type="checkbox" id="h_has_extra" onchange="toggleExtraMachineBox()" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
-                                <span><i class="fa-solid fa-circle-plus text-amber-600"></i> Extra Machine Chalayi Hai?</span>
-                            </label>
-                            <div id="extra_machine_box" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3 mt-4 pt-3 border-t border-amber-200">
-                                <div><label class="block text-xs font-bold text-amber-900 mb-1">Extra Mode *</label><select id="h_extra_mode" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-sm"></select></div>
-                                <div><label class="block text-xs font-bold text-amber-900 mb-1">Extra M/C No. *</label><select id="h_extra_machine_no" onchange="autoSelectMachineType('h_extra_machine_no', 'h_extra_machine')" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-sm font-bold"></select></div>
-                                <div><label class="block text-xs font-bold text-amber-900 mb-1">Extra Type *</label><select id="h_extra_machine" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-sm"></select></div>
-                                <div><label class="block text-xs font-bold text-amber-900 mb-1">Extra Design</label><select id="h_extra_design" onchange="fillExtraDesignStitches()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-sm"></select></div>
-                                <div><label class="block text-xs font-bold text-amber-900 mb-1">Extra Stitches/Hrs</label><input type="number" step="any" id="h_extra_qty" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-sm"></div>
-                                <div><label class="block text-xs font-bold text-amber-900 mb-1">Extra Frame</label><input type="number" id="h_extra_frame" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-sm"></div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label>
+                                <select id="h_shift" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-indigo-50/60 font-bold text-sm">
+                                    <option value="Day">☀️ Day Shift</option>
+                                    <option value="Night">🌙 Night Shift</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Attendance Status *</label>
+                                <select id="h_status" onchange="updateLiveBonusPreview()" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold text-sm">
+                                    <option value="Full">✅ Full Day</option>
+                                    <option value="Half">🌗 Half Day</option>
+                                    <option value="Absent">❌ Absent</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label>
+                                <input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none">
+                                <select id="h_worker1" required onchange="showWorkerSummary(); updateLiveBonusPreview();" class="w-full border p-2 rounded-b-lg bg-slate-50 text-sm font-semibold"></select>
                             </div>
                         </div>
-
-                        <div class="md:col-span-2 lg:col-span-3"><label class="block text-sm font-semibold mb-1 text-red-600">Remarks / Notes (Mandatory for Half/Absent)</label>
-                        <input type="text" id="h_note" placeholder="Enter reason for absence, half day, or other notes..." class="w-full border border-red-200 p-2.5 rounded-lg bg-red-50"></div>
+                        <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-2"></div>
                     </div>
-                    <div class="flex gap-2">
-                        <button type="submit" id="h_btn_save" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Save Entry</button>
-                        <button type="button" id="h_btn_cancel" onclick="cancelEditAttendance()" class="hidden w-1/3 bg-gray-400 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Cancel</button>
+
+                    <!-- STEP 2: MACHINE & PAYMENT MODE -->
+                    <div class="machine-only-field bg-white p-4 md:p-5 rounded-xl shadow-sm border border-teal-200">
+                        <div class="text-xs font-black uppercase tracking-wider text-teal-800 mb-3 flex items-center gap-2 border-b pb-2">
+                            <span class="bg-teal-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">2</span> Machine & Payment Mode
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-teal-800 mb-1">Machine Number *</label>
+                                <select id="h_machine_no" onchange="autoSelectMachineType('h_machine_no', 'h_machine'); updateLiveBonusPreview();" class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label>
+                                <select id="h_machine" onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Payment Mode *</label>
+                                <select id="h_mode" onchange="toggleWorker2(); updateLiveBonusPreview();" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select>
+                            </div>
+                            <div id="worker2_div" class="hidden md:col-span-3 bg-indigo-50 p-3 rounded-lg border border-indigo-200">
+                                <label class="block text-xs font-bold text-indigo-700 mb-1">Secondary Worker (50-50 Shared) *</label>
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <input type="text" id="search_w2" onkeyup="filterWorkerSelect(this.value, 'h_worker2')" placeholder="🔍 Search 2nd Worker..." class="sm:w-1/3 border border-indigo-300 p-2 text-xs rounded-lg bg-white outline-none">
+                                    <select id="h_worker2" class="sm:w-2/3 border border-indigo-300 p-2 rounded-lg bg-white text-sm font-semibold"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: DESIGNS & PRODUCTION -->
+                    <div class="machine-only-field bg-white p-4 md:p-5 rounded-xl shadow-sm border border-indigo-200">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-3 pb-2 border-b">
+                            <div class="text-xs font-black uppercase tracking-wider text-indigo-800 flex items-center gap-2">
+                                <span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">3</span> Design & Stitches (Multiple Designs)
+                            </div>
+                            <button type="button" onclick="addAttDesignRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
+                                <i class="fa-solid fa-plus"></i> Add Design
+                            </button>
+                        </div>
+                        <div id="h_design_rows" class="space-y-2.5"></div>
+                        <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap justify-between items-center gap-3">
+                            <div id="h_design_totals" class="text-xs font-bold text-indigo-800 flex flex-wrap gap-4"></div>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-bold text-emerald-700">Custom / Extra Bonus (₹):</label>
+                                <input type="number" id="h_custom" value="0" oninput="updateLiveBonusPreview()" class="w-28 border border-emerald-300 p-1.5 rounded-lg bg-emerald-50 font-bold text-sm text-right">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: EXTRA MACHINE (OPTIONAL) -->
+                    <div class="machine-only-field bg-amber-50 p-4 rounded-xl shadow-sm border-2 border-amber-200">
+                        <label class="flex items-center gap-2.5 cursor-pointer font-bold text-amber-900 text-sm select-none">
+                            <input type="checkbox" id="h_has_extra" onchange="toggleExtraMachineBox(); updateLiveBonusPreview();" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
+                            <span><i class="fa-solid fa-circle-plus text-amber-600"></i> Extra Machine Chalayi Hai? (Optional)</span>
+                        </label>
+                        <div id="extra_machine_box" class="hidden grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mt-3 pt-3 border-t border-amber-200">
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Mode *</label><select id="h_extra_mode" onchange="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra M/C No. *</label><select id="h_extra_machine_no" onchange="autoSelectMachineType('h_extra_machine_no', 'h_extra_machine'); updateLiveBonusPreview();" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Type *</label><select id="h_extra_machine" onchange="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Design</label><select id="h_extra_design" onchange="fillExtraDesignStitches(); updateLiveBonusPreview();" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Stitches/Hrs</label><input type="number" step="any" id="h_extra_qty" oninput="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Frame</label><input type="number" id="h_extra_frame" oninput="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs"></div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: REMARKS, LIVE BONUS PREVIEW & SAVE -->
+                    <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-red-600 mb-1">Remarks / Notes (Half Day ya Absent par zaroori)</label>
+                                <input type="text" id="h_note" placeholder="Chutti ka karan, machine issue, ya koi special note..." class="w-full border border-red-200 p-2.5 rounded-lg bg-red-50/60 text-sm">
+                            </div>
+                            <div id="h_live_bonus_box" class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-center">
+                                <div class="text-[11px] font-bold text-emerald-700 uppercase">Estimated Bonus</div>
+                                <div id="h_live_bonus_val" class="text-2xl font-black text-emerald-800">₹0</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" id="h_btn_save" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base"><i class="fa-solid fa-check-circle mr-1"></i> Save Entry</button>
+                            <button type="button" id="h_btn_cancel" onclick="cancelEditAttendance()" class="hidden w-1/3 bg-gray-400 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Cancel</button>
+                        </div>
                     </div>
                 </form>
 
@@ -251,27 +330,35 @@
                     <h3 class="font-bold text-lg text-indigo-800 mb-3"><i class="fa-solid fa-list-check"></i> Is Mahine ki Haziri List</h3>
                     <div class="overflow-x-auto max-h-80 border rounded-lg border-slate-200">
                         <table class="w-full text-left text-sm border-collapse">
-                            <thead class="bg-slate-100 sticky top-0"><tr><th class="p-3 border-b">Date</th><th class="p-3 border-b">Status</th><th class="p-3 border-b">Details (M/C No. / Designs / Stitch)</th><th class="p-3 border-b text-red-600">Note</th><th class="p-3 border-b text-right">Bonus</th><th class="p-3 border-b text-center">Edit/Del</th></tr></thead>
+                            <thead class="bg-slate-100 sticky top-0"><tr><th class="p-3 border-b">Date & Shift</th><th class="p-3 border-b">Status</th><th class="p-3 border-b">Details (M/C No. / Designs / Stitch)</th><th class="p-3 border-b text-red-600">Note</th><th class="p-3 border-b text-right">Bonus</th><th class="p-3 border-b text-center">Edit/Del</th></tr></thead>
                             <tbody id="w_history_body" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <!-- BULK ATTENDANCE -->
             <div id="att_bulk_view" class="hidden bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 pb-4 border-b border-slate-200 items-end">
-                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Attendance Date *</label><input type="date" id="bulk_att_date" onchange="renderBulkAttendanceTable()" class="w-full border p-2 rounded-lg bg-slate-50 font-bold"></div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4 pb-4 border-b border-slate-200 items-end">
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Attendance Date *</label><input type="date" id="bulk_att_date" onchange="renderBulkAttendanceTable()" class="w-full border p-2 rounded-lg bg-slate-50 font-bold text-sm"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label>
+                        <select id="bulk_att_shift" onchange="renderBulkAttendanceTable()" class="w-full border border-indigo-200 p-2 rounded-lg bg-indigo-50 font-bold text-sm">
+                            <option value="Day">☀️ Day Shift</option>
+                            <option value="Night">🌙 Night Shift</option>
+                        </select>
+                    </div>
                     <div><label class="block text-xs font-bold text-slate-700 mb-1">Filter Category</label><select id="bulk_att_cat" onchange="renderBulkAttendanceTable()" class="w-full border p-2 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
                     <div><label class="block text-xs font-bold text-slate-700 mb-1">Search Active Worker</label><input type="text" id="bulk_att_search" onkeyup="filterBulkAttRows(this.value)" placeholder="🔍 ID ya Naam..." class="w-full border p-2 rounded-lg bg-indigo-50 text-sm outline-none"></div>
                     <div class="flex gap-2"><button type="button" onclick="bulkToggleSelectAll(true)" class="w-1/2 bg-indigo-50 text-indigo-700 border border-indigo-200 py-2 rounded-lg text-xs font-bold">Select All</button><button type="button" onclick="bulkToggleSelectAll(false)" class="w-1/2 bg-slate-100 text-slate-700 border py-2 rounded-lg text-xs font-bold">Clear All</button></div>
                 </div>
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-3 text-xs text-amber-900 flex flex-wrap justify-between items-center gap-2">
-                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> Sirf <b>Active</b> workers dikh rahe hain. Multiple design ke liye Single Entry use karein.</span>
+                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> Bulk mein bhi ab <b>Design No. + Part</b> aur <b>Day/Night Shift</b> support hai!</span>
                     <span id="bulk_att_count_badge" class="bg-indigo-600 text-white px-2.5 py-1 rounded-full font-bold">Selected: 0</span>
                 </div>
                 <div class="overflow-x-auto max-h-[60vh] border rounded-xl border-slate-200 mb-4">
-                    <table class="w-full text-left text-xs border-collapse min-w-[1080px]">
-                        <thead class="bg-indigo-50 text-indigo-900 sticky top-0 z-10"><tr><th class="p-2.5 border-b text-center w-10">Save</th><th class="p-2.5 border-b min-w-[150px]">Worker (ID)</th><th class="p-2.5 border-b w-24">Status</th><th class="p-2.5 border-b w-32">Pay Mode</th><th class="p-2.5 border-b w-24">M/C No.</th><th class="p-2.5 border-b w-36">Machine Type</th><th class="p-2.5 border-b w-28">Design</th><th class="p-2.5 border-b w-28">Stitches/Hrs</th><th class="p-2.5 border-b w-20">Frame</th><th class="p-2.5 border-b w-20">Custom ₹</th><th class="p-2.5 border-b min-w-[110px]">Remarks</th><th class="p-2.5 border-b text-right w-20">Est. Bonus</th></tr></thead>
+                    <table class="w-full text-left text-xs border-collapse min-w-[1180px]">
+                        <thead class="bg-indigo-50 text-indigo-900 sticky top-0 z-10"><tr><th class="p-2.5 border-b text-center w-10">Save</th><th class="p-2.5 border-b min-w-[145px]">Worker (ID)</th><th class="p-2.5 border-b w-24">Status</th><th class="p-2.5 border-b w-32">Pay Mode</th><th class="p-2.5 border-b w-24">M/C No.</th><th class="p-2.5 border-b w-32">Machine Type</th><th class="p-2.5 border-b w-24">Design No.</th><th class="p-2.5 border-b w-28">Part</th><th class="p-2.5 border-b w-24">Stitches/Hrs</th><th class="p-2.5 border-b w-16">Frame</th><th class="p-2.5 border-b w-20">Custom ₹</th><th class="p-2.5 border-b min-w-[100px]">Remarks</th><th class="p-2.5 border-b text-right w-20">Est. Bonus</th></tr></thead>
                         <tbody id="bulk_att_body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
@@ -282,7 +369,7 @@
         <!-- 3. ADVANCE -->
         <section id="advance" class="tab-content">
             <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-                <h2 class="text-2xl font-bold text-slate-800">Advance (Upad) Management</h2>
+                <h2 class="text-2xl font-bold text-slate-800">Advance (Upad) & Pagar Payments</h2>
                 <div class="flex bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
                     <button type="button" id="btn_upad_single" onclick="switchUpadMode('single')" class="px-4 py-2 rounded-lg text-sm font-bold bg-amber-500 text-white transition"><i class="fa-solid fa-user"></i> Single Upad</button>
                     <button type="button" id="btn_upad_bulk" onclick="switchUpadMode('bulk')" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-amber-600 transition"><i class="fa-solid fa-bolt text-amber-500"></i> Bulk Upad (Hafta)</button>
@@ -295,7 +382,7 @@
                         <div><label class="block text-sm font-semibold mb-1">Date *</label><input type="date" id="u_date" required class="w-full border p-2.5 rounded-lg bg-slate-50"></div>
                         <div><label class="block text-sm font-semibold mb-1">Worker (Active Only) *</label><input type="text" id="search_uw" onkeyup="filterWorkerSelect(this.value, 'u_worker')" placeholder="🔍 Search..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none"><select id="u_worker" required class="w-full border p-2.5 rounded-b-lg bg-slate-50"></select></div>
                         <div><label class="block text-sm font-semibold mb-1 text-red-600">Amount (₹) *</label><input type="number" id="u_amount" required class="w-full border border-red-200 p-2.5 rounded-lg bg-red-50"></div>
-                        <div><label class="block text-sm font-semibold mb-1">Reason / Mode</label><input type="text" id="u_note" placeholder="Cash, UPI..." class="w-full border p-2.5 rounded-lg bg-slate-50"></div>
+                        <div><label class="block text-sm font-semibold mb-1">Reason / Mode</label><input type="text" id="u_note" placeholder="Cash, UPI, Final Pagar..." class="w-full border p-2.5 rounded-lg bg-slate-50"></div>
                     </div>
                     <div class="flex gap-2"><button type="submit" id="u_btn_save" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Save Advance</button><button type="button" id="u_btn_cancel" onclick="cancelEditAdvance()" class="hidden w-1/3 bg-gray-400 text-white font-bold py-3.5 rounded-xl">Cancel</button></div>
                 </form>
@@ -309,13 +396,19 @@
                 <div class="overflow-x-auto max-h-80 border rounded-xl border-slate-200 mb-4"><table class="w-full text-left text-sm border-collapse"><thead class="bg-amber-50 sticky top-0"><tr><th class="p-2.5 border-b">Active Worker</th><th class="p-2.5 border-b w-36 text-red-700">Amount (₹)</th><th class="p-2.5 border-b">Alag Reason</th></tr></thead><tbody id="bulk_upad_body" class="divide-y divide-slate-100"></tbody></table></div>
                 <button type="button" onclick="saveBulkAdvance()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl shadow-lg"><i class="fa-solid fa-wallet"></i> Save All Bulk Advances</button>
             </div>
-            <h3 class="text-lg font-bold text-slate-700 mb-3">Advance Statement (<span id="upad_statement_month"></span>)</h3>
+            <h3 class="text-lg font-bold text-slate-700 mb-3">Advance & Paid Statement (<span id="upad_statement_month"></span>)</h3>
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto max-h-64"><table class="w-full text-left text-sm border-collapse"><thead class="bg-amber-50 sticky top-0"><tr><th class="p-3">Date</th><th class="p-3">Worker (ID)</th><th class="p-3">Reason</th><th class="p-3 text-right">Amount (₹)</th><th class="p-3 text-center">Edit/Del</th></tr></thead><tbody id="advanceStatementBody"></tbody></table></div>
         </section>
 
         <!-- 4. REPORTS -->
         <section id="reports" class="tab-content">
-            <h2 class="text-2xl font-bold mb-4 text-slate-800">Month-Wise Reports & Analysis</h2>
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                <h2 class="text-2xl font-bold text-slate-800">Month-Wise Reports & Export</h2>
+                <div class="flex gap-2">
+                    <button type="button" onclick="exportSalaryCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-file-excel mr-1"></i> Export Pagar Excel</button>
+                    <button type="button" onclick="exportMachineCSV()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-file-csv mr-1"></i> Export Machine Excel</button>
+                </div>
+            </div>
             <div class="flex space-x-2 mb-4 overflow-x-auto pb-2">
                 <button onclick="setReportType('company')" id="btn_rep_company" class="rep-tab-btn bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold flex-shrink-0"><i class="fa-solid fa-chart-pie"></i> Company Analysis</button>
                 <button onclick="setReportType('worker')" id="btn_rep_worker" class="rep-tab-btn bg-white border text-slate-700 px-4 py-2 rounded-lg font-semibold flex-shrink-0"><i class="fa-solid fa-id-badge"></i> Worker ID Report</button>
@@ -328,7 +421,7 @@
         <section id="master" class="tab-content">
             <h2 class="text-2xl font-bold mb-6 text-slate-800">Master Data & Settings</h2>
             <div class="flex flex-wrap gap-2 mb-4">
-                <button onclick="openMaster('m_admin')" class="bg-gray-800 text-white font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-lock"></i> Security & Sync</button>
+                <button onclick="openMaster('m_admin')" class="bg-gray-800 text-white font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-lock"></i> Security, Sync & Backup</button>
                 <button onclick="openMaster('m_cat')" class="bg-sky-100 text-sky-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-tags"></i> Categories</button>
                 <button onclick="openMaster('m_worker')" class="bg-indigo-100 text-indigo-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-users"></i> Workers & Pagar History</button>
                 <button onclick="openMaster('m_machno')" class="bg-teal-100 text-teal-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-hashtag"></i> Machine No.</button>
@@ -339,24 +432,40 @@
             </div>
 
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <!-- Security, Sync & Backup -->
                 <div id="m_admin" class="master-panel block">
                     <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg mb-5 text-sm text-indigo-900"><b>App Name:</b> Mahi and Devansh co. &nbsp;|&nbsp; <b>Owner Email:</b> mahifashion0128@gmail.com</div>
-                    <h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Admin Security (Password for Editing / Deleting)</h3>
+                    <h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Admin Security (Login & Edit Password)</h3>
                     <form onsubmit="saveAdminPassword(event)" class="flex gap-2 mb-3 max-w-sm"><input type="password" id="admin_pass" placeholder="Enter New Password" required class="w-full border p-2 rounded bg-slate-50"><button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded font-bold">Set Password</button></form>
                     <p class="text-xs text-gray-500 mb-6">Default password is: <b>1234</b>.</p>
-                    <div class="border-t pt-4">
+
+                    <div class="border-t pt-4 mb-6">
                         <h3 class="font-bold text-lg mb-2 text-indigo-800"><i class="fa-solid fa-cloud"></i> Google Sheet Live Sync</h3>
                         <form onsubmit="saveScriptUrl(event)" class="flex flex-col md:flex-row gap-2 mb-3"><input type="url" id="sheet_url_input" placeholder="Paste Google Apps Script Web App URL" class="w-full border p-2 rounded bg-slate-50 text-sm"><button type="submit" class="bg-indigo-700 text-white px-4 py-2 rounded font-bold text-sm shrink-0">Save Link</button></form>
                         <div class="flex flex-wrap gap-3"><button type="button" onclick="syncFromSheet(true)" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-bold text-sm"><i class="fa-solid fa-cloud-arrow-down"></i> Download</button><button type="button" onclick="syncToSheet(true)" class="bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-bold text-sm"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button></div>
                     </div>
+
+                    <div class="border-t pt-4">
+                        <h3 class="font-bold text-lg mb-2 text-slate-800"><i class="fa-solid fa-shield-halved text-emerald-600"></i> Full Data Backup & Restore (Offline Safe Copy)</h3>
+                        <p class="text-xs text-slate-500 mb-3">Apne poore data ki ek backup file PC/Phone mein save karein ya purani backup file se data wapas layein.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <button type="button" onclick="downloadBackupJSON()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-lg font-bold text-sm"><i class="fa-solid fa-download mr-1"></i> Download Backup (.json)</button>
+                            <label class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-4 py-2.5 rounded-lg font-bold text-sm cursor-pointer">
+                                <i class="fa-solid fa-upload mr-1"></i> Restore Backup File
+                                <input type="file" id="restore_file_input" accept=".json" onchange="restoreBackupJSON(event)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Categories -->
                 <div id="m_cat" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-sky-700 border-b pb-2" id="c_form_title">Manage Worker Categories</h3>
                     <form id="c_form" onsubmit="saveWorkerType(event)" class="flex flex-col md:flex-row gap-2 mb-4"><input type="hidden" id="c_edit_id"><input type="text" id="c_name" placeholder="Category Name" required class="w-full md:w-1/2 border p-2 rounded bg-slate-50"><select id="c_hasProd" class="w-full md:w-1/3 border p-2 rounded bg-slate-50 font-bold text-indigo-700"><option value="true">Needs Machine/Stitch Entry</option><option value="false">Only Full/Half/Absent (Fixed)</option></select><button type="submit" id="c_btn_save" class="bg-sky-600 text-white px-4 py-2 rounded font-bold">Save</button><button type="button" id="c_btn_cancel" onclick="cancelEditCategory()" class="hidden bg-gray-400 text-white px-4 py-2 rounded font-bold">Cancel</button></form>
                     <div class="mt-4 border-t pt-4"><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="categoryList"></div></div>
                 </div>
 
+                <!-- Workers (+ Mobile Number) -->
                 <div id="m_worker" class="master-panel">
                     <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-2 mb-4"><h3 class="font-bold text-lg text-indigo-700" id="w_form_title">Add / Update Worker</h3><button type="button" onclick="document.getElementById('bulk_worker_box').classList.toggle('hidden')" class="bg-amber-100 text-amber-900 px-3 py-1.5 rounded-lg text-xs font-bold border border-amber-300"><i class="fa-solid fa-bolt"></i> Bulk Add Workers</button></div>
                     <div id="bulk_worker_box" class="hidden mb-5 p-4 rounded-xl border-2 border-amber-300 bg-amber-50 space-y-3">
@@ -371,7 +480,8 @@
                         <input type="hidden" id="w_edit_id">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                             <div><label class="block text-xs font-bold text-indigo-800 mb-1">Worker ID *</label><input type="text" id="w_code" required class="w-full border border-indigo-300 p-2 rounded bg-indigo-50 font-bold"></div>
-                            <div class="md:col-span-2"><label class="block text-xs font-bold text-slate-700 mb-1">Worker Name *</label><input type="text" id="w_name" required class="w-full border p-2 rounded bg-slate-50"></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Worker Name *</label><input type="text" id="w_name" required class="w-full border p-2 rounded bg-slate-50"></div>
+                            <div><label class="block text-xs font-bold text-emerald-700 mb-1">WhatsApp / Mobile No.</label><input type="tel" id="w_mobile" placeholder="10 digit number" class="w-full border border-emerald-200 p-2 rounded bg-emerald-50/40 text-sm"></div>
                             <div><label class="block text-xs font-bold text-emerald-800 mb-1">Work Status *</label><select id="w_active" class="w-full border border-emerald-300 p-2 rounded bg-emerald-50 font-bold text-emerald-900"><option value="true">🟢 Active (Kaam Par)</option><option value="false">🔴 Inactive (Chutti / Chhod Diya)</option></select></div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -391,6 +501,7 @@
                     </div>
                 </div>
 
+                <!-- Machine Numbers -->
                 <div id="m_machno" class="master-panel">
                     <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-2 mb-4"><h3 class="font-bold text-lg text-teal-700" id="mn_form_title">Manage Machine Numbers</h3><button type="button" onclick="document.getElementById('bulk_machno_box').classList.toggle('hidden')" class="bg-teal-100 text-teal-900 px-3 py-1.5 rounded-lg text-xs font-bold border border-teal-300"><i class="fa-solid fa-bolt"></i> Quick Add Range</button></div>
                     <div id="bulk_machno_box" class="hidden mb-5 p-4 rounded-xl border-2 border-teal-300 bg-teal-50 space-y-3">
@@ -406,42 +517,40 @@
                     <div class="mt-4 border-t pt-4"><h4 class="font-bold text-gray-700 mb-2">Saved Machine Numbers (<span id="machno_count_lbl">0</span>):</h4><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="machineNumberList"></div></div>
                 </div>
 
+                <!-- Layered Designs (+ Search Box) -->
                 <div id="m_design" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-emerald-700 border-b pb-2" id="d_form_title">Add / Update Design</h3>
                     <form id="d_form" onsubmit="saveDesign(event)" class="space-y-4 mb-4">
                         <input type="hidden" id="d_edit_id">
-                        <div class="grid grid-cols-2 gap-3">
-                       <input type="text" id="d_code" placeholder="Main Design No. (e.g. 1370)" required class="border p-2 rounded font-bold bg-emerald-50">
-                       <input type="number" id="d_stitch" placeholder="Plain Stitches (1370)" class="border p-2 rounded">
-                       </div>
-
-<!-- MULTIPLE VARIANTS (-C, -P, -B) EK SATH -->
-<div id="d_variants_box" class="border border-emerald-200 bg-emerald-50/50 p-3 rounded-lg space-y-2">
-    <div class="text-xs font-bold text-emerald-800">Extra Parts / Variants (Khali chhod sakte hain):</div>
-    <div class="grid grid-cols-2 gap-2">
-        <input type="text" id="d_suf1" value="-C" placeholder="Suffix (e.g. -C)" class="border p-1.5 rounded bg-white text-sm font-bold">
-        <input type="number" id="d_st1" placeholder="Stitches for -C (e.g. 35360)" class="border p-1.5 rounded bg-white text-sm">
-    </div>
-    <div class="grid grid-cols-2 gap-2">
-        <input type="text" id="d_suf2" value="-P" placeholder="Suffix (e.g. -P)" class="border p-1.5 rounded bg-white text-sm font-bold">
-        <input type="number" id="d_st2" placeholder="Stitches for -P (e.g. 25620)" class="border p-1.5 rounded bg-white text-sm">
-    </div>
-    <div class="grid grid-cols-2 gap-2">
-        <input type="text" id="d_suf3" value="" placeholder="3rd Suffix (e.g. -B / -A)" class="border p-1.5 rounded bg-white text-sm font-bold">
-        <input type="number" id="d_st3" placeholder="Stitches for 3rd Part" class="border p-1.5 rounded bg-white text-sm">
-    </div>
-</div>
-
-<input type="number" id="d_fixBonus" placeholder="Fixed Basic Bonus (₹)" class="w-full border p-2 rounded">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-800 mb-1">Design Number *</label>
+                            <input type="text" id="d_code" placeholder="e.g. 1395" required class="w-full border border-emerald-300 p-2.5 rounded-lg font-bold bg-emerald-50 text-base">
+                        </div>
+                        <div id="d_variants_box" class="border border-emerald-200 bg-emerald-50/50 p-3 rounded-xl space-y-2">
+                            <div class="flex justify-between items-center pb-1 border-b border-emerald-200">
+                                <span class="text-xs font-bold text-emerald-900">Design Parts & Stitches (Plain, C, P, B...)</span>
+                                <button type="button" onclick="addDesignPartRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Part</button>
+                            </div>
+                            <div id="d_parts_container" class="space-y-2"></div>
+                            <p class="text-[11px] text-emerald-700">Tip: Part khali chhodne par Plain (e.g. <b>1395</b>) save hoga; <b>C</b> ya <b>P</b> likhne par <b>1395-C</b>, <b>1395-P</b> ban jayega.</p>
+                        </div>
+                        <input type="number" id="d_fixBonus" placeholder="Fixed Basic Bonus (₹)" class="w-full border p-2 rounded">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="border p-3 rounded bg-blue-50"><h4 class="font-bold text-blue-800 text-sm mb-2">Stitch Bonus Layers</h4><div class="flex gap-2 mb-2"><input type="number" id="s_lim1" placeholder="T1 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon1" placeholder="T1 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2 mb-2"><input type="number" id="s_lim2" placeholder="T2 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon2" placeholder="T2 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2"><input type="number" id="s_lim3" placeholder="T3 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon3" placeholder="T3 ₹" class="w-1/2 p-1.5 rounded"></div></div>
                             <div class="border p-3 rounded bg-amber-50"><h4 class="font-bold text-amber-800 text-sm mb-2">Frame Bonus Layers</h4><div class="flex gap-2 mb-2"><input type="number" id="f_lim1" placeholder="T1 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon1" placeholder="T1 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2 mb-2"><input type="number" id="f_lim2" placeholder="T2 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon2" placeholder="T2 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2"><input type="number" id="f_lim3" placeholder="T3 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon3" placeholder="T3 ₹" class="w-1/2 p-1.5 rounded"></div></div>
                         </div>
                         <div class="flex gap-2"><button type="submit" id="d_btn_save" class="bg-emerald-600 text-white w-full py-2 rounded font-bold">Save Design Rules</button><button type="button" id="d_btn_cancel" onclick="cancelEditDesign()" class="hidden bg-gray-400 text-white px-4 rounded font-bold">Cancel</button></div>
                     </form>
-                    <div class="mt-4 border-t pt-4"><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="designList"></div></div>
+                    <div class="mt-4 border-t pt-4">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                            <h4 class="font-bold text-gray-700">Saved Designs (<span id="design_count_lbl">0</span>):</h4>
+                            <input type="text" onkeyup="filterMasterDesigns(this.value)" placeholder="🔍 Search Design No..." class="border p-1.5 rounded bg-emerald-50 text-xs w-48 outline-none">
+                        </div>
+                        <div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="designList"></div>
+                    </div>
                 </div>
 
+                <!-- Machine Rules -->
                 <div id="m_rule" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-amber-700 border-b pb-2" id="m_form_title">Machine Rates & Layer Bonus</h3>
                     <form id="m_form" onsubmit="saveMachineRule(event)" class="space-y-4 mb-4">
@@ -467,6 +576,7 @@
                     <div class="mt-4 border-t pt-4"><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="machineRuleList"></div></div>
                 </div>
 
+                <!-- Alter Rate -->
                 <div id="m_alter" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-rose-700 border-b pb-2"><i class="fa-solid fa-clock"></i> Alter Hourly Rate Setting</h3>
                     <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl mb-4 flex flex-wrap justify-between items-center gap-3">
@@ -476,6 +586,7 @@
                     <form onsubmit="saveAlterRate(event)" class="flex flex-col sm:flex-row gap-3 max-w-md"><input type="number" step="any" min="0" id="alter_rate_input" required class="w-full border border-rose-300 p-2.5 rounded-lg bg-slate-50 font-bold"><button type="submit" class="bg-rose-600 text-white px-5 py-2.5 rounded-lg font-bold shrink-0">Update Rate</button></form>
                 </div>
 
+                <!-- Payment Modes -->
                 <div id="m_paymode" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-purple-700 border-b pb-2" id="pm_form_title">Manage Payment Modes</h3>
                     <form id="pm_form" onsubmit="savePaymentMode(event)" class="space-y-3 mb-4 bg-purple-50/60 p-4 rounded-xl border border-purple-200">
@@ -522,7 +633,7 @@
     <!-- Hidden A4 PDF: WORKER PAYSLIP -->
     <div id="payslip-container" class="payslip-box">
         <div style="text-align:center; margin-bottom: 18px;">
-            <img src="logo.png?v=2" onerror="this.style.display='none'" style="width:55px; height:55px; object-fit:contain; margin:0 auto 6px auto; display:block;" alt="Logo">
+            <img src="logo.png?v=3" onerror="this.style.display='none'" style="width:140px; height:auto; margin:0 auto 6px auto; display:block;" alt="Logo">
             <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #312e81;">Mahi and Devansh co.</h1>
             <p style="font-size: 12px; margin: 2px 0; color: #475569;">mahifashion0128@gmail.com</p>
             <p style="font-size: 15px; margin: 6px 0 0 0;">Worker Salary Statement | Month: <span id="slip_month" style="font-weight:bold;"></span></p>
@@ -536,7 +647,7 @@
             <tr><td style="font-weight:bold;">Total Base Salary Earned</td><td style="text-align:right;" id="slip_base">0</td></tr>
             <tr><td style="font-weight:bold; color: green;">Total Bonus</td><td style="text-align:right; font-weight:bold; color: green;" id="slip_bonus">0</td></tr>
             <tr><td style="font-weight:bold; color: #4f46e5;">Pichla Baki</td><td style="text-align:right; font-weight:bold;" id="slip_prev">0</td></tr>
-            <tr><td style="font-weight:bold; color: red;">Total Advance (Upad)</td><td style="text-align:right; font-weight:bold; color: red;" id="slip_upad">0</td></tr>
+            <tr><td style="font-weight:bold; color: red;">Total Advance / Paid</td><td style="text-align:right; font-weight:bold; color: red;" id="slip_upad">0</td></tr>
             <tr style="background-color: #fef08a;"><th style="text-align:left; font-size: 17px;">Net Salary Payable</th><th style="text-align:right; font-size: 19px;" id="slip_net">0</th></tr>
         </table>
         <div style="display:flex; justify-content: space-between; margin-top: 45px;"><p style="font-weight:bold; border-top: 1px solid black; padding-top: 5px;">Manager Signature</p><p style="font-weight:bold; border-top: 1px solid black; padding-top: 5px;">Worker Signature</p></div>
@@ -545,7 +656,7 @@
     <!-- Hidden A4 PDF: MACHINE REPORT -->
     <div id="machine-pdf-container" class="payslip-box">
         <div style="text-align:center; margin-bottom: 18px;">
-            <img src="logo.png?v=2" onerror="this.style.display='none'" style="width:55px; height:55px; object-fit:contain; margin:0 auto 6px auto; display:block;" alt="Logo">
+            <img src="logo.png?v=3" onerror="this.style.display='none'" style="width:140px; height:auto; margin:0 auto 6px auto; display:block;" alt="Logo">
             <h1 style="font-size: 26px; font-weight: bold; margin:0; color: #0f766e;">Mahi and Devansh co.</h1>
             <p style="font-size: 12px; margin: 2px 0; color: #475569;">mahifashion0128@gmail.com</p>
             <p style="font-size: 15px; margin: 6px 0 0 0;">Machine Production Report | Month: <span id="mslip_month" style="font-weight:bold;"></span></p>
@@ -554,7 +665,7 @@
             <div><p style="margin:2px 0;"><strong>Machine Number:</strong> <span id="mslip_no"></span></p><p style="margin:2px 0;"><strong>Machine Type(s):</strong> <span id="mslip_type"></span></p></div>
             <div style="text-align:right;"><p style="margin:2px 0;"><strong>Total Shifts:</strong> <span id="mslip_entries"></span></p><p style="margin:2px 0;"><strong>Total Stitches:</strong> <span id="mslip_stitches"></span></p><p style="margin:2px 0;"><strong>Total Frames:</strong> <span id="mslip_frames"></span></p></div>
         </div>
-        <table><thead style="background-color: #e5e7eb;"><tr><th>Date</th><th>Worker (ID)</th><th>Machine Type / Design</th><th>Stitches / Hrs</th><th>Frame</th><th>Bonus (₹)</th></tr></thead><tbody id="mslip_logs"></tbody></table>
+        <table><thead style="background-color: #e5e7eb;"><tr><th>Date & Shift</th><th>Worker (ID)</th><th>Machine Type / Design</th><th>Stitches / Hrs</th><th>Frame</th><th>Bonus (₹)</th></tr></thead><tbody id="mslip_logs"></tbody></table>
         <table><tr style="background-color: #ccfbf1;"><th style="text-align:left; font-size: 16px;">Total Machine Bonus</th><th style="text-align:right; font-size: 18px;" id="mslip_bonus">₹0</th></tr></table>
     </div>
 
@@ -567,9 +678,8 @@
         <button onclick="switchTab('master', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-gear mb-1"></i> Master</button>
     </nav>
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl opacity-0 z-[110] font-medium"><span id="toastMsg">Saved!</span></div>
-
     <script>
-        const DEFAULT_SCRIPT_URL = 'any one';
+        const DEFAULT_SCRIPT_URL = 'MERA_COPIED_URL_YAHAN_PASTE_KAREIN';
         const DEFAULT_PAYMENT_MODES = [
             { id: 'Normal', name: 'Normal (Base + Bonus)', dayMult: 1, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
             { id: 'ExtraStitch', name: 'Extra Machine (Stitch Bonus)', dayMult: 0, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
@@ -582,9 +692,32 @@
         let paymentModes = [], machineNumbers = [], workerTypes = [], workers = [], designs = [], machineRules = [], attendance = [], advanceData = [];
         let bonusChart, compareChart, currentReportType = 'company', currentDashPanel = 'd_daily';
 
+        // ====== LOGIN LOCK ======
+        function checkLoginStatus() {
+            let screen = document.getElementById('login_screen'); if (!screen) return;
+            if (sessionStorage.getItem('karkhana_unlocked') === 'true') screen.style.display = 'none';
+            else { screen.style.display = 'flex'; let inp = document.getElementById('login_pass_input'); if (inp) setTimeout(() => inp.focus(), 100); }
+        }
+        function handleAppLogin(e) {
+            e.preventDefault();
+            let entered = document.getElementById('login_pass_input').value, errEl = document.getElementById('login_err');
+            if (entered === adminPassword) {
+                sessionStorage.setItem('karkhana_unlocked', 'true');
+                document.getElementById('login_screen').style.display = 'none';
+                document.getElementById('login_pass_input').value = '';
+                errEl.classList.add('hidden');
+            } else {
+                errEl.classList.remove('hidden');
+                document.getElementById('login_pass_input').value = '';
+                document.getElementById('login_pass_input').focus();
+            }
+        }
+        function lockApp() { sessionStorage.removeItem('karkhana_unlocked'); checkLoginStatus(); }
+
+        // ====== SYNC & BACKUP ======
         function getScriptUrl() { let s = (localStorage.getItem('karkhana_scriptUrl') || '').trim(); return (s && s.startsWith('https://script.google.com/')) ? s : DEFAULT_SCRIPT_URL; }
         function isCloudConfigured() { let u = getScriptUrl(); return u && u.startsWith('https://script.google.com/'); }
-        function saveScriptUrl(e) { e.preventDefault(); let val = document.getElementById('sheet_url_input').value.trim(); if (!val.startsWith('https://script.google.com/')) { alert('Sahi Google Apps Script Web App URL dalein!'); return; } localStorage.setItem('karkhana_scriptUrl', val); showToast('Google Sheet Link Saved! Syncing...'); syncFromSheet(true); }
+        function saveScriptUrl(e) { e.preventDefault(); let val = document.getElementById('sheet_url_input').value.trim(); if (!val.startsWith('https://script.google.com/')) { alert('Sahi Google Apps Script Web App URL dalein!'); return; } localStorage.setItem('karkhana_scriptUrl', val); showToast('Link Saved! Syncing...'); syncFromSheet(true); }
         function setSyncBadge(text, colorClass) { document.querySelectorAll('.sync-status-text').forEach(el => el.innerText = text); document.querySelectorAll('.sync-badge').forEach(el => { el.classList.remove('text-emerald-300','text-yellow-300','text-red-300','text-gray-300'); el.classList.add(colorClass); }); }
 
         function saveAllLocal() {
@@ -595,6 +728,76 @@
             localStorage.setItem('karkhana_att', JSON.stringify(attendance)); localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
         }
 
+        function downloadBackupJSON() {
+            let payload = { appName: 'Mahi and Devansh co.', backupDate: new Date().toISOString(), adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData };
+            let blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `MahiAndDevanshCo_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click(); showToast('Backup File Downloaded!');
+        }
+        function restoreBackupJSON(e) {
+            let file = e.target.files[0]; if (!file) return;
+            if (!checkAdmin() || !confirm("Backup restore karne se current data replace ho jayega. Continue?")) { e.target.value = ''; return; }
+            let reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    let d = JSON.parse(ev.target.result);
+                    if (d.adminPassword) adminPassword = d.adminPassword;
+                    if (d.alterRate !== undefined) alterRate = parseFloat(d.alterRate) || 120;
+                    if (Array.isArray(d.paymentModes)) paymentModes = d.paymentModes;
+                    if (Array.isArray(d.machineNumbers)) machineNumbers = d.machineNumbers;
+                    if (Array.isArray(d.workerTypes)) workerTypes = d.workerTypes;
+                    if (Array.isArray(d.workers)) workers = d.workers;
+                    if (Array.isArray(d.designs)) designs = d.designs;
+                    if (Array.isArray(d.machineRules)) machineRules = d.machineRules;
+                    if (Array.isArray(d.attendance)) attendance = d.attendance;
+                    if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
+                    migrateWorkersData(); saveAllLocal(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); refreshAllData(); syncToSheet();
+                    showToast('✅ Backup Restored Successfully!');
+                } catch(err) { alert('Galat Backup File!'); }
+                e.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        async function syncToSheet(showNotify = false) {
+            if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
+            setSyncBadge('Saving...', 'text-yellow-300');
+            try {
+                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, updatedAt: new Date().toISOString() };
+                let res = await fetch(getScriptUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+                let result = await res.json();
+                if (result.status === 'ok') { setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Sheet mein upload ho gaya!'); }
+                else throw new Error(result.message || 'Save failed');
+            } catch (err) { setSyncBadge('🔴 Sync Err', 'text-red-300'); if (showNotify) showToast('Sheet sync fail hua!'); }
+        }
+        async function syncFromSheet(showNotify = false) {
+            if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
+            setSyncBadge('Syncing...', 'text-yellow-300');
+            try {
+                let res = await fetch(getScriptUrl() + '?t=' + Date.now());
+                let result = await res.json();
+                if (result.status === 'ok' && result.data) {
+                    let d = result.data;
+                    if (d.adminPassword) adminPassword = d.adminPassword;
+                    if (d.alterRate !== undefined && !isNaN(parseFloat(d.alterRate))) alterRate = parseFloat(d.alterRate);
+                    if (Array.isArray(d.paymentModes) && d.paymentModes.length) paymentModes = d.paymentModes;
+                    if (Array.isArray(d.machineNumbers) && d.machineNumbers.length) machineNumbers = d.machineNumbers;
+                    if (Array.isArray(d.workerTypes) && d.workerTypes.length) workerTypes = d.workerTypes;
+                    if (Array.isArray(d.workers)) workers = d.workers;
+                    if (Array.isArray(d.designs)) designs = d.designs;
+                    if (Array.isArray(d.machineRules)) machineRules = d.machineRules;
+                    if (Array.isArray(d.attendance)) attendance = d.attendance;
+                    if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
+                    migrateWorkersData(); saveAllLocal(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); refreshAllData();
+                    setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Latest data sync ho gaya!');
+                } else if (result.status === 'empty') {
+                    if (workers.length || attendance.length || advanceData.length) await syncToSheet(showNotify); else setSyncBadge('🟢 Ready', 'text-emerald-300');
+                }
+            } catch (err) { setSyncBadge('🔴 Offline', 'text-red-300'); if (showNotify) showToast('Sheet se connect nahi ho paya!'); }
+        }
+
+        // ====== DASHBOARD PANELS ======
         function openDashPanel(panelId) {
             currentDashPanel = panelId;
             document.querySelectorAll('.dash-panel').forEach(p => p.style.display = 'none');
@@ -609,38 +812,93 @@
         function shiftDashDate(days) { let inp = document.getElementById('dash_filter_date'), d = inp.value ? new Date(inp.value) : new Date(); d.setDate(d.getDate() + days); inp.value = d.toISOString().slice(0, 10); renderDailyProductionPanel(); }
         function setDashToday() { document.getElementById('dash_filter_date').valueAsDate = new Date(); renderDailyProductionPanel(); }
 
+        // ====== DESIGN NO. + PART (SINGLE & BULK) ======
+        function getBaseDesignCode(code) { if (!code || code === '-') return ''; let idx = String(code).indexOf('-'); return idx > 0 ? String(code).substring(0, idx).trim() : String(code).trim(); }
+        function updateBaseDesignDatalist() {
+            let dl = document.getElementById('att_base_designs_list');
+            if (!dl) { dl = document.createElement('datalist'); dl.id = 'att_base_designs_list'; document.body.appendChild(dl); }
+            let bases = [...new Set(designs.filter(d => d && d.code).map(d => getBaseDesignCode(d.code)))];
+            dl.innerHTML = bases.map(b => `<option value="${b}">`).join('');
+        }
         function addAttDesignRow(desVal = '', qtyVal = '', frameVal = '') {
+            updateBaseDesignDatalist();
             let cont = document.getElementById('h_design_rows'); if (!cont) return;
             let idx = cont.children.length, row = document.createElement('div');
-            row.className = 'att-design-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-white p-2.5 rounded-lg border border-indigo-200';
-            let dOpts = `<option value="">Manual Entry</option>` + designs.map(d => d ? `<option value="${d.code}" ${d.code === desVal ? 'selected' : ''}>${d.code} (${d.stitches || 0} St)</option>` : '').join('');
-            row.innerHTML = `<div class="md:col-span-5"><label class="block text-[11px] font-bold text-indigo-800 mb-1">Design ${idx + 1}</label><select class="ad-design w-full border border-indigo-200 p-2 rounded-lg bg-indigo-50/40 text-sm" onchange="onAttDesignSelect(this)">${dOpts}</select></div><div class="md:col-span-4"><label class="block text-[11px] font-bold text-slate-700 mb-1">Stitches / Hours *</label><input type="number" step="any" value="${qtyVal}" placeholder="0" oninput="updateAttDesignTotals()" class="ad-qty w-full border p-2 rounded-lg bg-slate-50 text-sm font-bold"></div><div class="md:col-span-2"><label class="block text-[11px] font-bold text-slate-700 mb-1">Frame</label><input type="number" value="${frameVal}" placeholder="0" oninput="updateAttDesignTotals()" class="ad-frame w-full border p-2 rounded-lg bg-slate-50 text-sm"></div><div class="md:col-span-1 flex justify-end">${idx === 0 ? '<span class="text-[10px] text-gray-400 py-2">Main</span>' : '<button type="button" onclick="this.closest(\'.att-design-row\').remove(); updateAttDesignTotals();" class="w-full md:w-auto px-2.5 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-200"><i class="fa-solid fa-trash"></i></button>'}</div>`;
-            cont.appendChild(row); updateAttDesignTotals();
+            row.className = 'att-design-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-slate-50/70 p-2.5 rounded-lg border border-indigo-200';
+            let baseVal = (desVal && desVal !== '-') ? getBaseDesignCode(desVal) : '';
+            row.innerHTML = `
+                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-indigo-800 mb-1">Design No. ${idx + 1}</label><input type="text" list="att_base_designs_list" value="${baseVal}" placeholder="e.g. 1370" oninput="onAttBaseInput(this)" class="ad-base w-full border border-indigo-300 p-2 rounded-lg bg-white text-sm font-bold outline-none"></div>
+                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-emerald-800 mb-1">Part (Plain / C / P)</label><select class="ad-design w-full border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold" onchange="onAttDesignSelect(this)"></select></div>
+                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-slate-700 mb-1">Stitches / Hours *</label><input type="number" step="any" value="${qtyVal}" placeholder="0" oninput="updateAttDesignTotals()" class="ad-qty w-full border p-2 rounded-lg bg-white text-sm font-bold"></div>
+                <div class="md:col-span-2"><label class="block text-[11px] font-bold text-slate-700 mb-1">Frame</label><input type="number" value="${frameVal}" placeholder="0" oninput="updateAttDesignTotals()" class="ad-frame w-full border p-2 rounded-lg bg-white text-sm"></div>
+                <div class="md:col-span-1 flex justify-end">${idx === 0 ? '<span class="text-[10px] text-gray-400 py-2">Main</span>' : '<button type="button" onclick="this.closest(\'.att-design-row\').remove(); updateAttDesignTotals();" class="w-full md:w-auto px-2.5 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-200"><i class="fa-solid fa-trash"></i></button>'}</div>`;
+            cont.appendChild(row);
+            populateAttPartOptions(row, baseVal, desVal, false);
+            updateAttDesignTotals();
+        }
+        function onAttBaseInput(inpEl) { populateAttPartOptions(inpEl.closest('.att-design-row'), inpEl.value.trim(), '', true); }
+        function populateAttPartOptions(row, baseCode, selectedFullCode = '', autoFillQty = true) {
+            let sel = row.querySelector('.ad-design'); if (!sel) return;
+            if (!baseCode) { sel.innerHTML = `<option value="">Manual Entry</option>`; updateLiveBonusPreview(); return; }
+            let bLow = baseCode.toLowerCase(), matches = designs.filter(d => d && d.code && getBaseDesignCode(d.code).toLowerCase() === bLow);
+            if (!matches.length) { sel.innerHTML = `<option value="${baseCode}">${baseCode} (Manual)</option>`; updateLiveBonusPreview(); return; }
+            sel.innerHTML = (matches.length > 1 ? `<option value="">-- Part Chunein --</option>` : '') + matches.map(d => {
+                let i = d.code.indexOf('-'), partLbl = i > 0 ? d.code.substring(i + 1) : 'Plain';
+                let isSel = (selectedFullCode && d.code === selectedFullCode) || (!selectedFullCode && matches.length === 1);
+                return `<option value="${d.code}" ${isSel ? 'selected' : ''}>${partLbl} (${d.stitches || 0} St)</option>`;
+            }).join('');
+            if (autoFillQty && matches.length === 1) { let qInp = row.querySelector('.ad-qty'); if (qInp) qInp.value = matches[0].stitches || ''; }
+            updateAttDesignTotals();
         }
         function onAttDesignSelect(selEl) { let row = selEl.closest('.att-design-row'), d = designs.find(x => x && x.code === selEl.value); if (d && row) row.querySelector('.ad-qty').value = d.stitches; updateAttDesignTotals(); }
         function readAttDesignRows() {
             let rows = [];
             document.querySelectorAll('#h_design_rows .att-design-row').forEach(r => {
-                let design = r.querySelector('.ad-design').value || '-', qty = parseFloat(r.querySelector('.ad-qty').value) || 0, frame = parseFloat(r.querySelector('.ad-frame').value) || 0;
+                let baseVal = (r.querySelector('.ad-base')?.value || '').trim(), design = r.querySelector('.ad-design').value || baseVal || '-', qty = parseFloat(r.querySelector('.ad-qty').value) || 0, frame = parseFloat(r.querySelector('.ad-frame').value) || 0;
                 if (qty > 0 || frame > 0 || design !== '-') rows.push({ design, qty, frame });
             });
             return rows;
         }
         function updateAttDesignTotals() {
-            let el = document.getElementById('h_design_totals'); if (!el) return;
+            let el = document.getElementById('h_design_totals');
             let items = readAttDesignRows();
-            el.innerHTML = `<span>Designs: ${items.length}</span><span>Total Stitches/Hrs: ${items.reduce((s, i) => s + i.qty, 0).toLocaleString('en-IN')}</span><span>Total Frames: ${items.reduce((s, i) => s + i.frame, 0)}</span>`;
+            if (el) el.innerHTML = `<span>Designs: ${items.length}</span><span>Total Stitches/Hrs: ${items.reduce((s, i) => s + i.qty, 0).toLocaleString('en-IN')}</span><span>Total Frames: ${items.reduce((s, i) => s + i.frame, 0)}</span>`;
+            updateLiveBonusPreview();
         }
         function resetAttDesignRows(items) {
             let cont = document.getElementById('h_design_rows'); if (!cont) return; cont.innerHTML = '';
             if (Array.isArray(items) && items.length) items.forEach(it => addAttDesignRow(it.design === '-' ? '' : it.design, it.qty || '', it.frame || ''));
             else addAttDesignRow('', '', '');
+            updateLiveBonusPreview();
         }
         function formatDesignSummaryHtml(a) {
             if (Array.isArray(a.designItems) && a.designItems.length > 1) return a.designItems.map(it => `<span class="inline-block bg-indigo-50 border border-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded text-[10px] mr-1 mb-0.5"><b>${it.design}</b>: ${it.qty}${it.frame ? ' (F:' + it.frame + ')' : ''}</span>`).join('');
             return a.design || '-';
         }
 
+        // ====== LIVE BONUS PREVIEW IN SINGLE ATTENDANCE ======
+        function updateLiveBonusPreview() {
+            let valEl = document.getElementById('h_live_bonus_val'); if (!valEl) return;
+            let w = workers.find(x => x && x.id === document.getElementById('h_worker1')?.value);
+            let status = document.getElementById('h_status')?.value || 'Full';
+            if (!isWorkerMachineType(w) || status === 'Absent') { valEl.innerText = '₹0'; return; }
+            let date = document.getElementById('h_date')?.value || new Date().toISOString().slice(0, 10);
+            let pmObj = getPaymentMode(document.getElementById('h_mode')?.value);
+            let machine = document.getElementById('h_machine')?.value || '';
+            let designItems = readAttDesignRows();
+            let qty = designItems.reduce((s, i) => s + i.qty, 0), frame = designItems.reduce((s, i) => s + i.frame, 0);
+            let designCode = designItems.map(i => i.design).filter(d => d && d !== '-').join(', ') || '-';
+            let customBonus = parseFloat(document.getElementById('h_custom')?.value) || 0;
+            let primaryBonus = calcProductionBonus(pmObj, machine, designCode, qty, frame, date, status, designItems);
+            let extraBonus = 0;
+            if (document.getElementById('h_has_extra')?.checked) {
+                extraBonus = calcProductionBonus(getPaymentMode(document.getElementById('h_extra_mode')?.value), document.getElementById('h_extra_machine')?.value, document.getElementById('h_extra_design')?.value || '-', parseFloat(document.getElementById('h_extra_qty')?.value) || 0, parseFloat(document.getElementById('h_extra_frame')?.value) || 0, date, status);
+            }
+            let tot = primaryBonus + extraBonus + customBonus;
+            valEl.innerText = '₹' + tot.toFixed(0);
+        }
+
+        // ====== WORKER HELPERS & SALARY HISTORY ======
         function getWorkerCode(w) { return (w && w.code) ? w.code : (w ? w.id : '-'); }
         function getWorkerLabel(w) { return w ? `[${getWorkerCode(w)}] ${w.name}` : 'Unknown'; }
         function isWorkerActive(w) { return w && w.isActive !== false; }
@@ -668,6 +926,56 @@
             document.getElementById('salHistModal').classList.add('active');
         }
 
+        // ====== MARK PAGAR PAID & WHATSAPP SHARE ======
+        function markPagarPaid(wId) {
+            if (!checkAdmin()) return;
+            let selM = getSelMonth(), w = workers.find(x => x && x.id === wId); if (!w) return;
+            let wA = attendance.filter(a => a.workerId === wId && a.date.startsWith(selM)), wU = advanceData.filter(u => u.workerId === wId && u.date.startsWith(selM));
+            let net = (calculateEarnedSalary(w, calcEffDays(wA), selM) + wA.reduce((s, a) => s + (a.finalBonus || 0), 0)) - wU.reduce((s, u) => s + (u.amount || 0), 0) + calculatePreviousBalance(w, selM);
+            if (net <= 0) { alert("Is worker ka koi positive pagar baki nahi hai!"); return; }
+            if (!confirm(`${w.name} ko ₹${net.toFixed(0)} Final Pagar Paid mark karein?\nIsse ${getMonthName(selM)} ka hisab ₹0 (Clear) ho jayega.`)) return;
+            let lastDay = selM + '-' + String(getDaysInMonth(selM)).padStart(2, '0');
+            advanceData.push({ id: "U_PAID_" + Date.now(), date: lastDay, workerId: wId, amount: Math.round(net), note: `✅ Final Pagar Paid (${getMonthName(selM)})` });
+            localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
+            showToast(`✅ ${w.name} ka Pagar Paid Mark ho gaya!`);
+            refreshAllData(); syncToSheet();
+        }
+
+        function shareWorkerWhatsApp(wId) {
+            let selM = getSelMonth(), w = workers.find(x => x && x.id === wId); if (!w) return;
+            let wA = attendance.filter(a => a.workerId === wId && a.date.startsWith(selM)), wU = advanceData.filter(u => u.workerId === wId && u.date.startsWith(selM));
+            let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0), prev = calculatePreviousBalance(w, selM), net = (base + bon) - upd + prev;
+            let msg = `*Mahi and Devansh co.*\n*Salary Slip — ${getMonthName(selM)}*\n\nWorker: ${w.name} (${getWorkerCode(w)})\nAttendance: ${eff} Days\nBase Pagar: ₹${base.toFixed(0)}\nTotal Bonus: ₹${bon.toFixed(0)}\nPichla Baki: ₹${prev.toFixed(0)}\nAdvance / Paid: -₹${upd.toFixed(0)}\n------------------\n*Net Payable: ₹${net.toFixed(0)}*`;
+            let phone = (w.mobile || '').replace(/\D/g, '');
+            if (phone.length === 10) phone = '91' + phone;
+            let url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        // ====== EXCEL (CSV) EXPORTS ======
+        function exportSalaryCSV() {
+            let selM = getSelMonth(), rows = [['Worker ID', 'Name', 'Mobile', 'Category', 'Month Rate', 'Days', 'Base Salary', 'Bonus', 'Pichla Baki', 'Advance/Paid', 'Net Payable']];
+            workers.forEach(w => {
+                let wA = attendance.filter(a => a.workerId === w.id && a.date.startsWith(selM)), wU = advanceData.filter(u => u.workerId === w.id && u.date.startsWith(selM));
+                let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0), prev = calculatePreviousBalance(w, selM), net = (base + bon) - upd + prev;
+                rows.push([getWorkerCode(w), w.name, w.mobile || '', w.type || '', getWorkerSalaryForMonth(w, selM), eff, base.toFixed(0), bon.toFixed(0), prev.toFixed(0), upd.toFixed(0), net.toFixed(0)]);
+            });
+            downloadCSV(rows, `MahiAndDevanshCo_Salary_${selM}.csv`);
+        }
+        function exportMachineCSV() {
+            let selM = getSelMonth(), mData = Object.values(buildMachineReportData(selM)).sort((a, b) => a.no.localeCompare(b.no, undefined, { numeric: true }));
+            let rows = [['Machine No', 'Types', 'Total Shifts', 'Total Stitches', 'Total Alter Hrs', 'Total Frames', 'Total Bonus']];
+            mData.forEach(m => rows.push([m.no, Array.from(m.types).join('/'), m.entries.length, m.totalStitches, m.totalAlterHrs, m.totalFrames, m.totalBonus.toFixed(0)]));
+            downloadCSV(rows, `MahiAndDevanshCo_Machine_${selM}.csv`);
+        }
+        function downloadCSV(rows, filename) {
+            let csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+            showToast('Excel (CSV) Downloaded!');
+        }
+
+        // ====== SLABS & CHARTS ======
         function toggleMachineRateMode() {
             let mode = document.getElementById('m_rateMode').value;
             document.getElementById('m_single_rate_box').classList.toggle('hidden', mode === 'slabs');
@@ -705,43 +1013,7 @@
         function syncSliderFromScroll(scrollId, sliderId) { const el = document.getElementById(scrollId), sl = document.getElementById(sliderId); if (el && sl) { sl.max = Math.max(1, el.scrollWidth - el.clientWidth); sl.value = el.scrollLeft; } }
         function nudgeScroll(scrollId, amount) { const el = document.getElementById(scrollId); if (el) el.scrollBy({ left: amount, behavior: 'smooth' }); }
 
-        async function syncToSheet(showNotify = false) {
-            if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
-            setSyncBadge('Saving...', 'text-yellow-300');
-            try {
-                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, updatedAt: new Date().toISOString() };
-                let res = await fetch(getScriptUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-                let result = await res.json();
-                if (result.status === 'ok') { setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Sheet mein data upload ho gaya!'); }
-                else throw new Error(result.message || 'Save failed');
-            } catch (err) { setSyncBadge('🔴 Sync Err', 'text-red-300'); if (showNotify) showToast('Sheet sync fail hua!'); }
-        }
-        async function syncFromSheet(showNotify = false) {
-            if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
-            setSyncBadge('Syncing...', 'text-yellow-300');
-            try {
-                let res = await fetch(getScriptUrl() + '?t=' + Date.now());
-                let result = await res.json();
-                if (result.status === 'ok' && result.data) {
-                    let d = result.data;
-                    if (d.adminPassword) adminPassword = d.adminPassword;
-                    if (d.alterRate !== undefined && !isNaN(parseFloat(d.alterRate))) alterRate = parseFloat(d.alterRate);
-                    if (Array.isArray(d.paymentModes) && d.paymentModes.length) paymentModes = d.paymentModes;
-                    if (Array.isArray(d.machineNumbers) && d.machineNumbers.length) machineNumbers = d.machineNumbers;
-                    if (Array.isArray(d.workerTypes) && d.workerTypes.length) workerTypes = d.workerTypes;
-                    if (Array.isArray(d.workers)) workers = d.workers;
-                    if (Array.isArray(d.designs)) designs = d.designs;
-                    if (Array.isArray(d.machineRules)) machineRules = d.machineRules;
-                    if (Array.isArray(d.attendance)) attendance = d.attendance;
-                    if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
-                    migrateWorkersData(); saveAllLocal(); refreshDropdowns(); renderMasterLists(); refreshAllData();
-                    setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Latest data sync ho gaya!');
-                } else if (result.status === 'empty') {
-                    if (workers.length || attendance.length || advanceData.length) await syncToSheet(showNotify); else setSyncBadge('🟢 Ready', 'text-emerald-300');
-                }
-            } catch (err) { setSyncBadge('🔴 Offline', 'text-red-300'); if (showNotify) showToast('Sheet se connect nahi ho paya!'); }
-        }
-
+        // ====== DATA LOADER & INIT ======
         function getSafeData(key, def) { try { let d = JSON.parse(localStorage.getItem(key)); return Array.isArray(d) ? d.filter(Boolean) : (d || def); } catch(e) { return def; } }
         function migrateWorkersData() {
             let ch = false;
@@ -761,7 +1033,7 @@
             if (rt.length && typeof rt[0] === 'string') workerTypes = rt.map(t => ({ id: "C_" + Math.random().toString(36).substr(2,9), name: t, hasProduction: (t === 'Machine Worker' || t === 'Alter') }));
             else if (rt.length) workerTypes = rt;
             else workerTypes = [{ id: "C_1", name: 'Machine Worker', hasProduction: true }, { id: "C_2", name: 'Alter', hasProduction: true }, { id: "C_3", name: 'Mending', hasProduction: false }, { id: "C_4", name: 'Designer', hasProduction: false }];
-            workers = getSafeData('karkhana_workers', [{ id: "W1", code: "W01", name: "Ramesh Bhai", type: "Machine Worker", fixSalary: 18000, rule: "30Days", isActive: true, salaryHistory: [{ effectiveMonth: '2020-01', updatedDate: '', salary: 18000 }] }]);
+            workers = getSafeData('karkhana_workers', [{ id: "W1", code: "W01", name: "Ramesh Bhai", mobile: "", type: "Machine Worker", fixSalary: 18000, rule: "30Days", isActive: true, salaryHistory: [{ effectiveMonth: '2020-01', updatedDate: '', salary: 18000 }] }]);
             designs = getSafeData('karkhana_designs', []);
             machineRules = getSafeData('karkhana_machineRules', [{ id: 'MR1', name: 'Type 25', rateMode: 'single', min: 185000, rate: 1.75, rateSlabs: [] }]);
             attendance = getSafeData('karkhana_att', []); advanceData = getSafeData('karkhana_upad', []);
@@ -770,6 +1042,7 @@
 
         function initApp() {
             loadDataSafely();
+            checkLoginStatus();
             if (isCloudConfigured()) document.getElementById('sheet_url_input').value = getScriptUrl();
             let today = new Date();
             ['h_date', 'u_date', 'bulk_att_date', 'bulk_upad_date', 'dash_filter_date', 'w_sal_date'].forEach(id => { let el = document.getElementById(id); if (el) el.valueAsDate = today; });
@@ -777,7 +1050,7 @@
             document.getElementById('app_month').value = mStr;
             if (document.getElementById('app_month_mob')) document.getElementById('app_month_mob').value = mStr;
             document.getElementById('w_sal_from').value = mStr;
-            refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); refreshAllData(); showWorkerSummary();
+            refreshDropdowns(); resetAttDesignRows(); resetDesignPartRows(); renderMasterLists(); refreshAllData(); showWorkerSummary();
             document.getElementById('w_code').value = getNextWorkerCode();
             openDashPanel('d_daily');
             syncFromSheet(false);
@@ -816,11 +1089,10 @@
         function filterWorkerSelect(query, selectId) {
             let q = query.toLowerCase();
             document.getElementById(selectId).innerHTML = getActiveWorkers().filter(w => (w.name || '').toLowerCase().includes(q) || getWorkerCode(w).toLowerCase().includes(q)).map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name} (${w.type})</option>`).join('') || '<option value="">No match</option>';
-            if (selectId === 'h_worker1') showWorkerSummary();
+            if (selectId === 'h_worker1') { showWorkerSummary(); updateLiveBonusPreview(); }
         }
         function getMachineNoOptionsHtml(includeBlank = false) { return (includeBlank ? '<option value="">-- M/C No --</option>' : '') + machineNumbers.map(m => m ? `<option value="${m.no}">${m.no}${m.defaultType ? ' (' + m.defaultType + ')' : ''}</option>` : '').join(''); }
         function getMachineOptionsHtml() { return machineRules.map(m => m ? `<option value="${m.name}">${m.name} (${m.rateMode === 'slabs' && m.rateSlabs?.length ? 'Slabs' : '₹' + (m.rate || 0)})</option>` : '').join('') + `<option value="ALTER">ALTER (Hourly - ₹${alterRate}/Hr)</option>`; }
-        function getDesignOptionsHtml() { return `<option value="">Manual</option>` + designs.map(d => d ? `<option value="${d.code}">${d.code} (${d.stitches || 0})</option>` : '').join(''); }
         function autoSelectMachineType(noSelectId, typeSelectId) {
             let noEl = document.getElementById(noSelectId), typeEl = document.getElementById(typeSelectId); if (!noEl || !typeEl) return;
             let mn = machineNumbers.find(m => m && m.no === noEl.value);
@@ -846,11 +1118,27 @@
             let bac = document.getElementById('bulk_att_cat'); if (bac) bac.innerHTML = `<option value="ALL">All Active (${activeW.length})</option>` + tHtml;
         }
 
+        // ====== DAILY PRODUCTION + PENDING HAZIRI ======
         function renderDailyProductionPanel() {
-            let out = document.getElementById('dash_daily_output'); if (!out) return;
-            let dStr = document.getElementById('dash_filter_date').value, onlyNotes = document.getElementById('dash_only_notes').checked;
+            let out = document.getElementById('dash_daily_output'), pendBox = document.getElementById('dash_pending_box'); if (!out) return;
+            let dStr = document.getElementById('dash_filter_date').value, onlyNotes = document.getElementById('dash_only_notes').checked, shiftFilter = document.getElementById('dash_filter_shift')?.value || 'ALL';
             if (!dStr) { out.innerHTML = '<p class="text-xs text-gray-400">Date select karein.</p>'; return; }
-            let dayAtt = attendance.filter(a => a && a.date === dStr);
+
+            let allDayAtt = attendance.filter(a => a && a.date === dStr);
+            let doneIds = new Set(allDayAtt.map(a => a.workerId));
+            let pendingW = getActiveWorkers().filter(w => !doneIds.has(w.id));
+            if (pendBox) {
+                if (pendingW.length > 0) {
+                    pendBox.innerHTML = `<div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900">
+                        <div class="font-bold mb-1.5 flex items-center justify-between"><span><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Pending Haziri (${dStr}): <b>${pendingW.length} Active Workers</b> ki entry abhi baki hai</span></div>
+                        <div class="flex flex-wrap gap-1.5">${pendingW.map(w => `<span class="bg-white border border-amber-300 px-2 py-0.5 rounded font-semibold">[${getWorkerCode(w)}] ${w.name}</span>`).join('')}</div>
+                    </div>`;
+                } else {
+                    pendBox.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-bold text-emerald-800"><i class="fa-solid fa-circle-check mr-1"></i> ${dStr}: Sabhi Active Workers ki Haziri complete hai!</div>`;
+                }
+            }
+
+            let dayAtt = allDayAtt.filter(a => shiftFilter === 'ALL' || (a.shift || 'Day') === shiftFilter);
             if (onlyNotes) dayAtt = dayAtt.filter(a => a.note && a.note !== '-');
             if (!dayAtt.length) { out.innerHTML = `<div class="p-6 text-center text-sm text-gray-400 bg-slate-50 rounded-xl border"><b>${dStr}</b> ko koi ${onlyNotes ? 'Note wali ' : ''}entry nahi mili.</div>`; return; }
 
@@ -861,6 +1149,7 @@
                 if (isM) { if (isAlt) totAlt += (a.qty || 0); else totSt += (a.qty || 0); totFr += (a.frame || 0); }
                 totBon += (a.finalBonus || 0);
                 let hasNote = a.note && a.note !== '-'; if (hasNote) notesCount++;
+                let shBadge = (a.shift || 'Day') === 'Night' ? '<span class="bg-indigo-900 text-yellow-300 px-1.5 py-0.5 rounded text-[10px] font-bold">🌙 Night</span>' : '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded text-[10px] font-bold">☀️ Day</span>';
                 let mDet = !isM ? '<span class="text-gray-400">Fixed Worker</span>' : `${a.machineNo ? `<span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${a.machineNo}</span>` : ''}<b>${a.machine}</b><div class="mt-0.5">${formatDesignSummaryHtml(a)}</div>`;
                 let qDet = !isM ? '-' : `${(a.qty || 0).toLocaleString('en-IN')} ${isAlt ? 'hr' : 'st'}`, fDet = !isM ? '-' : (a.frame || 0);
                 if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') {
@@ -871,10 +1160,10 @@
                     fDet += `<div class="text-[11px] text-amber-700 font-semibold mt-1">${a.extraFrame || 0}</div>`;
                 }
                 let noteCell = hasNote ? `<span class="inline-block bg-red-50 border border-red-200 text-red-700 px-2 py-1 rounded-md font-semibold text-xs">${a.note}</span>` : '<span class="text-gray-300">-</span>';
-                return `<tr class="border-b hover:bg-slate-50 ${hasNote ? 'bg-red-50/20' : ''}"><td class="p-3 font-semibold">${wLbl}</td><td class="p-3 font-bold ${a.status==='Absent'?'text-red-600':(a.status==='Half'?'text-amber-600':'text-emerald-700')}">${a.status}</td><td class="p-3 text-xs">${mDet}</td><td class="p-3 text-right font-bold">${qDet}</td><td class="p-3 text-right">${fDet}</td><td class="p-3">${noteCell}</td><td class="p-3 text-right font-bold text-emerald-600">₹${(a.finalBonus || 0).toFixed(0)}</td></tr>`;
+                return `<tr class="border-b hover:bg-slate-50 ${hasNote ? 'bg-red-50/20' : ''}"><td class="p-3 font-semibold">${wLbl}<div class="mt-0.5">${shBadge}</div></td><td class="p-3 font-bold ${a.status==='Absent'?'text-red-600':(a.status==='Half'?'text-amber-600':'text-emerald-700')}">${a.status}</td><td class="p-3 text-xs">${mDet}</td><td class="p-3 text-right font-bold">${qDet}</td><td class="p-3 text-right">${fDet}</td><td class="p-3">${noteCell}</td><td class="p-3 text-right font-bold text-emerald-600">₹${(a.finalBonus || 0).toFixed(0)}</td></tr>`;
             }).join('');
 
-            out.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4"><div class="p-3 bg-indigo-50 rounded-xl border border-indigo-200"><div class="text-[11px] font-bold text-indigo-700">Present (${dStr})</div><div class="text-xl font-black text-indigo-900">${dayAtt.filter(a=>a.status!=='Absent').length} / ${dayAtt.length}</div></div><div class="p-3 bg-teal-50 rounded-xl border border-teal-200"><div class="text-[11px] font-bold text-teal-700">Total Stitches</div><div class="text-xl font-black text-teal-900">${totSt.toLocaleString('en-IN')}${totAlt>0?` (+${totAlt}hr)`:''}</div></div><div class="p-3 bg-sky-50 rounded-xl border border-sky-200"><div class="text-[11px] font-bold text-sky-700">Total Frames</div><div class="text-xl font-black text-sky-900">${totFr}</div></div><div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200"><div class="text-[11px] font-bold text-emerald-700">Day Bonus</div><div class="text-xl font-black text-emerald-800">₹${totBon.toFixed(0)}</div></div><div class="p-3 bg-red-50 rounded-xl border border-red-200"><div class="text-[11px] font-bold text-red-700">Notes</div><div class="text-xl font-black text-red-700">${notesCount}</div></div></div><div class="overflow-x-auto max-h-[65vh] border rounded-xl"><table class="w-full text-left text-xs md:text-sm border-collapse min-w-[780px]"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-3 border-b">Worker (ID)</th><th class="p-3 border-b">Status</th><th class="p-3 border-b">Machine & Designs</th><th class="p-3 border-b text-right">Stitches/Hrs</th><th class="p-3 border-b text-right">Frame</th><th class="p-3 border-b text-red-700">Remarks / Notes</th><th class="p-3 border-b text-right">Bonus</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+            out.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4"><div class="p-3 bg-indigo-50 rounded-xl border border-indigo-200"><div class="text-[11px] font-bold text-indigo-700">Present (${dStr})</div><div class="text-xl font-black text-indigo-900">${dayAtt.filter(a=>a.status!=='Absent').length} / ${dayAtt.length}</div></div><div class="p-3 bg-teal-50 rounded-xl border border-teal-200"><div class="text-[11px] font-bold text-teal-700">Total Stitches</div><div class="text-xl font-black text-teal-900">${totSt.toLocaleString('en-IN')}${totAlt>0?` (+${totAlt}hr)`:''}</div></div><div class="p-3 bg-sky-50 rounded-xl border border-sky-200"><div class="text-[11px] font-bold text-sky-700">Total Frames</div><div class="text-xl font-black text-sky-900">${totFr}</div></div><div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200"><div class="text-[11px] font-bold text-emerald-700">Day Bonus</div><div class="text-xl font-black text-emerald-800">₹${totBon.toFixed(0)}</div></div><div class="p-3 bg-red-50 rounded-xl border border-red-200"><div class="text-[11px] font-bold text-red-700">Notes</div><div class="text-xl font-black text-red-700">${notesCount}</div></div></div><div class="overflow-x-auto max-h-[65vh] border rounded-xl"><table class="w-full text-left text-xs md:text-sm border-collapse min-w-[780px]"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-3 border-b">Worker & Shift</th><th class="p-3 border-b">Status</th><th class="p-3 border-b">Machine & Designs</th><th class="p-3 border-b text-right">Stitches/Hrs</th><th class="p-3 border-b text-right">Frame</th><th class="p-3 border-b text-red-700">Remarks / Notes</th><th class="p-3 border-b text-right">Bonus</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
         }
 
         function renderWorkerSearchPanel() {
@@ -893,7 +1182,7 @@
                     if (a.machine && a.machine !== 'NONE') { if (isAlt) wAlt += (a.qty || 0); else wSt += (a.qty || 0); wFr += (a.frame || 0); }
                     if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') { let eAlt = (a.extraMachine === 'ALTER' || getPaymentMode(a.extraMode).bonusType === 'alter'); if (eAlt) wAlt += (a.extraQty || 0); else wSt += (a.extraQty || 0); wFr += (a.extraFrame || 0); }
                 });
-                return `<div class="border border-indigo-200 rounded-xl p-4 mb-4 bg-indigo-50/20"><div class="flex flex-wrap justify-between items-center gap-2 mb-3"><div><span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-xs font-bold mr-1.5">${getWorkerCode(w)}</span><span class="font-bold text-lg">${w.name}</span></div><div class="text-xs font-bold text-indigo-800">Month Rate: ₹${getWorkerSalaryForMonth(w, selM)}</div></div><div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3"><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Stitches</div><div class="text-sm font-black text-teal-800">${wSt.toLocaleString('en-IN')}${wAlt>0?` (+${wAlt}hr)`:''}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Frames</div><div class="text-sm font-black text-sky-800">${wFr}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Days & Base</div><div class="text-sm font-black text-indigo-800">${eff}d (₹${base.toFixed(0)})</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Bonus</div><div class="text-sm font-black text-emerald-700">₹${bon.toFixed(0)}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Month Upad</div><div class="text-sm font-black text-red-600">₹${upd.toFixed(0)}</div></div></div><div class="overflow-x-auto max-h-64 border rounded-lg bg-white"><table class="w-full text-left text-xs border-collapse"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 border-b">Date</th><th class="p-2 border-b">Status</th><th class="p-2 border-b">M/C & Designs</th><th class="p-2 border-b text-right">Qty</th><th class="p-2 border-b text-right">Frame</th><th class="p-2 border-b text-red-600">Note</th><th class="p-2 border-b text-right">Bonus</th></tr></thead><tbody>${wA.length ? wA.map(a => { let isM = (a.machine && a.machine !== 'NONE'); return `<tr class="border-b"><td class="p-2">${a.date}</td><td class="p-2 font-bold">${a.status}</td><td class="p-2">${!isM?'Fixed':`${a.machineNo?'['+a.machineNo+'] ':''}${a.machine}: ${formatDesignSummaryHtml(a)}`}</td><td class="p-2 text-right font-bold">${isM?(a.qty||0).toLocaleString('en-IN'):'-'}</td><td class="p-2 text-right">${isM?(a.frame||0):'-'}</td><td class="p-2 text-red-600 font-semibold">${a.note!=='-'?a.note:'-'}</td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`; }).join('') : '<tr><td colspan="7" class="p-3 text-center text-gray-400">No entries.</td></tr>'}</tbody></table></div></div>`;
+                return `<div class="border border-indigo-200 rounded-xl p-4 mb-4 bg-indigo-50/20"><div class="flex flex-wrap justify-between items-center gap-2 mb-3"><div><span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-xs font-bold mr-1.5">${getWorkerCode(w)}</span><span class="font-bold text-lg">${w.name}</span></div><div class="text-xs font-bold text-indigo-800">Month Rate: ₹${getWorkerSalaryForMonth(w, selM)}</div></div><div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3"><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Stitches</div><div class="text-sm font-black text-teal-800">${wSt.toLocaleString('en-IN')}${wAlt>0?` (+${wAlt}hr)`:''}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Frames</div><div class="text-sm font-black text-sky-800">${wFr}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Days & Base</div><div class="text-sm font-black text-indigo-800">${eff}d (₹${base.toFixed(0)})</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Bonus</div><div class="text-sm font-black text-emerald-700">₹${bon.toFixed(0)}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Month Upad</div><div class="text-sm font-black text-red-600">₹${upd.toFixed(0)}</div></div></div><div class="overflow-x-auto max-h-64 border rounded-lg bg-white"><table class="w-full text-left text-xs border-collapse"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 border-b">Date & Shift</th><th class="p-2 border-b">Status</th><th class="p-2 border-b">M/C & Designs</th><th class="p-2 border-b text-right">Qty</th><th class="p-2 border-b text-right">Frame</th><th class="p-2 border-b text-red-600">Note</th><th class="p-2 border-b text-right">Bonus</th></tr></thead><tbody>${wA.length ? wA.map(a => { let isM = (a.machine && a.machine !== 'NONE'); return `<tr class="border-b"><td class="p-2">${a.date} <span class="text-[10px] text-gray-500">(${a.shift||'Day'})</span></td><td class="p-2 font-bold">${a.status}</td><td class="p-2">${!isM?'Fixed':`${a.machineNo?'['+a.machineNo+'] ':''}${a.machine}: ${formatDesignSummaryHtml(a)}`}</td><td class="p-2 text-right font-bold">${isM?(a.qty||0).toLocaleString('en-IN'):'-'}</td><td class="p-2 text-right">${isM?(a.frame||0):'-'}</td><td class="p-2 text-red-600 font-semibold">${a.note!=='-'?a.note:'-'}</td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`; }).join('') : '<tr><td colspan="7" class="p-3 text-center text-gray-400">No entries.</td></tr>'}</tbody></table></div></div>`;
             }).join('');
         }
 
@@ -919,7 +1208,7 @@
                 let pm = getPaymentMode(a.mode), unit = (a.machine === 'ALTER' || pm.bonusType === 'alter') ? 'hr' : 'st';
                 let det = (!isM || a.machine === 'NONE') ? 'Fixed Salary Worker' : `${a.machineNo?`<span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${a.machineNo}</span>`:''}<b>${a.machine}</b> (${a.qty||0} ${unit}) <div class="mt-0.5">${formatDesignSummaryHtml(a)}</div>`;
                 if (a.hasExtraMachine && a.extraMachine) det += `<div class="text-[11px] text-amber-700 font-semibold mt-0.5">+ Extra: ${a.extraMachineNo?'['+a.extraMachineNo+'] ':''}${a.extraMachine}/${a.extraDesign||'-'} (${a.extraQty||0})</div>`;
-                return `<tr class="border-b hover:bg-slate-50"><td class="p-3">${a.date}</td><td class="p-3 font-bold">${a.status}</td><td class="p-3 text-xs text-gray-600">${det}</td><td class="p-3 text-red-500 text-xs font-semibold">${a.note!=='-'?a.note:''}</td><td class="p-3 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td><td class="p-3 text-center whitespace-nowrap"><button type="button" onclick="triggerEditAttendance('${a.id}')" class="text-indigo-600 mr-3"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAttendance('${a.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                return `<tr class="border-b hover:bg-slate-50"><td class="p-3">${a.date} <span class="text-[10px] text-gray-500">(${a.shift||'Day'})</span></td><td class="p-3 font-bold">${a.status}</td><td class="p-3 text-xs text-gray-600">${det}</td><td class="p-3 text-red-500 text-xs font-semibold">${a.note!=='-'?a.note:''}</td><td class="p-3 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td><td class="p-3 text-center whitespace-nowrap"><button type="button" onclick="triggerEditAttendance('${a.id}')" class="text-indigo-600 mr-3"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAttendance('${a.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             }).join('');
         }
 
@@ -930,7 +1219,7 @@
             if (tabId === 'dashboard') openDashPanel(currentDashPanel);
             if (tabId === 'advance') { renderAdvanceStatement(); if (!document.getElementById('upad_bulk_view').classList.contains('hidden')) renderBulkUpadTable(); }
             if (tabId === 'reports') setReportType(currentReportType);
-            if (tabId === 'attendance') { showWorkerSummary(); if (!document.getElementById('att_bulk_view').classList.contains('hidden')) renderBulkAttendanceTable(); }
+            if (tabId === 'attendance') { showWorkerSummary(); updateLiveBonusPreview(); if (!document.getElementById('att_bulk_view').classList.contains('hidden')) renderBulkAttendanceTable(); }
         }
         function openMaster(panelId) { document.querySelectorAll('.master-panel').forEach(p => p.style.display = 'none'); document.getElementById(panelId).style.display = 'block'; }
 
@@ -960,12 +1249,19 @@
             return (baseAuto * (pmObj.bonusMult ?? 1)) + (parseFloat(pmObj.flatBonus) || 0);
         }
 
+        // ====== SINGLE ATTENDANCE SAVE (WITH DUPLICATE WARNING & SHIFT) ======
         function saveAttendance(e) {
             e.preventDefault();
             let editId = document.getElementById('h_edit_id').value, status = document.getElementById('h_status').value, note = document.getElementById('h_note').value.trim();
             if ((status === 'Half' || status === 'Absent') && (!note || note === '-')) { alert("Please enter Remarks for Half Day or Absent!"); return; }
             if (!note) note = "-";
-            let date = document.getElementById('h_date').value, customBonus = parseFloat(document.getElementById('h_custom').value) || 0, w1 = document.getElementById('h_worker1').value, isM = toggleMachineFields();
+            let date = document.getElementById('h_date').value, shift = document.getElementById('h_shift').value || 'Day', customBonus = parseFloat(document.getElementById('h_custom').value) || 0, w1 = document.getElementById('h_worker1').value, isM = toggleMachineFields();
+
+            if (!editId) {
+                let isDup = attendance.some(a => a && a.workerId === w1 && a.date === date && (a.shift || 'Day') === shift);
+                if (isDup && !confirm(`⚠️ Warning: Is worker ki ${date} (${shift} Shift) ki Haziri pehle se save hai!\nKya aap phir bhi dobara save karna chahte hain?`)) return;
+            }
+
             let mode = 'Normal', machineNo = '', machine = 'NONE', designCode = '-', qty = 0, frame = 0, designItems = [], hasExtraMachine = false, extraMode = '', extraMachineNo = '', extraMachine = '', extraDesign = '-', extraQty = 0, extraFrame = 0, extraBonus = 0, primaryBonus = 0, pmObj = getPaymentMode('Normal');
 
             if (isM) {
@@ -984,7 +1280,7 @@
                     extraBonus = calcProductionBonus(extraPmObj, extraMachine, extraDesign, extraQty, extraFrame, date, status);
                 }
             }
-            let baseEntry = { id: editId || "A_" + Date.now(), date, status, mode, machineNo, machine, design: designCode, designItems, frame, qty, customBonus, note, hasExtraMachine, extraMode, extraMachineNo, extraMachine, extraDesign, extraQty, extraFrame, extraBonus };
+            let baseEntry = { id: editId || "A_" + Date.now(), date, shift, status, mode, machineNo, machine, design: designCode, designItems, frame, qty, customBonus, note, hasExtraMachine, extraMode, extraMachineNo, extraMachine, extraDesign, extraQty, extraFrame, extraBonus };
             if (editId) { attendance = attendance.filter(a => a.id !== editId); attendance.push({ ...baseEntry, workerId: w1, finalBonus: primaryBonus + extraBonus + customBonus }); showToast("Updated!"); }
             else if (pmObj.isShared && isM) { let w2 = document.getElementById('h_worker2').value, sc = customBonus / 2, se = extraBonus / 2, st = primaryBonus + se + sc; attendance.push({ ...baseEntry, workerId: w1, customBonus: sc, extraBonus: se, finalBonus: st }, { ...baseEntry, id: "A_" + (Date.now() + 1), workerId: w2, customBonus: sc, extraBonus: se, finalBonus: st }); showToast("Saved (50-50)!"); }
             else { attendance.push({ ...baseEntry, workerId: w1, finalBonus: primaryBonus + extraBonus + customBonus }); showToast("Saved!"); }
@@ -993,7 +1289,7 @@
 
         function triggerEditAttendance(id) {
             if (!checkAdmin()) return; let a = attendance.find(x => x && x.id === id); if (!a) return;
-            switchAttMode('single'); document.getElementById('h_edit_id').value = a.id; document.getElementById('h_date').value = a.date; document.getElementById('h_status').value = a.status || 'Full';
+            switchAttMode('single'); document.getElementById('h_edit_id').value = a.id; document.getElementById('h_date').value = a.date; document.getElementById('h_shift').value = a.shift || 'Day'; document.getElementById('h_status').value = a.status || 'Full';
             let wSel = document.getElementById('h_worker1'); if (!Array.from(wSel.options).some(o => o.value === a.workerId)) { let wObj = workers.find(x => x.id === a.workerId); if (wObj) { let opt = document.createElement('option'); opt.value = wObj.id; opt.text = getWorkerLabel(wObj); wSel.appendChild(opt); } }
             wSel.value = a.workerId; document.getElementById('h_mode').value = a.mode || 'Normal'; if (a.machineNo) document.getElementById('h_machine_no').value = a.machineNo;
             document.getElementById('h_machine').value = a.machine === 'NONE' ? '' : a.machine; document.getElementById('h_custom').value = a.customBonus || 0; document.getElementById('h_note').value = a.note === '-' ? '' : a.note;
@@ -1001,23 +1297,33 @@
             document.getElementById('h_has_extra').checked = !!a.hasExtraMachine;
             if (a.hasExtraMachine) { if (a.extraMode) document.getElementById('h_extra_mode').value = a.extraMode; if (a.extraMachineNo) document.getElementById('h_extra_machine_no').value = a.extraMachineNo; if (a.extraMachine) document.getElementById('h_extra_machine').value = a.extraMachine; document.getElementById('h_extra_design').value = (!a.extraDesign || a.extraDesign === '-') ? '' : a.extraDesign; document.getElementById('h_extra_qty').value = a.extraQty || ''; document.getElementById('h_extra_frame').value = a.extraFrame || ''; }
             document.getElementById('h_btn_save').innerText = "Update Entry"; document.getElementById('h_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('h_btn_cancel').classList.remove('hidden');
-            toggleMachineFields(); toggleWorker2(); toggleExtraMachineBox(); window.scrollTo({ top: 0, behavior: 'smooth' });
+            toggleMachineFields(); toggleWorker2(); toggleExtraMachineBox(); updateLiveBonusPreview(); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         function deleteAttendance(id) { if (!checkAdmin() || !confirm("Delete Entry?")) return; let kw = document.getElementById('h_worker1').value; attendance = attendance.filter(a => a && a.id !== id); localStorage.setItem('karkhana_att', JSON.stringify(attendance)); if (document.getElementById('h_edit_id').value === id) cancelEditAttendance(kw); showToast("Deleted!"); refreshAllData(); syncToSheet(); }
-        function cancelEditAttendance(keepWorkerId) { document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date(); document.getElementById('h_has_extra').checked = false; refreshDropdowns(); resetAttDesignRows(); if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId; document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('h_btn_cancel').classList.add('hidden'); toggleMachineFields(); toggleExtraMachineBox(); }
+        function cancelEditAttendance(keepWorkerId) { document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date(); document.getElementById('h_has_extra').checked = false; refreshDropdowns(); resetAttDesignRows(); if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId; document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('h_btn_cancel').classList.add('hidden'); toggleMachineFields(); toggleExtraMachineBox(); updateLiveBonusPreview(); }
 
+        // ====== BULK ATTENDANCE (WITH SHIFT + DESIGN NO. & PART) ======
         function switchAttMode(mode) { let s = document.getElementById('att_single_view'), b = document.getElementById('att_bulk_view'), bs = document.getElementById('btn_att_single'), bb = document.getElementById('btn_att_bulk'); if (mode === 'bulk') { s.classList.add('hidden'); b.classList.remove('hidden'); bb.classList.add('bg-indigo-600','text-white'); bb.classList.remove('text-slate-600'); bs.classList.remove('bg-indigo-600','text-white'); bs.classList.add('text-slate-600'); renderBulkAttendanceTable(); } else { b.classList.add('hidden'); s.classList.remove('hidden'); bs.classList.add('bg-indigo-600','text-white'); bs.classList.remove('text-slate-600'); bb.classList.remove('bg-indigo-600','text-white'); bb.classList.add('text-slate-600'); showWorkerSummary(); } }
         function renderBulkAttendanceTable() {
+            updateBaseDesignDatalist();
             let tbody = document.getElementById('bulk_att_body'); if (!tbody) return;
-            let dateStr = document.getElementById('bulk_att_date').value || new Date().toISOString().slice(0, 10), cat = document.getElementById('bulk_att_cat').value || 'ALL', list = getActiveWorkers().filter(w => cat === 'ALL' || w.type === cat);
-            if (!list.length) { tbody.innerHTML = '<tr><td colspan="12" class="p-4 text-center text-gray-400">No active workers.</td></tr>'; updateBulkSelectedCount(); return; }
-            let bm = paymentModes.filter(pm => pm && !pm.isShared), pmOpts = (bm.length ? bm : paymentModes).map(pm => `<option value="${pm.id}">${pm.name}</option>`).join(''), mnOpts = getMachineNoOptionsHtml(false) || '<option value="-">-</option>', machOpts = getMachineOptionsHtml(), desOpts = getDesignOptionsHtml();
+            let dateStr = document.getElementById('bulk_att_date').value || new Date().toISOString().slice(0, 10), shift = document.getElementById('bulk_att_shift')?.value || 'Day', cat = document.getElementById('bulk_att_cat').value || 'ALL', list = getActiveWorkers().filter(w => cat === 'ALL' || w.type === cat);
+            if (!list.length) { tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-center text-gray-400">No active workers.</td></tr>'; updateBulkSelectedCount(); return; }
+            let bm = paymentModes.filter(pm => pm && !pm.isShared), pmOpts = (bm.length ? bm : paymentModes).map(pm => `<option value="${pm.id}">${pm.name}</option>`).join(''), mnOpts = getMachineNoOptionsHtml(false) || '<option value="-">-</option>', machOpts = getMachineOptionsHtml();
             tbody.innerHTML = list.map(w => {
-                let isM = isWorkerMachineType(w), exists = attendance.some(a => a.workerId === w.id && a.date === dateStr), key = `${getWorkerCode(w)} ${w.name}`.toLowerCase(), badge = exists ? '<span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 rounded">✓ Saved</span>' : '';
-                if (!isM) return `<tr class="bulk-att-row ${exists?'bg-emerald-50/40':''}" data-wid="${w.id}" data-wname="${key}" data-ismach="false"><td class="p-2 text-center"><input type="checkbox" class="b-chk w-4 h-4 accent-indigo-600" ${!exists?'checked':''} onchange="updateBulkSelectedCount()"></td><td class="p-2 font-bold"><span class="text-indigo-600 text-[10px]">[${getWorkerCode(w)}]</span> ${w.name} ${badge}</td><td class="p-2"><select class="b-status w-full border p-1.5 rounded bg-indigo-50 font-bold" onchange="onBulkRowChange(this)"><option value="Full">Full</option><option value="Half">Half</option><option value="Absent">Absent</option></select></td><td colspan="7" class="p-2 text-center text-slate-400 italic">Fixed Worker</td><td class="p-2"><input type="text" class="b-note w-full border p-1.5 rounded bg-red-50/40" placeholder="Note..."></td><td class="p-2 text-right font-bold text-emerald-600">₹0</td></tr>`;
-                return `<tr class="bulk-att-row ${exists?'bg-emerald-50/40':''}" data-wid="${w.id}" data-wname="${key}" data-ismach="true"><td class="p-2 text-center"><input type="checkbox" class="b-chk w-4 h-4 accent-indigo-600" onchange="updateBulkSelectedCount()"></td><td class="p-2 font-bold"><span class="text-indigo-600 text-[10px]">[${getWorkerCode(w)}]</span> ${w.name} ${badge}</td><td class="p-2"><select class="b-status w-full border p-1.5 rounded bg-indigo-50 font-bold" onchange="onBulkRowChange(this,true)"><option value="Full">Full</option><option value="Half">Half</option><option value="Absent">Absent</option></select></td><td class="p-2"><select class="b-mode w-full border p-1.5 rounded bg-white" onchange="onBulkRowChange(this)">${pmOpts}</select></td><td class="p-2"><select class="b-machno w-full border border-teal-300 p-1.5 rounded bg-teal-50 font-bold" onchange="onBulkMachNoChange(this)">${mnOpts}</select></td><td class="p-2"><select class="b-machine w-full border p-1.5 rounded bg-white" onchange="onBulkRowChange(this)">${machOpts}</select></td><td class="p-2"><select class="b-design w-full border p-1.5 rounded bg-white" onchange="onBulkDesignChange(this)">${desOpts}</select></td><td class="p-2"><input type="number" step="any" class="b-qty w-full border p-1.5 rounded bg-white font-bold" placeholder="0" oninput="onBulkRowChange(this,true)"></td><td class="p-2"><input type="number" class="b-frame w-full border p-1.5 rounded bg-white" placeholder="0" oninput="onBulkRowChange(this)"></td><td class="p-2"><input type="number" class="b-custom w-full border p-1.5 rounded bg-emerald-50" value="0" oninput="onBulkRowChange(this)"></td><td class="p-2"><input type="text" class="b-note w-full border p-1.5 rounded bg-red-50/40" placeholder="Note..."></td><td class="p-2 text-right font-bold text-emerald-600 b-est">₹0</td></tr>`;
+                let isM = isWorkerMachineType(w), exists = attendance.some(a => a.workerId === w.id && a.date === dateStr && (a.shift || 'Day') === shift), key = `${getWorkerCode(w)} ${w.name}`.toLowerCase(), badge = exists ? '<span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-bold px-1.5 rounded">✓ Saved</span>' : '';
+                if (!isM) return `<tr class="bulk-att-row ${exists?'bg-emerald-50/40':''}" data-wid="${w.id}" data-wname="${key}" data-ismach="false"><td class="p-2 text-center"><input type="checkbox" class="b-chk w-4 h-4 accent-indigo-600" ${!exists?'checked':''} onchange="updateBulkSelectedCount()"></td><td class="p-2 font-bold"><span class="text-indigo-600 text-[10px]">[${getWorkerCode(w)}]</span> ${w.name} ${badge}</td><td class="p-2"><select class="b-status w-full border p-1.5 rounded bg-indigo-50 font-bold" onchange="onBulkRowChange(this)"><option value="Full">Full</option><option value="Half">Half</option><option value="Absent">Absent</option></select></td><td colspan="8" class="p-2 text-center text-slate-400 italic">Fixed Worker</td><td class="p-2"><input type="text" class="b-note w-full border p-1.5 rounded bg-red-50/40" placeholder="Note..."></td><td class="p-2 text-right font-bold text-emerald-600">₹0</td></tr>`;
+                return `<tr class="bulk-att-row ${exists?'bg-emerald-50/40':''}" data-wid="${w.id}" data-wname="${key}" data-ismach="true"><td class="p-2 text-center"><input type="checkbox" class="b-chk w-4 h-4 accent-indigo-600" onchange="updateBulkSelectedCount()"></td><td class="p-2 font-bold"><span class="text-indigo-600 text-[10px]">[${getWorkerCode(w)}]</span> ${w.name} ${badge}</td><td class="p-2"><select class="b-status w-full border p-1.5 rounded bg-indigo-50 font-bold" onchange="onBulkRowChange(this,true)"><option value="Full">Full</option><option value="Half">Half</option><option value="Absent">Absent</option></select></td><td class="p-2"><select class="b-mode w-full border p-1.5 rounded bg-white" onchange="onBulkRowChange(this)">${pmOpts}</select></td><td class="p-2"><select class="b-machno w-full border border-teal-300 p-1.5 rounded bg-teal-50 font-bold" onchange="onBulkMachNoChange(this)">${mnOpts}</select></td><td class="p-2"><select class="b-machine w-full border p-1.5 rounded bg-white" onchange="onBulkRowChange(this)">${machOpts}</select></td><td class="p-2"><input type="text" list="att_base_designs_list" class="b-base w-full border border-indigo-200 p-1.5 rounded bg-white font-bold" placeholder="1370" oninput="onBulkBaseInput(this)"></td><td class="p-2"><select class="b-design w-full border border-emerald-200 p-1.5 rounded bg-white font-bold" onchange="onBulkDesignChange(this)"><option value="">Manual</option></select></td><td class="p-2"><input type="number" step="any" class="b-qty w-full border p-1.5 rounded bg-white font-bold" placeholder="0" oninput="onBulkRowChange(this,true)"></td><td class="p-2"><input type="number" class="b-frame w-full border p-1.5 rounded bg-white" placeholder="0" oninput="onBulkRowChange(this)"></td><td class="p-2"><input type="number" class="b-custom w-full border p-1.5 rounded bg-emerald-50" value="0" oninput="onBulkRowChange(this)"></td><td class="p-2"><input type="text" class="b-note w-full border p-1.5 rounded bg-red-50/40" placeholder="Note..."></td><td class="p-2 text-right font-bold text-emerald-600 b-est">₹0</td></tr>`;
             }).join('');
             updateBulkSelectedCount();
+        }
+        function onBulkBaseInput(inpEl) {
+            let tr = inpEl.closest('tr'), sel = tr.querySelector('.b-design'), base = inpEl.value.trim();
+            if (!base) { sel.innerHTML = '<option value="">Manual</option>'; onBulkRowChange(inpEl); return; }
+            let matches = designs.filter(d => d && d.code && getBaseDesignCode(d.code).toLowerCase() === base.toLowerCase());
+            if (!matches.length) { sel.innerHTML = `<option value="${base}">${base}</option>`; onBulkRowChange(inpEl); return; }
+            sel.innerHTML = (matches.length > 1 ? '<option value="">--Part--</option>' : '') + matches.map(d => { let i = d.code.indexOf('-'), lbl = i > 0 ? d.code.substring(i + 1) : 'Plain'; return `<option value="${d.code}" ${matches.length===1?'selected':''}>${lbl} (${d.stitches})</option>`; }).join('');
+            if (matches.length === 1) { tr.querySelector('.b-qty').value = matches[0].stitches; onBulkRowChange(inpEl, true); }
         }
         function onBulkMachNoChange(sel) { let tr = sel.closest('tr'), mn = machineNumbers.find(m => m && m.no === sel.value); if (mn && mn.defaultType) { let ms = tr.querySelector('.b-machine'); if (ms && Array.from(ms.options).some(o => o.value === mn.defaultType)) ms.value = mn.defaultType; } onBulkRowChange(sel); }
         function filterBulkAttRows(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#bulk_att_body .bulk-att-row').forEach(tr => tr.style.display = (tr.dataset.wname || '').includes(q) ? '' : 'none'); }
@@ -1032,19 +1338,19 @@
         function bulkToggleSelectAll(c) { document.querySelectorAll('#bulk_att_body .bulk-att-row').forEach(tr => { if (tr.style.display !== 'none') tr.querySelector('.b-chk').checked = c; }); updateBulkSelectedCount(); }
         function updateBulkSelectedCount() { let b = document.getElementById('bulk_att_count_badge'); if (b) b.innerText = 'Selected: ' + document.querySelectorAll('#bulk_att_body .b-chk:checked').length; }
         function saveBulkAttendance() {
-            let date = document.getElementById('bulk_att_date').value; if (!date) { alert("Date select karein!"); return; }
+            let date = document.getElementById('bulk_att_date').value, shift = document.getElementById('bulk_att_shift')?.value || 'Day'; if (!date) { alert("Date select karein!"); return; }
             let entries = [], errs = [], ts = Date.now();
             document.querySelectorAll('#bulk_att_body .bulk-att-row').forEach((tr, i) => {
                 if (!tr.querySelector('.b-chk').checked) return;
                 let wId = tr.dataset.wid, w = workers.find(x => x.id === wId), isM = tr.dataset.ismach === 'true', status = tr.querySelector('.b-status').value, note = (tr.querySelector('.b-note').value || '').trim();
                 if ((status === 'Half' || status === 'Absent') && (!note || note === '-')) { errs.push(`${getWorkerLabel(w)}: Remarks likhein.`); return; }
                 if (!note) note = '-';
-                if (!isM) entries.push({ id: `A_${ts}_${i}`, workerId: wId, date, status, mode: 'Normal', machineNo: '', machine: 'NONE', design: '-', designItems: [], frame: 0, qty: 0, customBonus: 0, note, finalBonus: 0, hasExtraMachine: false });
+                if (!isM) entries.push({ id: `A_${ts}_${i}`, workerId: wId, date, shift, status, mode: 'Normal', machineNo: '', machine: 'NONE', design: '-', designItems: [], frame: 0, qty: 0, customBonus: 0, note, finalBonus: 0, hasExtraMachine: false });
                 else {
-                    let mode = tr.querySelector('.b-mode').value, pmObj = getPaymentMode(mode), machineNo = tr.querySelector('.b-machno').value || '', machine = tr.querySelector('.b-machine').value, design = tr.querySelector('.b-design').value || '-', qty = parseFloat(tr.querySelector('.b-qty').value) || 0, frame = parseFloat(tr.querySelector('.b-frame').value) || 0, customBonus = parseFloat(tr.querySelector('.b-custom').value) || 0;
+                    let mode = tr.querySelector('.b-mode').value, pmObj = getPaymentMode(mode), machineNo = tr.querySelector('.b-machno').value || '', machine = tr.querySelector('.b-machine').value, baseVal = (tr.querySelector('.b-base')?.value || '').trim(), design = tr.querySelector('.b-design').value || baseVal || '-', qty = parseFloat(tr.querySelector('.b-qty').value) || 0, frame = parseFloat(tr.querySelector('.b-frame').value) || 0, customBonus = parseFloat(tr.querySelector('.b-custom').value) || 0;
                     if ((pmObj.bonusType === 'stitch' || pmObj.bonusType === 'alter' || machine === 'ALTER') && !qty && status !== 'Absent') { errs.push(`${getWorkerLabel(w)}: Stitches/Hrs dalein.`); return; }
                     let bon = calcProductionBonus(pmObj, machine, design, qty, frame, date, status) + customBonus;
-                    entries.push({ id: `A_${ts}_${i}`, workerId: wId, date, status, mode, machineNo, machine, design, designItems: [{ design, qty, frame }], frame, qty, customBonus, note, finalBonus: bon, hasExtraMachine: false });
+                    entries.push({ id: `A_${ts}_${i}`, workerId: wId, date, shift, status, mode, machineNo, machine, design, designItems: [{ design, qty, frame }], frame, qty, customBonus, note, finalBonus: bon, hasExtraMachine: false });
                 }
             });
             if (errs.length) { alert(errs.slice(0, 6).join('\n')); return; }
@@ -1052,6 +1358,7 @@
             attendance.push(...entries); localStorage.setItem('karkhana_att', JSON.stringify(attendance)); showToast(`✅ ${entries.length} Saved!`); renderBulkAttendanceTable(); refreshAllData(); syncToSheet();
         }
 
+        // ====== UPAD ======
         function switchUpadMode(mode) { let s = document.getElementById('upad_single_view'), b = document.getElementById('upad_bulk_view'), bs = document.getElementById('btn_upad_single'), bb = document.getElementById('btn_upad_bulk'); if (mode === 'bulk') { s.classList.add('hidden'); b.classList.remove('hidden'); bb.classList.add('bg-amber-500','text-white'); bb.classList.remove('text-slate-600'); bs.classList.remove('bg-amber-500','text-white'); bs.classList.add('text-slate-600'); renderBulkUpadTable(); } else { b.classList.add('hidden'); s.classList.remove('hidden'); bs.classList.add('bg-amber-500','text-white'); bs.classList.remove('text-slate-600'); bb.classList.remove('bg-amber-500','text-white'); bb.classList.add('text-slate-600'); } }
         function renderBulkUpadTable() { document.getElementById('bulk_upad_body').innerHTML = getActiveWorkers().map(w => `<tr class="bulk-upad-row" data-wid="${w.id}"><td class="p-2.5 font-bold"><span class="text-indigo-600 text-xs">[${getWorkerCode(w)}]</span> ${w.name}</td><td class="p-2"><input type="number" min="0" class="bu-amt w-full border border-red-200 p-1.5 rounded-lg bg-red-50/50 font-bold text-red-700" placeholder="0" oninput="updateBulkUpadTotal()"></td><td class="p-2"><input type="text" class="bu-note w-full border p-1.5 rounded-lg text-xs" placeholder="Optional"></td></tr>`).join(''); updateBulkUpadTotal(); }
         function updateBulkUpadTotal() { let t = 0, c = 0; document.querySelectorAll('#bulk_upad_body .bu-amt').forEach(i => { let v = parseFloat(i.value) || 0; if (v > 0) { t += v; c++; } }); document.getElementById('bulk_upad_total_lbl').innerText = `₹${t.toFixed(0)} (${c})`; }
@@ -1062,6 +1369,7 @@
         function cancelEditAdvance() { document.getElementById('u_edit_id').value = ''; document.getElementById('upad_form').reset(); document.getElementById('u_date').valueAsDate = new Date(); refreshDropdowns(); document.getElementById('u_btn_save').innerText = "Save Advance"; document.getElementById('u_btn_cancel').classList.add('hidden'); }
         function renderAdvanceStatement() { let selM = getSelMonth(), list = advanceData.filter(u => u && u.date && u.date.startsWith(selM)).sort((a,b) => new Date(b.date) - new Date(a.date)); document.getElementById('advanceStatementBody').innerHTML = !list.length ? '<tr><td colspan="5" class="p-4 text-center text-gray-400">No Advance entries.</td></tr>' : list.map(u => { let w = workers.find(x => x.id === u.workerId); return `<tr class="border-b"><td class="p-3">${u.date}</td><td class="p-3 font-semibold">${w?getWorkerLabel(w):'Unknown'}</td><td class="p-3 text-slate-600">${u.note}</td><td class="p-3 text-right font-bold text-red-600">₹${u.amount}</td><td class="p-3 text-center"><button type="button" onclick="triggerEditAdvance('${u.id}')" class="text-indigo-600 mr-3"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAdvance('${u.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`; }).join(''); }
 
+        // ====== MASTER CRUD ======
         function saveBulkWorkers() {
             let raw = (document.getElementById('bw_text').value || '').trim(); if (!raw) return;
             let defType = document.getElementById('bw_type').value, defRule = document.getElementById('bw_rule').value, effM = getSelMonth(), td = new Date().toISOString().slice(0, 10), add = 0, dup = 0, ts = Date.now();
@@ -1070,48 +1378,33 @@
                 let code = p.length >= 3 ? p[0].replace(/\s+/g, '') : getNextWorkerCode(), name = (p.length >= 3 ? p[1] : p[0]).replace(/\s+/g, ' '), sal = parseFloat(p.length >= 3 ? p[2] : p[1]);
                 if (!name || isNaN(sal)) return;
                 if (workers.some(w => w.name.toLowerCase() === name.toLowerCase() || getWorkerCode(w).toLowerCase() === code.toLowerCase())) { dup++; return; }
-                workers.push({ id: `W_${ts}_${i}`, code, name, type: defType, fixSalary: sal, rule: defRule, isActive: true, salaryHistory: [{ effectiveMonth: effM, updatedDate: td, salary: sal }] }); add++;
+                workers.push({ id: `W_${ts}_${i}`, code, name, mobile: '', type: defType, fixSalary: sal, rule: defRule, isActive: true, salaryHistory: [{ effectiveMonth: effM, updatedDate: td, salary: sal }] }); add++;
             });
             if (add) { localStorage.setItem('karkhana_workers', JSON.stringify(workers)); document.getElementById('bw_text').value = ''; document.getElementById('w_code').value = getNextWorkerCode(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
             alert(`Added: ${add}, Skipped Duplicate: ${dup}`);
         }
-function saveDesign(e) {
-    e.preventDefault();
-    let id = document.getElementById('d_edit_id').value;
-    let g = k => parseFloat(document.getElementById(k).value) || 0;
-    let baseCode = document.getElementById('d_code').value.trim();
-    let commonRules = {
-        fixBonus: g('d_fixBonus'),
-        sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'),
-        fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3')
-    };
-
-    if (id) {
-        let p = { id, code: baseCode, stitches: g('d_stitch'), ...commonRules };
-        designs = designs.map(d => d.id === id ? p : d);
-        showToast("Design Updated!");
-    } else {
-        let toAdd = [];
-        let ts = Date.now();
-        if (g('d_stitch') > 0) toAdd.push({ id: `D_${ts}_0`, code: baseCode, stitches: g('d_stitch'), ...commonRules });
-
-        [[1, 'd_suf1', 'd_st1'], [2, 'd_suf2', 'd_st2'], [3, 'd_suf3', 'd_st3']].forEach(([idx, sufId, stId]) => {
-            let suf = (document.getElementById(sufId)?.value || '').trim();
-            let st = g(stId);
-            if (suf && st > 0) {
-                toAdd.push({ id: `D_${ts}_${idx}`, code: baseCode + suf, stitches: st, ...commonRules });
+        function saveWorker(e) {
+            e.preventDefault();
+            let id = document.getElementById('w_edit_id').value, code = document.getElementById('w_code').value.trim().replace(/\s+/g, ''), name = document.getElementById('w_name').value.trim().replace(/\s+/g, ' '), mobile = (document.getElementById('w_mobile')?.value || '').trim(), isActive = document.getElementById('w_active').value === 'true', newSal = parseFloat(document.getElementById('w_salary').value) || 0, effM = document.getElementById('w_sal_from').value || getSelMonth(), updD = document.getElementById('w_sal_date').value || new Date().toISOString().slice(0, 10);
+            if (workers.some(w => w.id !== id && getWorkerCode(w).toLowerCase() === code.toLowerCase())) { alert(`ID "${code}" already exists!`); return; }
+            if (workers.some(w => w.id !== id && w.name.toLowerCase() === name.toLowerCase())) { alert(`Name "${name}" already exists!`); return; }
+            if (id) {
+                let ex = workers.find(w => w.id === id), hist = Array.isArray(ex?.salaryHistory) ? [...ex.salaryHistory] : [];
+                if (!hist.length || getWorkerSalaryForMonth(ex, effM) !== newSal) {
+                    let idx = hist.findIndex(h => h.effectiveMonth === effM);
+                    if (idx >= 0) hist[idx] = { effectiveMonth: effM, updatedDate: updD, salary: newSal }; else hist.push({ effectiveMonth: effM, updatedDate: updD, salary: newSal });
+                    hist.sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
+                }
+                workers = workers.map(w => w.id === id ? { id, code, name, mobile, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, isActive, salaryHistory: hist } : w);
+                showToast("Worker Updated!");
+            } else {
+                workers.push({ id: "W_" + Date.now(), code, name, mobile, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, isActive, salaryHistory: [{ effectiveMonth: effM, updatedDate: updD, salary: newSal }] });
+                showToast("Worker Added!");
             }
-        });
-
-        if (!toAdd.length) { alert("Kam se kam 1 part ke Stitches dalein!"); return; }
-        designs.push(...toAdd);
-        showToast(`✅ ${toAdd.length} Design(s) Saved!`);
-    }
-    localStorage.setItem('karkhana_designs', JSON.stringify(designs));
-    cancelEditDesign(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet();
-}
+            localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
+        }
         function toggleWorkerActiveQuick(id) { if (!checkAdmin()) return; let w = workers.find(x => x.id === id); if (!w) return; w.isActive = !isWorkerActive(w); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive'}`); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
-        function editWorker(id) { let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return; document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule; document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function editWorker(id) { let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return; document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_mobile').value = w.mobile || ''; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule; document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function cancelEditWorker() { document.getElementById('w_edit_id').value = ''; document.getElementById('w_form').reset(); document.getElementById('w_code').value = getNextWorkerCode(); document.getElementById('w_active').value = 'true'; document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_form_title').innerText = "Add / Update Worker"; document.getElementById('w_btn_save').innerText = "Save Worker"; document.getElementById('w_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('w_btn_cancel').classList.add('hidden'); }
         function deleteWorker(id) { if (!checkAdmin() || !confirm("Delete Worker?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
         function filterMasterWorkers(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#workerList .m-worker-row').forEach(el => el.style.display = (el.dataset.key || '').includes(q) ? '' : 'none'); }
@@ -1127,10 +1420,29 @@ function saveDesign(e) {
         function cancelEditCategory() { document.getElementById('c_edit_id').value = ''; document.getElementById('c_form').reset(); document.getElementById('c_btn_cancel').classList.add('hidden'); }
         function deleteWorkerType(id) { if (!checkAdmin() || !confirm("Delete?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
 
-        function saveDesign(e) { e.preventDefault(); let id = document.getElementById('d_edit_id').value, g = k => parseFloat(document.getElementById(k).value) || 0; let p = { id: id || "D_" + Date.now(), code: document.getElementById('d_code').value, stitches: g('d_stitch'), fixBonus: g('d_fixBonus'), sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'), fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3') }; designs = id ? designs.map(d => d.id === id ? p : d) : [...designs, p]; localStorage.setItem('karkhana_designs', JSON.stringify(designs)); cancelEditDesign(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet(); }
-        function editDesign(id) { let d = designs.find(x => x.id === id); if (!d || !checkAdmin()) return; document.getElementById('d_edit_id').value = d.id; document.getElementById('d_code').value = d.code; document.getElementById('d_stitch').value = d.stitches; document.getElementById('d_fixBonus').value = d.fixBonus || ''; const map = { s_lim1:'sLim1', s_bon1:'sBon1', s_lim2:'sLim2', s_bon2:'sBon2', s_lim3:'sLim3', s_bon3:'sBon3', f_lim1:'fLim1', f_bon1:'fBon1', f_lim2:'fLim2', f_bon2:'fBon2', f_lim3:'fLim3', f_bon3:'fBon3' }; Object.keys(map).forEach(k => document.getElementById(k).value = d[map[k]] || ''); document.getElementById('d_btn_cancel').classList.remove('hidden'); }
-        function cancelEditDesign() { document.getElementById('d_edit_id').value = ''; document.getElementById('d_form').reset(); document.getElementById('d_btn_cancel').classList.add('hidden'); }
+        function addDesignPartRow(partVal = '', stitchVal = '') {
+            let cont = document.getElementById('d_parts_container'); if (!cont) return;
+            let idx = cont.children.length, row = document.createElement('div');
+            row.className = 'd-part-row grid grid-cols-12 gap-2 items-center';
+            row.innerHTML = `<input type="text" value="${partVal}" placeholder="Part (Plain / C / P / B)" class="dp-name col-span-5 border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold"><input type="number" value="${stitchVal}" placeholder="Stitches (e.g. 25620)" class="dp-stitch col-span-6 border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold"><div class="col-span-1 text-center">${idx === 0 ? '<span class="text-[10px] text-gray-400">1</span>' : '<button type="button" onclick="this.closest(\'.d-part-row\').remove()" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button>'}</div>`;
+            cont.appendChild(row);
+        }
+        function resetDesignPartRows(items = null) { let cont = document.getElementById('d_parts_container'); if (!cont) return; cont.innerHTML = ''; if (Array.isArray(items) && items.length) items.forEach(it => addDesignPartRow(it.part, it.stitch)); else { addDesignPartRow('', ''); addDesignPartRow('C', ''); } }
+        function saveDesign(e) {
+            e.preventDefault();
+            let id = document.getElementById('d_edit_id').value, g = k => parseFloat(document.getElementById(k).value) || 0, baseCode = document.getElementById('d_code').value.trim();
+            let commonRules = { fixBonus: g('d_fixBonus'), sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'), fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3') };
+            let rows = [];
+            document.querySelectorAll('#d_parts_container .d-part-row').forEach(r => { let pName = (r.querySelector('.dp-name').value || '').trim().replace(/^-+/, ''), st = parseFloat(r.querySelector('.dp-stitch').value) || 0; if (st > 0) rows.push({ pName, st }); });
+            if (!rows.length) { alert("Kam se kam 1 Part ke Stitches dalein!"); return; }
+            if (id) { let first = rows[0], fullCode = (!first.pName || first.pName.toLowerCase() === 'plain') ? baseCode : `${baseCode}-${first.pName}`; designs = designs.map(d => d.id === id ? { id, code: fullCode, stitches: first.st, ...commonRules } : d); showToast("Design Updated!"); }
+            else { let ts = Date.now(), toAdd = rows.map((r, i) => ({ id: `D_${ts}_${i}`, code: (!r.pName || r.pName.toLowerCase() === 'plain') ? baseCode : `${baseCode}-${r.pName}`, stitches: r.st, ...commonRules })); designs.push(...toAdd); showToast(`✅ ${toAdd.length} Part(s) Saved!`); }
+            localStorage.setItem('karkhana_designs', JSON.stringify(designs)); cancelEditDesign(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet();
+        }
+        function editDesign(id) { let d = designs.find(x => x.id === id); if (!d || !checkAdmin()) return; document.getElementById('d_edit_id').value = d.id; let idx = (d.code || '').indexOf('-'); document.getElementById('d_code').value = idx > 0 ? d.code.substring(0, idx) : d.code; resetDesignPartRows([{ part: idx > 0 ? d.code.substring(idx + 1) : '', stitch: d.stitches }]); document.getElementById('d_fixBonus').value = d.fixBonus || ''; const map = { s_lim1:'sLim1', s_bon1:'sBon1', s_lim2:'sLim2', s_bon2:'sBon2', s_lim3:'sLim3', s_bon3:'sBon3', f_lim1:'fLim1', f_bon1:'fBon1', f_lim2:'fLim2', f_bon2:'fBon2', f_lim3:'fLim3', f_bon3:'fBon3' }; Object.keys(map).forEach(k => document.getElementById(k).value = d[map[k]] || ''); document.getElementById('d_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function cancelEditDesign() { document.getElementById('d_edit_id').value = ''; document.getElementById('d_form').reset(); resetDesignPartRows(); document.getElementById('d_btn_cancel').classList.add('hidden'); }
         function deleteDesign(id) { if (!checkAdmin() || !confirm("Delete?")) return; designs = designs.filter(d => d.id !== id); localStorage.setItem('karkhana_designs', JSON.stringify(designs)); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet(); }
+        function filterMasterDesigns(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#designList .m-design-row').forEach(el => el.style.display = (el.dataset.key || '').includes(q) ? '' : 'none'); }
 
         function saveMachineRule(e) { e.preventDefault(); let id = document.getElementById('m_edit_id').value, g = k => parseFloat(document.getElementById(k).value) || 0, rm = document.getElementById('m_rateMode').value, slabs = rm === 'slabs' ? readRateSlabsFromForm() : []; if (rm === 'slabs' && !slabs.length) { alert("Add at least 1 slab!"); return; } let p = { id: id || "MR_" + Date.now(), name: document.getElementById('m_name').value.trim(), fixSal: g('m_fixSal'), rateMode: rm, min: rm === 'slabs' ? slabs[0].from : g('m_min'), rate: rm === 'slabs' ? slabs[0].rate : g('m_rate'), rateSlabs: slabs, mLim1: g('m_lim1'), mBon1: g('m_bon1'), mLim2: g('m_lim2'), mBon2: g('m_bon2'), mLim3: g('m_lim3'), mBon3: g('m_bon3') }; machineRules = id ? machineRules.map(m => m.id === id ? p : m) : [...machineRules, p]; localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules)); cancelEditMachineRule(); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
         function editMachineRule(id) { let m = machineRules.find(x => x.id === id); if (!m || !checkAdmin()) return; document.getElementById('m_edit_id').value = m.id; document.getElementById('m_name').value = m.name; document.getElementById('m_fixSal').value = m.fixSal || ''; document.getElementById('m_min').value = m.min ?? ''; document.getElementById('m_rate').value = m.rate ?? ''; const lm = { m_lim1:'mLim1', m_bon1:'mBon1', m_lim2:'mLim2', m_bon2:'mBon2', m_lim3:'mLim3', m_bon3:'mBon3' }; Object.keys(lm).forEach(k => document.getElementById(k).value = m[lm[k]] || ''); let mode = (m.rateMode === 'slabs' && m.rateSlabs?.length) ? 'slabs' : 'single'; document.getElementById('m_rateMode').value = mode; document.getElementById('m_rate_slabs_container').innerHTML = ''; if (mode === 'slabs') m.rateSlabs.forEach(s => addRateSlabRow(s.from, s.to === null ? '' : s.to, s.rate)); toggleMachineRateMode(); document.getElementById('m_btn_cancel').classList.remove('hidden'); }
@@ -1153,12 +1465,14 @@ function saveDesign(e) {
             document.getElementById('worker_count_lbl').innerText = `${getActiveWorkers().length} Active / ${workers.length} Total`;
             document.getElementById('workerList').innerHTML = workers.map(w => {
                 let active = isWorkerActive(w), latest = getLatestSalaryRecord(w), hc = Array.isArray(w.salaryHistory) ? w.salaryHistory.length : 1;
-                return `<div class="m-worker-row p-3 border-b flex flex-wrap justify-between items-center gap-2 ${active?'':'bg-red-50/50 opacity-80'}" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()} ${active?'active':'inactive'}"><div><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1">${getWorkerCode(w)}</span><b>${w.name}</b> <button type="button" onclick="toggleWorkerActiveQuick('${w.id}')" class="ml-1 px-2 py-0.5 rounded text-[10px] font-bold ${active?'bg-emerald-100 text-emerald-800':'bg-red-100 text-red-700'}">${active?'🟢 Active':'🔴 Inactive'}</button><div class="text-xs mt-1"><span class="text-emerald-700 font-bold">₹${latest.salary}</span> <button type="button" onclick="showSalaryHistoryModal('${w.id}')" class="ml-2 text-indigo-600 underline font-semibold">📜 Pagar History (${hc})</button></div></div><div><button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`;
+                return `<div class="m-worker-row p-3 border-b flex flex-wrap justify-between items-center gap-2 ${active?'':'bg-red-50/50 opacity-80'}" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()} ${w.mobile||''} ${active?'active':'inactive'}"><div><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1">${getWorkerCode(w)}</span><b>${w.name}</b> ${w.mobile?`<span class="text-xs text-slate-500 ml-1">📞 ${w.mobile}</span>`:''} <button type="button" onclick="toggleWorkerActiveQuick('${w.id}')" class="ml-1 px-2 py-0.5 rounded text-[10px] font-bold ${active?'bg-emerald-100 text-emerald-800':'bg-red-100 text-red-700'}">${active?'🟢 Active':'🔴 Inactive'}</button><div class="text-xs mt-1"><span class="text-emerald-700 font-bold">₹${latest.salary}</span> <button type="button" onclick="showSalaryHistoryModal('${w.id}')" class="ml-2 text-indigo-600 underline font-semibold">📜 Pagar History (${hc})</button></div></div><div><button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`;
             }).join('');
-            document.getElementById('designList').innerHTML = designs.map(d => `<div class="p-3 border-b flex justify-between items-center text-xs"><div><b class="text-sm">${d.code}</b> (${d.stitches} St, Fix: ₹${d.fixBonus||0})</div><div><button type="button" onclick="editDesign('${d.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteDesign('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+            let dc = document.getElementById('design_count_lbl'); if (dc) dc.innerText = designs.length;
+            document.getElementById('designList').innerHTML = designs.map(d => `<div class="m-design-row p-3 border-b flex justify-between items-center text-xs" data-key="${(d.code||'').toLowerCase()}"><div><b class="text-sm">${d.code}</b> (${d.stitches} St, Fix: ₹${d.fixBonus||0})</div><div><button type="button" onclick="editDesign('${d.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteDesign('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
             document.getElementById('machineRuleList').innerHTML = machineRules.map(m => `<div class="p-3 border-b flex justify-between items-center"><div><b>${m.name}</b> <div class="text-xs">${m.rateMode==='slabs'&&m.rateSlabs?.length ? formatSlabsSummary(m.rateSlabs) : `Min:${m.min}, ₹${m.rate}/1k`}</div></div><div><button type="button" onclick="editMachineRule('${m.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteRule('${m.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
         }
 
+        // ====== CALCULATIONS, REPORTS & PDF ======
         function calcEffDays(wAtt) { return wAtt.reduce((s, a) => s + (((a.status || 'Full') === 'Full' ? 1 : (a.status === 'Half' ? 0.5 : 0)) * (getPaymentMode(a.mode).dayMult ?? 1)), 0); }
         function calculateEarnedSalary(worker, effDays, monthStr) {
             let tDays = getDaysInMonth(monthStr), div = tDays;
@@ -1177,12 +1491,12 @@ function saveDesign(e) {
             let map = {};
             machineNumbers.forEach(mn => { if (mn?.no) map[mn.no] = { no: mn.no, defaultType: mn.defaultType || '', entries: [], totalStitches: 0, totalAlterHrs: 0, totalFrames: 0, totalBonus: 0, types: new Set() }; });
             attendance.filter(a => a && a.date && a.date.startsWith(selM)).forEach(a => {
-                let w = workers.find(x => x.id === a.workerId), wLbl = w ? getWorkerLabel(w) : 'Unknown';
+                let w = workers.find(x => x.id === a.workerId), wLbl = w ? getWorkerLabel(w) : 'Unknown', sh = a.shift || 'Day';
                 if (a.machine && a.machine !== 'NONE') {
                     let k = (a.machineNo && a.machineNo !== '-') ? a.machineNo : 'Unassigned';
                     if (!map[k]) map[k] = { no: k, defaultType: '', entries: [], totalStitches: 0, totalAlterHrs: 0, totalFrames: 0, totalBonus: 0, types: new Set() };
                     let isAlt = (a.machine === 'ALTER' || getPaymentMode(a.mode).bonusType === 'alter'), mb = (a.finalBonus || 0) - (a.extraBonus || 0);
-                    map[k].entries.push({ date: a.date, workerLabel: wLbl, machineType: a.machine, design: a.design || '-', qty: a.qty || 0, frame: a.frame || 0, bonus: mb, isAlter: isAlt, isExtra: false });
+                    map[k].entries.push({ date: a.date, shift: sh, workerLabel: wLbl, machineType: a.machine, design: a.design || '-', qty: a.qty || 0, frame: a.frame || 0, bonus: mb, isAlter: isAlt, isExtra: false });
                     if (isAlt) map[k].totalAlterHrs += (a.qty || 0); else map[k].totalStitches += (a.qty || 0);
                     map[k].totalFrames += (a.frame || 0); map[k].totalBonus += mb; map[k].types.add(a.machine);
                 }
@@ -1190,7 +1504,7 @@ function saveDesign(e) {
                     let ek = (a.extraMachineNo && a.extraMachineNo !== '-') ? a.extraMachineNo : 'Unassigned';
                     if (!map[ek]) map[ek] = { no: ek, defaultType: '', entries: [], totalStitches: 0, totalAlterHrs: 0, totalFrames: 0, totalBonus: 0, types: new Set() };
                     let isAlt = (a.extraMachine === 'ALTER' || getPaymentMode(a.extraMode).bonusType === 'alter'), eb = a.extraBonus || 0;
-                    map[ek].entries.push({ date: a.date, workerLabel: wLbl, machineType: a.extraMachine, design: a.extraDesign || '-', qty: a.extraQty || 0, frame: a.extraFrame || 0, bonus: eb, isAlter: isAlt, isExtra: true });
+                    map[ek].entries.push({ date: a.date, shift: sh, workerLabel: wLbl, machineType: a.extraMachine, design: a.extraDesign || '-', qty: a.extraQty || 0, frame: a.extraFrame || 0, bonus: eb, isAlter: isAlt, isExtra: true });
                     if (isAlt) map[ek].totalAlterHrs += (a.extraQty || 0); else map[ek].totalStitches += (a.extraQty || 0);
                     map[ek].totalFrames += (a.extraFrame || 0); map[ek].totalBonus += eb; map[ek].types.add(a.extraMachine);
                 }
@@ -1207,7 +1521,8 @@ function saveDesign(e) {
                 let net = (calculateEarnedSalary(w, calcEffDays(wA), selM) + wA.reduce((s, a) => s + (a.finalBonus || 0), 0)) - wU.reduce((s, u) => s + (u.amount || 0), 0) + calculatePreviousBalance(w, selM);
                 totPagar += net > 0 ? net : 0; return { w, net };
             }).sort((a, b) => b.net - a.net).forEach(st => {
-                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between border-l-4 ${st.net < 0 ? 'border-red-500' : 'border-emerald-500'}"><span class="font-bold cursor-pointer" onclick="showUpadModal('${st.w.id}')"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(st.w)}]</span>${st.w.name}${!isWorkerActive(st.w)?' <span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">Inactive</span>':''}</span><span class="font-bold ${st.net < 0 ? 'text-red-600' : 'text-emerald-700'}">₹${st.net.toFixed(0)}</span></div>`;
+                let paidBtn = st.net > 0 ? `<button onclick="markPagarPaid('${st.w.id}')" class="ml-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded text-[11px] font-bold">Mark Paid</button>` : '';
+                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between items-center border-l-4 ${st.net < 0 ? 'border-red-500' : 'border-emerald-500'}"><span class="font-bold cursor-pointer" onclick="showUpadModal('${st.w.id}')"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(st.w)}]</span>${st.w.name}${!isWorkerActive(st.w)?' <span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">Inactive</span>':''}</span><div class="flex items-center"><span class="font-bold ${st.net < 0 ? 'text-red-600' : 'text-emerald-700'}">₹${st.net.toFixed(0)}</span>${paidBtn}</div></div>`;
                 if (st.net < 0) neg += card; else pos += card;
             });
             document.getElementById('dash_total_pagar').innerText = '₹' + totPagar.toFixed(0);
@@ -1247,18 +1562,18 @@ function saveDesign(e) {
             if (type === 'company') {
                 let mA = attendance.filter(a => a.date.startsWith(selM)), mU = advanceData.filter(u => u.date.startsWith(selM));
                 let tB = mA.reduce((s, a) => s + (a.finalBonus || 0), 0), tU = mU.reduce((s, u) => s + (u.amount || 0), 0), tS = workers.reduce((s, w) => s + calculateEarnedSalary(w, calcEffDays(mA.filter(a => a.workerId === w.id)), selM), 0);
-                html = `<div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div onclick="showAnalysisDetail('base')" class="p-4 bg-indigo-50 rounded-lg cursor-pointer border border-indigo-200"><div class="text-xs font-bold text-indigo-700">Base Salary</div><div class="text-2xl font-black">₹${tS.toFixed(0)}</div></div><div onclick="showAnalysisDetail('bonus')" class="p-4 bg-emerald-50 rounded-lg cursor-pointer border border-emerald-200"><div class="text-xs font-bold text-emerald-700">Total Bonus</div><div class="text-2xl font-black">₹${tB.toFixed(0)}</div></div><div onclick="showAnalysisDetail('upad')" class="p-4 bg-red-50 rounded-lg cursor-pointer border border-red-200"><div class="text-xs font-bold text-red-700">Total Advance</div><div class="text-2xl font-black text-red-600">₹${tU.toFixed(0)}</div></div><div onclick="showAnalysisDetail('net')" class="p-4 bg-gray-800 rounded-lg cursor-pointer text-white"><div class="text-xs font-bold text-gray-300">Net Payable</div><div class="text-2xl font-black">₹${((tS + tB) - tU).toFixed(0)}</div></div></div>`;
+                html = `<div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div onclick="showAnalysisDetail('base')" class="p-4 bg-indigo-50 rounded-lg cursor-pointer border border-indigo-200"><div class="text-xs font-bold text-indigo-700">Base Salary</div><div class="text-2xl font-black">₹${tS.toFixed(0)}</div></div><div onclick="showAnalysisDetail('bonus')" class="p-4 bg-emerald-50 rounded-lg cursor-pointer border border-emerald-200"><div class="text-xs font-bold text-emerald-700">Total Bonus</div><div class="text-2xl font-black">₹${tB.toFixed(0)}</div></div><div onclick="showAnalysisDetail('upad')" class="p-4 bg-red-50 rounded-lg cursor-pointer border border-red-200"><div class="text-xs font-bold text-red-700">Total Advance / Paid</div><div class="text-2xl font-black text-red-600">₹${tU.toFixed(0)}</div></div><div onclick="showAnalysisDetail('net')" class="p-4 bg-gray-800 rounded-lg cursor-pointer text-white"><div class="text-xs font-bold text-gray-300">Net Payable</div><div class="text-2xl font-black">₹${((tS + tB) - tU).toFixed(0)}</div></div></div>`;
             } else if (type === 'worker') {
                 html = `<div class="mb-4 flex flex-wrap justify-between items-center gap-2"><h3 class="font-bold text-lg text-indigo-800">Worker ID Wise Report (${getMonthName(selM)})</h3><input type="text" onkeyup="filterReportCards(this.value,'worker-rep-card')" placeholder="🔍 Search ID or Name..." class="border p-2 rounded-lg bg-indigo-50 text-sm w-full md:w-64"></div>` +
                     workers.map(w => {
                         let wA = attendance.filter(a => a.workerId === w.id && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date)), wU = advanceData.filter(u => u.workerId === w.id && u.date.startsWith(selM));
                         let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0), net = (base + bon) - upd + calculatePreviousBalance(w, selM);
-                        return `<div class="worker-rep-card border rounded-lg mb-3" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()}"><div class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer" onclick="document.getElementById('det_${w.id}').classList.toggle('hidden')"><div><h3 class="font-bold text-lg"><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs mr-2">${getWorkerCode(w)}</span>${w.name} <span class="text-xs text-gray-500">(Rate: ₹${getWorkerSalaryForMonth(w, selM)})</span></h3><span class="text-xs">Days: <b>${eff}</b> | Base: ₹${base.toFixed(0)} | Bonus: <b class="text-emerald-700">₹${bon.toFixed(0)}</b> | Upad: <b class="text-red-600">₹${upd.toFixed(0)}</b> | Net: <b class="text-indigo-800">₹${net.toFixed(0)}</b></span></div><i class="fa-solid fa-chevron-down text-indigo-600"></i></div><div id="det_${w.id}" class="hidden p-4 border-t bg-white"><button onclick="downloadWorkerPDF('${w.id}')" class="mb-3 bg-emerald-100 text-emerald-800 px-4 py-2 rounded-lg font-bold text-sm"><i class="fa-solid fa-file-pdf"></i> Download Payslip PDF</button><div class="overflow-x-auto"><table class="w-full text-sm text-left border"><thead class="bg-gray-100"><tr><th class="p-2">Date</th><th class="p-2">Details & Designs</th><th class="p-2 text-right">Bonus</th></tr></thead><tbody>${wA.length ? wA.map(a => `<tr class="border-b"><td class="p-2">${a.date}</td><td class="p-2">${a.machineNo?`[${a.machineNo}] `:''}${a.status} (${a.machine!=='NONE'?a.machine:'Fixed'}) ${formatDesignSummaryHtml(a)}<div class="text-xs text-red-500">${a.note!=='-'?a.note:''}</div></td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`).join('') : '<tr><td colspan="3" class="p-2 text-center text-gray-400">No Data</td></tr>'}</tbody></table></div></div></div>`;
+                        return `<div class="worker-rep-card border rounded-lg mb-3" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()}"><div class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer" onclick="document.getElementById('det_${w.id}').classList.toggle('hidden')"><div><h3 class="font-bold text-lg"><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs mr-2">${getWorkerCode(w)}</span>${w.name} <span class="text-xs text-gray-500">(Rate: ₹${getWorkerSalaryForMonth(w, selM)})</span></h3><span class="text-xs">Days: <b>${eff}</b> | Base: ₹${base.toFixed(0)} | Bonus: <b class="text-emerald-700">₹${bon.toFixed(0)}</b> | Upad/Paid: <b class="text-red-600">₹${upd.toFixed(0)}</b> | Net: <b class="text-indigo-800">₹${net.toFixed(0)}</b></span></div><i class="fa-solid fa-chevron-down text-indigo-600"></i></div><div id="det_${w.id}" class="hidden p-4 border-t bg-white"><div class="flex flex-wrap gap-2 mb-3"><button onclick="downloadWorkerPDF('${w.id}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-solid fa-file-pdf mr-1"></i> Download PDF</button><button onclick="shareWorkerWhatsApp('${w.id}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp Slip</button>${net > 0 ? `<button onclick="markPagarPaid('${w.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-solid fa-check-double mr-1"></i> Mark Pagar Paid (₹${net.toFixed(0)})</button>` : '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-lg font-bold text-xs">✅ Hisab Clear</span>'}</div><div class="overflow-x-auto"><table class="w-full text-sm text-left border"><thead class="bg-gray-100"><tr><th class="p-2">Date & Shift</th><th class="p-2">Details & Designs</th><th class="p-2 text-right">Bonus</th></tr></thead><tbody>${wA.length ? wA.map(a => `<tr class="border-b"><td class="p-2">${a.date} (${a.shift||'Day'})</td><td class="p-2">${a.machineNo?`[${a.machineNo}] `:''}${a.status} (${a.machine!=='NONE'?a.machine:'Fixed'}) ${formatDesignSummaryHtml(a)}<div class="text-xs text-red-500">${a.note!=='-'?a.note:''}</div></td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`).join('') : '<tr><td colspan="3" class="p-2 text-center text-gray-400">No Data</td></tr>'}</tbody></table></div></div></div>`;
                     }).join('');
             } else {
                 let list = Object.values(buildMachineReportData(selM)).sort((a, b) => a.no.localeCompare(b.no, undefined, { numeric: true }));
                 html = `<div class="mb-4 flex flex-wrap justify-between items-center gap-2"><h3 class="font-bold text-lg text-teal-800">Machine No. Wise Report (${getMonthName(selM)})</h3><input type="text" onkeyup="filterReportCards(this.value,'mach-rep-card')" placeholder="🔍 Search M/C No..." class="border p-2 rounded-lg bg-teal-50 text-sm w-full md:w-64"></div>` +
-                    list.map((m, idx) => `<div class="mach-rep-card border rounded-lg mb-3" data-key="${m.no.toLowerCase()}"><div class="bg-teal-50/60 p-4 flex justify-between items-center cursor-pointer" onclick="document.getElementById('mrep_${idx}').classList.toggle('hidden')"><div><h3 class="font-bold text-lg text-teal-900"><span class="bg-teal-600 text-white px-2.5 py-0.5 rounded text-xs mr-2">${m.no}</span></h3><span class="text-xs">Shifts: <b>${m.entries.length}</b> | Stitches: <b>${m.totalStitches.toLocaleString('en-IN')}</b> | Frames: <b>${m.totalFrames}</b> | Bonus: <b class="text-emerald-700">₹${m.totalBonus.toFixed(0)}</b></span></div><i class="fa-solid fa-chevron-down text-teal-700"></i></div><div id="mrep_${idx}" class="hidden p-4 border-t bg-white"><button onclick="downloadMachinePDF(decodeURIComponent('${encodeURIComponent(m.no)}'))" class="mb-3 bg-teal-100 text-teal-900 px-4 py-2 rounded-lg font-bold text-sm"><i class="fa-solid fa-file-pdf"></i> Download Machine PDF</button><div class="overflow-x-auto"><table class="w-full text-sm text-left border"><thead class="bg-gray-100"><tr><th class="p-2">Date</th><th class="p-2">Worker</th><th class="p-2">Type / Design</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Bonus</th></tr></thead><tbody>${m.entries.length ? m.entries.map(e => `<tr class="border-b"><td class="p-2">${e.date}</td><td class="p-2 font-semibold">${e.workerLabel}</td><td class="p-2 text-xs">${e.machineType} / ${e.design}</td><td class="p-2 text-right font-bold">${e.qty.toLocaleString('en-IN')}</td><td class="p-2 text-right font-bold text-emerald-600">₹${e.bonus.toFixed(0)}</td></tr>`).join('') : '<tr><td colspan="5" class="p-3 text-center text-gray-400">No Entries</td></tr>'}</tbody></table></div></div></div>`).join('');
+                    list.map((m, idx) => `<div class="mach-rep-card border rounded-lg mb-3" data-key="${m.no.toLowerCase()}"><div class="bg-teal-50/60 p-4 flex justify-between items-center cursor-pointer" onclick="document.getElementById('mrep_${idx}').classList.toggle('hidden')"><div><h3 class="font-bold text-lg text-teal-900"><span class="bg-teal-600 text-white px-2.5 py-0.5 rounded text-xs mr-2">${m.no}</span></h3><span class="text-xs">Shifts: <b>${m.entries.length}</b> | Stitches: <b>${m.totalStitches.toLocaleString('en-IN')}</b> | Frames: <b>${m.totalFrames}</b> | Bonus: <b class="text-emerald-700">₹${m.totalBonus.toFixed(0)}</b></span></div><i class="fa-solid fa-chevron-down text-teal-700"></i></div><div id="mrep_${idx}" class="hidden p-4 border-t bg-white"><button onclick="downloadMachinePDF(decodeURIComponent('${encodeURIComponent(m.no)}'))" class="mb-3 bg-teal-100 text-teal-900 px-4 py-2 rounded-lg font-bold text-sm"><i class="fa-solid fa-file-pdf"></i> Download Machine PDF</button><div class="overflow-x-auto"><table class="w-full text-sm text-left border"><thead class="bg-gray-100"><tr><th class="p-2">Date & Shift</th><th class="p-2">Worker</th><th class="p-2">Type / Design</th><th class="p-2 text-right">Qty</th><th class="p-2 text-right">Bonus</th></tr></thead><tbody>${m.entries.length ? m.entries.map(e => `<tr class="border-b"><td class="p-2">${e.date} <span class="text-[10px] text-gray-500">(${e.shift})</span></td><td class="p-2 font-semibold">${e.workerLabel}</td><td class="p-2 text-xs">${e.machineType} / ${e.design}</td><td class="p-2 text-right font-bold">${e.qty.toLocaleString('en-IN')}</td><td class="p-2 text-right font-bold text-emerald-600">₹${e.bonus.toFixed(0)}</td></tr>`).join('') : '<tr><td colspan="5" class="p-3 text-center text-gray-400">No Entries</td></tr>'}</tbody></table></div></div></div>`).join('');
             }
             document.getElementById('reportRenderArea').innerHTML = html;
         }
@@ -1268,8 +1583,8 @@ function saveDesign(e) {
             let selM = getSelMonth(), mA = attendance.filter(a => a.date.startsWith(selM)), mU = advanceData.filter(u => u.date.startsWith(selM)), title = "", head = "", body = "";
             if (type === 'base') { title = "Base Salary"; head = "<tr><th class='p-2'>Worker</th><th class='p-2'>Days</th><th class='p-2 text-right'>Base</th></tr>"; body = workers.map(w => { let e = calcEffDays(mA.filter(a => a.workerId === w.id)), b = calculateEarnedSalary(w, e, selM); return b > 0 ? `<tr class='border-b'><td class='p-2 font-bold'>${getWorkerLabel(w)}</td><td class='p-2'>${e}</td><td class='p-2 text-right font-bold'>₹${b.toFixed(0)}</td></tr>` : ''; }).join(''); }
             else if (type === 'bonus') { title = "Bonus Details"; head = "<tr><th class='p-2'>Date</th><th class='p-2'>Worker</th><th class='p-2'>Machine / Design</th><th class='p-2 text-right'>Bonus</th></tr>"; body = mA.filter(a => a.finalBonus > 0).map(a => `<tr class='border-b'><td class='p-2'>${a.date}</td><td class='p-2 font-bold'>${getWorkerLabel(workers.find(x => x.id === a.workerId))}</td><td class='p-2'>${a.machine} / ${a.design}</td><td class='p-2 text-right font-bold text-emerald-600'>₹${a.finalBonus.toFixed(0)}</td></tr>`).join(''); }
-            else if (type === 'upad') { title = "Advance Details"; head = "<tr><th class='p-2'>Date</th><th class='p-2'>Worker</th><th class='p-2'>Reason</th><th class='p-2 text-right'>Amount</th></tr>"; body = mU.map(u => `<tr class='border-b'><td class='p-2'>${u.date}</td><td class='p-2 font-bold'>${getWorkerLabel(workers.find(x => x.id === u.workerId))}</td><td class='p-2'>${u.note}</td><td class='p-2 text-right font-bold text-red-600'>₹${u.amount}</td></tr>`).join(''); }
-            else { title = "Net Payable"; head = "<tr><th class='p-2'>Worker</th><th class='p-2 text-right'>Earned</th><th class='p-2 text-right'>Upad</th><th class='p-2 text-right'>Net</th></tr>"; body = workers.map(w => { let wA = mA.filter(a => a.workerId === w.id), e = calculateEarnedSalary(w, calcEffDays(wA), selM) + wA.reduce((s, a) => s + (a.finalBonus || 0), 0), u = mU.filter(x => x.workerId === w.id).reduce((s, x) => s + (x.amount || 0), 0); return (e - u) !== 0 ? `<tr class='border-b'><td class='p-2 font-bold'>${getWorkerLabel(w)}</td><td class='p-2 text-right'>₹${e.toFixed(0)}</td><td class='p-2 text-right text-red-500'>-₹${u.toFixed(0)}</td><td class='p-2 text-right font-bold'>₹${(e-u).toFixed(0)}</td></tr>` : ''; }).join(''); }
+            else if (type === 'upad') { title = "Advance / Paid Details"; head = "<tr><th class='p-2'>Date</th><th class='p-2'>Worker</th><th class='p-2'>Reason</th><th class='p-2 text-right'>Amount</th></tr>"; body = mU.map(u => `<tr class='border-b'><td class='p-2'>${u.date}</td><td class='p-2 font-bold'>${getWorkerLabel(workers.find(x => x.id === u.workerId))}</td><td class='p-2'>${u.note}</td><td class='p-2 text-right font-bold text-red-600'>₹${u.amount}</td></tr>`).join(''); }
+            else { title = "Net Payable"; head = "<tr><th class='p-2'>Worker</th><th class='p-2 text-right'>Earned</th><th class='p-2 text-right'>Upad/Paid</th><th class='p-2 text-right'>Net</th></tr>"; body = workers.map(w => { let wA = mA.filter(a => a.workerId === w.id), e = calculateEarnedSalary(w, calcEffDays(wA), selM) + wA.reduce((s, a) => s + (a.finalBonus || 0), 0), u = mU.filter(x => x.workerId === w.id).reduce((s, x) => s + (x.amount || 0), 0); return (e - u) !== 0 ? `<tr class='border-b'><td class='p-2 font-bold'>${getWorkerLabel(w)}</td><td class='p-2 text-right'>₹${e.toFixed(0)}</td><td class='p-2 text-right text-red-500'>-₹${u.toFixed(0)}</td><td class='p-2 text-right font-bold'>₹${(e-u).toFixed(0)}</td></tr>` : ''; }).join(''); }
             document.getElementById('analysisModalTitle').innerText = title; document.getElementById('analysisModalHead').innerHTML = head; document.getElementById('analysisModalBody').innerHTML = body || "<tr><td colspan='4' class='text-center p-4'>No Data</td></tr>"; document.getElementById('analysisModal').classList.add('active');
         }
 
@@ -1282,7 +1597,7 @@ function saveDesign(e) {
                 let desText = (Array.isArray(a.designItems) && a.designItems.length > 1) ? a.designItems.map(it => `${it.design}(${it.qty})`).join(', ') : (a.design || '-');
                 let det = !isM ? 'Fixed Worker' : `${a.machineNo ? '['+a.machineNo+'] ' : ''}${a.machine} / ${desText}`;
                 if (st !== 'Absent') { let d = getDaysInMonth(selM), div = d; if (w.rule === 'SundayOff') { let s = 0, [y, m] = selM.split('-'); for (let i = 1; i <= d; i++) if (new Date(y, m - 1, i).getDay() === 0) s++; div = d - s; } else if (w.rule === '2Leaves') div = d - 2; db = ((mSal / (div <= 0 ? 1 : div)) * (st === 'Full' ? 1 : 0.5)) * (pm.dayMult ?? 1); }
-                return `<tr><td>${a.date}</td><td>${det}<br><span style="font-size:10px;">(${st}, ${pm.name})</span></td><td>${!isM ? '-' : `Fr:${a.frame||0}, ${a.qty||0} ${unit}`}</td><td>₹${db.toFixed(0)}</td><td>₹${(a.finalBonus||0).toFixed(0)}</td><td style="color:red; font-size:11px;">${a.note!=='-'?a.note:''}</td></tr>`;
+                return `<tr><td>${a.date} (${a.shift||'Day'})</td><td>${det}<br><span style="font-size:10px;">(${st}, ${pm.name})</span></td><td>${!isM ? '-' : `Fr:${a.frame||0}, ${a.qty||0} ${unit}`}</td><td>₹${db.toFixed(0)}</td><td>₹${(a.finalBonus||0).toFixed(0)}</td><td style="color:red; font-size:11px;">${a.note!=='-'?a.note:''}</td></tr>`;
             }).join('');
             document.getElementById('slip_base').innerText = '₹' + base.toFixed(0); document.getElementById('slip_bonus').innerText = '₹' + bon.toFixed(0);
             let pe = document.getElementById('slip_prev'); pe.innerText = (prev >= 0 ? '+' : '') + '₹' + prev.toFixed(0); pe.style.color = prev >= 0 ? '#4f46e5' : 'red';
@@ -1294,46 +1609,12 @@ function saveDesign(e) {
         function downloadMachinePDF(machNo) {
             let selM = getSelMonth(), m = buildMachineReportData(selM)[machNo]; if (!m) return;
             document.getElementById('mslip_month').innerText = getMonthName(selM); document.getElementById('mslip_no').innerText = m.no; document.getElementById('mslip_type').innerText = m.types.size ? Array.from(m.types).join(', ') : (m.defaultType || '-'); document.getElementById('mslip_entries').innerText = m.entries.length; document.getElementById('mslip_stitches').innerText = m.totalStitches.toLocaleString('en-IN'); document.getElementById('mslip_frames').innerText = m.totalFrames; document.getElementById('mslip_bonus').innerText = '₹' + m.totalBonus.toFixed(0);
-            document.getElementById('mslip_logs').innerHTML = !m.entries.length ? '<tr><td colspan="6" style="text-align:center;">No Entries</td></tr>' : m.entries.map(e => `<tr><td>${e.date}</td><td>${e.workerLabel}</td><td>${e.machineType} / ${e.design}</td><td>${e.qty.toLocaleString('en-IN')}</td><td>${e.frame}</td><td>₹${e.bonus.toFixed(0)}</td></tr>`).join('');
+            document.getElementById('mslip_logs').innerHTML = !m.entries.length ? '<tr><td colspan="6" style="text-align:center;">No Entries</td></tr>' : m.entries.map(e => `<tr><td>${e.date} (${e.shift})</td><td>${e.workerLabel}</td><td>${e.machineType} / ${e.design}</td><td>${e.qty.toLocaleString('en-IN')}</td><td>${e.frame}</td><td>₹${e.bonus.toFixed(0)}</td></tr>`).join('');
             let el = document.getElementById('machine-pdf-container'); el.style.display = 'block';
             html2pdf().set({ margin: 10, filename: `MahiAndDevanshCo_Machine_${m.no}_${selM}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.style.display = 'none');
         }
 
         function showToast(msg) { let t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('opacity-0'); setTimeout(() => t.classList.add('opacity-0'), 3000); }
-// ====== APP LOGIN LOCK ======
-        function checkLoginStatus() {
-            let screen = document.getElementById('login_screen');
-            if (!screen) return;
-            if (sessionStorage.getItem('karkhana_unlocked') === 'true') {
-                screen.style.display = 'none';
-            } else {
-                screen.style.display = 'flex';
-            }
-        }
-
-        function handleAppLogin(e) {
-            e.preventDefault();
-            let entered = document.getElementById('login_pass_input').value;
-            let errEl = document.getElementById('login_err');
-            if (entered === adminPassword) {
-                sessionStorage.setItem('karkhana_unlocked', 'true');
-                document.getElementById('login_screen').style.display = 'none';
-                document.getElementById('login_pass_input').value = '';
-                errEl.classList.add('hidden');
-            } else {
-                errEl.classList.remove('hidden');
-                document.getElementById('login_pass_input').value = '';
-                document.getElementById('login_pass_input').focus();
-            }
-        }
-
-        function lockApp() {
-            sessionStorage.removeItem('karkhana_unlocked');
-            checkLoginStatus();
-        }
-
-        checkLoginStatus();
-
         initApp();
     </script>
 </body>
