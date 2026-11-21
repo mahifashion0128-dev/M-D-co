@@ -903,7 +903,7 @@
         function getWorkerCode(w) { return (w && w.code) ? w.code : (w ? w.id : '-'); }
         function getWorkerLabel(w) { return w ? `[${getWorkerCode(w)}] ${w.name}` : 'Unknown'; }
         function isWorkerActive(w) { return w && w.isActive !== false; }
-        function getActiveWorkers() { return workers.filter(w => isWorkerActive(w)); }
+        function getActiveWorkers() { return workers.filter(w => isWorkerActive(w)).sort((a, b) => getWorkerCode(a).localeCompare(getWorkerCode(b), undefined, { numeric: true, sensitivity: 'base' })); }
         function getNextWorkerCode() { let m = 0; workers.forEach(w => { let x = String(w?.code || '').match(/\d+/); if (x) m = Math.max(m, parseInt(x[0], 10)); }); return 'W' + String(m + 1).padStart(2, '0'); }
         function getWorkerSalaryForMonth(worker, monthStr) {
             if (!worker) return 0;
