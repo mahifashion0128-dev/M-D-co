@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mahi and Devansh co.</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="logo.png?v=2">
-    <link rel="apple-touch-icon" href="logo.png?v=2">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=3">
+    <link rel="apple-touch-icon" href="icon.png?v=3">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -26,12 +26,27 @@
     </style>
 </head>
 <body>
+    <!-- LOGIN PASSWORD SCREEN -->
+    <div id="login_screen" class="fixed inset-0 bg-indigo-950 z-[9999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center border border-indigo-200">
+            <img src="logo.png?v=2" onerror="this.style.display='none'" class="w-16 h-16 mx-auto mb-3 rounded-full bg-white p-1 shadow border object-contain" alt="Logo">
+            <h1 class="text-2xl font-black text-indigo-900">Mahi and Devansh co.</h1>
+            <p class="text-xs text-slate-500 mb-5">App kholne ke liye Password dalein</p>
+            <form onsubmit="handleAppLogin(event)" class="space-y-3">
+                <input type="password" id="login_pass_input" placeholder="Enter Password..." required autofocus class="w-full border-2 border-indigo-200 focus:border-indigo-600 p-3 rounded-xl text-center text-lg font-bold tracking-widest outline-none bg-slate-50">
+                <div id="login_err" class="hidden text-xs font-bold text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">Galat Password! Dobara try karein.</div>
+                <button type="submit" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3 rounded-xl shadow-lg transition">
+                    <i class="fa-solid fa-lock-open mr-1"></i> Unlock App
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Desktop Navbar -->
     <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-3 justify-between items-center">
         <div class="flex flex-col">
             <div class="font-bold text-xl flex items-center gap-2 leading-tight">
-                <img src="logo.png?v=2" onerror="this.style.display='none'" class="w-8 h-8 rounded-full bg-white p-0.5 shadow object-contain" alt="Logo">
+                <img src="icon.png?v=3" onerror="this.style.display='none'" class="w-8 h-8 rounded-lg shadow object-cover" alt="Icon">
                 Mahi and Devansh co.
             </div>
             <span class="text-[11px] text-indigo-200 ml-1">mahifashion0128@gmail.com</span>
@@ -57,7 +72,7 @@
     <!-- Mobile Header -->
     <div class="md:hidden bg-indigo-900 p-3 flex justify-between items-center text-white gap-2">
         <div class="flex items-center gap-2 min-w-0">
-            <img src="logo.png?v=2" onerror="this.style.display='none'" class="w-7 h-7 rounded-full bg-white p-0.5 shadow object-contain shrink-0" alt="Logo">
+            <img src="icon.png?v=3" onerror="this.style.display='none'" class="w-7 h-7 rounded-lg shadow object-cover shrink-0" alt="Icon">
             <div class="min-w-0">
                 <div class="font-bold text-sm truncate">Mahi and Devansh co.</div>
                 <div class="text-[10px] text-indigo-200 truncate">mahifashion0128@gmail.com</div>
@@ -532,7 +547,7 @@
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl opacity-0 z-[110] font-medium"><span id="toastMsg">Saved!</span></div>
 
     <script>
-        const DEFAULT_SCRIPT_URL = 'MERA_COPIED_URL_YAHAN_PASTE_KAREIN';
+        const DEFAULT_SCRIPT_URL = 'any one';
         const DEFAULT_PAYMENT_MODES = [
             { id: 'Normal', name: 'Normal (Base + Bonus)', dayMult: 1, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
             { id: 'ExtraStitch', name: 'Extra Machine (Stitch Bonus)', dayMult: 0, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
@@ -1248,6 +1263,40 @@
         }
 
         function showToast(msg) { let t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('opacity-0'); setTimeout(() => t.classList.add('opacity-0'), 3000); }
+// ====== APP LOGIN LOCK ======
+        function checkLoginStatus() {
+            let screen = document.getElementById('login_screen');
+            if (!screen) return;
+            if (sessionStorage.getItem('karkhana_unlocked') === 'true') {
+                screen.style.display = 'none';
+            } else {
+                screen.style.display = 'flex';
+            }
+        }
+
+        function handleAppLogin(e) {
+            e.preventDefault();
+            let entered = document.getElementById('login_pass_input').value;
+            let errEl = document.getElementById('login_err');
+            if (entered === adminPassword) {
+                sessionStorage.setItem('karkhana_unlocked', 'true');
+                document.getElementById('login_screen').style.display = 'none';
+                document.getElementById('login_pass_input').value = '';
+                errEl.classList.add('hidden');
+            } else {
+                errEl.classList.remove('hidden');
+                document.getElementById('login_pass_input').value = '';
+                document.getElementById('login_pass_input').focus();
+            }
+        }
+
+        function lockApp() {
+            sessionStorage.removeItem('karkhana_unlocked');
+            checkLoginStatus();
+        }
+
+        checkLoginStatus();
+
         initApp();
     </script>
 </body>
