@@ -100,7 +100,7 @@
                     Estimated Net Pagar: <span id="dash_total_pagar" class="text-xl">₹0</span>
                 </div>
             </div>
-
+            <div id="dash_worker_stats" class="flex flex-wrap items-center gap-2 mb-4 bg-white p-3 rounded-xl shadow-sm border border-indigo-100"></div>
             <div class="flex flex-wrap gap-2 mb-5">
                 <button type="button" id="dbtn_d_daily" onclick="openDashPanel('d_daily')" class="dash-nav-btn bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-calendar-day"></i> Daily Production & Notes</button>
                 <button type="button" id="dbtn_d_worker" onclick="openDashPanel('d_worker')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-user-check"></i> Worker Month Search</button>
@@ -1517,6 +1517,13 @@
         }
 
         function renderDashboard() {
+            let activeList = getActiveWorkers(), catCounts = {};
+            activeList.forEach(w => { let t = w.type || 'Other'; catCounts[t] = (catCounts[t] || 0) + 1; });
+            let statsEl = document.getElementById('dash_worker_stats');
+            if (statsEl) {
+           let catBadges = Object.keys(catCounts).map(c => `<span class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-lg text-xs font-bold">${c}: <span class="text-indigo-700">${catCounts[c]}</span></span>`).join('');
+           statsEl.innerHTML = `<span class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-black shadow-sm"><i class="fa-solid fa-users mr-1"></i> Total Active Workers: ${activeList.length}</span>` + catBadges;
+       }
             let selM = getSelMonth(), totPagar = 0, pos = '', neg = '';
             let vis = workers.filter(w => isWorkerActive(w) || attendance.some(a => a.workerId === w.id && a.date.startsWith(selM)) || advanceData.some(u => u.workerId === w.id && u.date.startsWith(selM)));
             vis.map(w => {
