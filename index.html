@@ -1516,30 +1516,56 @@
             return map;
         }
 
+       function getWorkerPendingMonthsHtml(worker, selM) {
+            let allA = attendance.filter(a => a && a.workerId === worker.id && a.date && a.date.substring(0, 7) <= selM);
+            let allU = advanceData.filter(u => u && u.workerId === worker.id && u.date && u.date.substring(0, 7) <= selM);
+            let months = [...new Set([...allA.map(a => a.date.substring(0, 7)), ...allU.map(u => u.date.substring(0, 7))])].sort();
+            let tags = [];
+            months.forEach(m => {
+                let mA = allA.filter(a => a.date.startsWith(m));
+                let mU = allU.filter(u => u.date.startsWith(m));
+                let mNet = Math.round(calculateEarnedSalary(worker, calcEffDays(mA), m) + mA.reduce((s, a) => s + (a.finalBonus || 0), 0) - mU.reduce((s, u) => s + (u.amount || 0), 0));
+                if (mNet !== 0) {
+                    let lbl = new Date(m + "-01").toLocaleString('en-IN', { month: 'short', year: '2-digit' });
+                    let cls = mNet < 0 ? 'bg-red-50 text-red-700 border-red-200' : (m < selM ? 'bg-amber-50 text-amber-800 border-amber-300' : 'bg-indigo-50 text-indigo-700 border-indigo-200');
+                    let sign = mNet > 0 ? '+' : '-';
+                    tags.push(`<span class="inline-block border px-1.5 py-0.5 rounded text-[10px] font-bold ${cls}">${lbl}: ${sign}₹${Math.abs(mNet)}</span>`);
+                }
+            });
+            return tags.length ? `<div class="flex flex-wrap gap-1 mt-1">${tags.join('')}</div>` : '';
+        }
+
         function renderDashboard() {
             let activeList = getActiveWorkers(), catCounts = {};
             activeList.forEach(w => { let t = w.type || 'Other'; catCounts[t] = (catCounts[t] || 0) + 1; });
             let statsEl = document.getElementById('dash_worker_stats');
             if (statsEl) {
-           let catBadges = Object.keys(catCounts).map(c => `<span class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-lg text-xs font-bold">${c}: <span class="text-indigo-700">${catCounts[c]}</span></span>`).join('');
-           statsEl.innerHTML = `<span class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-black shadow-sm"><i class="fa-solid fa-users mr-1"></i> Total Active Workers: ${activeList.length}</span>` + catBadges;
-       }
+                let catBadges = Object.keys(catCounts).map(c => `<span class="bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-lg text-xs font-bold">${c}: <span class="text-indigo-700">${catCounts[c]}</span></span>`).join('');
+                statsEl.innerHTML = `<span class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-black shadow-sm"><i class="fa-solid fa-users mr-1"></i> Total Active Workers: ${activeList.length}</span>` + catBadges;
+            }
+
             let selM = getSelMonth(), totPagar = 0, pos = '', neg = '';
-            let vis = workers.filter(w => isWorkerActive(w) || attendance.some(a => a.workerId === w.id && a.date.startsWith(selM)) || advanceData.some(u => u.workerId === w.id && u.date.startsWith(selM)));
+            let vis = workers.filter(w => isWorkerActive(w) || attendance.some(a => a.workerId === w.id && a.date.startsWith(selM)) || advanceData.some(u => u.workerId === w.id && u.date.startsWith(selM)) || Math.round(calculatePreviousBalance(w, selM)) !== 0);
             vis.map(w => {
                 let wA = attendance.filter(a => a.workerId === w.id && a.date.startsWith(selM)), wU = advanceData.filter(u => u.workerId === w.id && u.date.startsWith(selM));
                 let net = (calculateEarnedSalary(w, calcEffDays(wA), selM) + wA.reduce((s, a) => s + (a.finalBonus || 0), 0)) - wU.reduce((s, u) => s + (u.amount || 0), 0) + calculatePreviousBalance(w, selM);
                 totPagar += net > 0 ? net : 0; return { w, net };
             }).sort((a, b) => b.net - a.net).forEach(st => {
-                let paidBtn = st.net > 0 ? `<button onclick="markPagarPaid('${st.w.id}')" class="ml-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded text-[11px] font-bold">Mark Paid</button>` : '';
-                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between items-center border-l-4 ${st.net < 0 ? 'border-red-500' : 'border-emerald-500'}"><span class="font-bold cursor-pointer" onclick="showUpadModal('${st.w.id}')"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(st.w)}]</span>${st.w.name}${!isWorkerActive(st.w)?' <span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">Inactive</span>':''}</span><div class="flex items-center"><span class="font-bold ${st.net < 0 ? 'text-red-600' : 'text-emerald-700'}">₹${st.net.toFixed(0)}</span>${paidBtn}</div></div>`;
+                let paidBtn = st.net > 0 ? `<button onclick="markPagarPaid('${st.w.id}')" class="ml-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded text-[11px] font-bold shrink-0">Mark Paid</button>` : '';
+                let monthTags = getWorkerPendingMonthsHtml(st.w, selM);
+                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between items-start gap-2 border-l-4 ${st.net < 0 ? 'border-red-500' : 'border-emerald-500'}">
+                    <div class="cursor-pointer min-w-0" onclick="showUpadModal('${st.w.id}')">
+                        <div class="font-bold"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(st.w)}]</span>${st.w.name}${!isWorkerActive(st.w)?' <span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">Inactive</span>':''}</div>
+                        ${monthTags}
+                    </div>
+                    <div class="flex items-center shrink-0 pt-0.5"><span class="font-bold ${st.net < 0 ? 'text-red-600' : 'text-emerald-700'}">₹${st.net.toFixed(0)}</span>${paidBtn}</div>
+                </div>`;
                 if (st.net < 0) neg += card; else pos += card;
             });
             document.getElementById('dash_total_pagar').innerText = '₹' + totPagar.toFixed(0);
             document.getElementById('dashListPositive').innerHTML = pos || '<p class="text-sm text-gray-500">No data</p>';
             document.getElementById('dashListNegative').innerHTML = neg || '<p class="text-sm text-gray-500">Sabka balance positive hai.</p>';
         }
-
         function updateChart() {
             let c = document.getElementById('bonusChart'); if (!c) return;
             let sw = document.getElementById('chartWorkerSelect')?.value || 'ALL', selM = getSelMonth(), labels = [], data = [];
