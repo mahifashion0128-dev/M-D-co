@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <!-- WORKER ONLY STITCH ENTRY + AI DISPLAY SCANNER SCREEN -->
+    <!-- WORKER ONLY STITCH ENTRY + AI DISPLAY SCANNER + EXTRA MACHINE SCREEN -->
     <div id="worker_entry_screen" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-4">
         <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-teal-200 overflow-hidden my-4">
             <div class="bg-teal-700 text-white p-4 flex justify-between items-center">
@@ -72,7 +72,7 @@
                     <label class="inline-flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow transition text-sm">
                         <i class="fa-solid fa-camera text-base"></i>
                         <span id="scan_btn_text">📷 Machine Display Scan Karein</span>
-                        <input type="file" id="we_scan_input" accept="image/*" capture="environment" onchange="scanMachineDisplay(event)" class="hidden">
+                        <input type="file" id="we_scan_input" accept="image/*" capture="environment" onchange="scanMachineDisplay(event, false)" class="hidden">
                     </label>
                     <p id="scan_status_msg" class="text-[11px] text-indigo-700 font-semibold mt-1.5">Photo khinche — Stitches, Design aur Frame apne aap bhar jayenge</p>
                 </div>
@@ -89,14 +89,48 @@
                     <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine No. *</label><select id="we_machno" onchange="autoSelectMachineType('we_machno', 'we_machine')" required class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
                     <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="we_machine" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-semibold text-sm"></select></div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="block text-xs font-bold text-indigo-800 mb-1">Design No.</label><input type="text" id="we_design" list="att_base_designs_list" placeholder="e.g. 1370-C" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-white font-bold text-sm"></div>
-                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Total Frame</label><input type="number" id="we_frame" placeholder="0" class="w-full border p-2.5 rounded-lg bg-white text-sm"></div>
+
+                <!-- DESIGN-WISE ROWS -->
+                <div class="bg-slate-50 border border-indigo-200 p-3 rounded-xl space-y-2">
+                    <div class="flex justify-between items-center border-b border-indigo-100 pb-1.5">
+                        <span class="text-xs font-bold text-indigo-800">Design-Wise Frame & Stitches</span>
+                        <button type="button" onclick="addWeDesignRow()" class="bg-indigo-600 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">+ Add Design</button>
+                    </div>
+                    <div id="we_design_rows" class="space-y-2"></div>
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-emerald-800 mb-1">Total Stitches / Hours *</label>
                     <input type="number" step="any" id="we_qty" required placeholder="Stitches dalein..." class="w-full border-2 border-emerald-400 p-3 rounded-xl bg-emerald-50 font-black text-lg text-emerald-900">
                 </div>
+
+                <!-- EXTRA MACHINE (OPTIONAL) -->
+                <div class="bg-amber-50 border-2 border-amber-200 p-3 rounded-xl">
+                    <label class="flex items-center gap-2 cursor-pointer font-bold text-amber-900 text-xs select-none">
+                        <input type="checkbox" id="we_has_extra" onchange="document.getElementById('we_extra_box').classList.toggle('hidden', !this.checked)" class="w-4 h-4 accent-amber-600 rounded">
+                        <span><i class="fa-solid fa-circle-plus text-amber-600"></i> Extra Machine Chalayi Hai? (Optional)</span>
+                    </label>
+                    <div id="we_extra_box" class="hidden space-y-2.5 mt-3 pt-3 border-t border-amber-200">
+                        <label class="inline-flex items-center justify-center gap-1.5 w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-3 rounded-lg cursor-pointer text-xs shadow-sm">
+                            <i class="fa-solid fa-camera"></i>
+                            <span id="scan_ex_btn_text">📷 Extra Machine Display Scan Karein</span>
+                            <input type="file" accept="image/*" capture="environment" onchange="scanMachineDisplay(event, true)" class="hidden">
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra M/C No.</label><select id="we_ex_machno" onchange="autoSelectMachineType('we_ex_machno', 'we_ex_machine')" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra M/C Type</label><select id="we_ex_machine" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Design</label><input type="text" id="we_ex_design" list="att_base_designs_list" placeholder="Design No." class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Frame</label><input type="number" id="we_ex_frame" placeholder="0" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Stitches / Hours</label>
+                            <input type="number" step="any" id="we_ex_qty" placeholder="Extra stitches dalein..." class="w-full border border-amber-400 p-2.5 rounded-lg bg-white font-black text-sm text-amber-900">
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Note (Optional)</label>
                     <input type="text" id="we_note" placeholder="Koi remark ho toh likhein..." class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm">
@@ -271,8 +305,7 @@
                 </div>
             </div>
         </section>
-
-        <!-- 2. ATTENDANCE (STEP-BY-STEP LAYOUT) -->
+<!-- 2. ATTENDANCE (STEP-BY-STEP LAYOUT) -->
         <section id="attendance" class="tab-content">
             <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                 <h2 class="text-2xl font-bold text-slate-800">Attendance & Production Entry</h2>
@@ -391,7 +424,8 @@
                 <button type="button" onclick="saveBulkAttendance()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base"><i class="fa-solid fa-floppy-disk"></i> Save All Selected Attendance Entries</button>
             </div>
         </section>
-<!-- 3. ADVANCE -->
+
+        <!-- 3. ADVANCE -->
         <section id="advance" class="tab-content">
             <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                 <h2 class="text-2xl font-bold text-slate-800">Advance (Upad) & Pagar Payments</h2>
@@ -696,8 +730,7 @@
         <button onclick="switchTab('master', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-gear mb-1"></i> Master</button>
     </nav>
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl opacity-0 z-[110] font-medium"><span id="toastMsg">Saved!</span></div>
-
-    <script>
+<script>
         const DEFAULT_SCRIPT_URL = 'MERA_COPIED_URL_YAHAN_PASTE_KAREIN';
         const DEFAULT_PAYMENT_MODES = [
             { id: 'Normal', name: 'Normal (Base + Bonus)', dayMult: 1, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
@@ -995,7 +1028,8 @@
             let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }), a = document.createElement('a');
             a.href = URL.createObjectURL(blob); a.download = filename; a.click(); showToast('Excel (CSV) Downloaded!');
         }
-// ====== SLABS & CHARTS ======
+
+        // ====== SLABS & CHARTS ======
         function toggleMachineRateMode() {
             let mode = document.getElementById('m_rateMode').value;
             document.getElementById('m_single_rate_box').classList.toggle('hidden', mode === 'slabs');
@@ -1322,8 +1356,7 @@
         }
         function deleteAttendance(id) { if (!checkAdmin() || !confirm("Delete Entry?")) return; let kw = document.getElementById('h_worker1').value; attendance = attendance.filter(a => a && a.id !== id); localStorage.setItem('karkhana_att', JSON.stringify(attendance)); if (document.getElementById('h_edit_id').value === id) cancelEditAttendance(kw); showToast("Deleted!"); refreshAllData(); syncToSheet(); }
         function cancelEditAttendance(keepWorkerId) { document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date(); document.getElementById('h_has_extra').checked = false; refreshDropdowns(); resetAttDesignRows(); if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId; document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('h_btn_cancel').classList.add('hidden'); toggleMachineFields(); toggleExtraMachineBox(); updateLiveBonusPreview(); }
-
-        // ====== BULK ATTENDANCE ======
+// ====== BULK ATTENDANCE ======
         function switchAttMode(mode) { let s = document.getElementById('att_single_view'), b = document.getElementById('att_bulk_view'), bs = document.getElementById('btn_att_single'), bb = document.getElementById('btn_att_bulk'); if (mode === 'bulk') { s.classList.add('hidden'); b.classList.remove('hidden'); bb.classList.add('bg-indigo-600','text-white'); bb.classList.remove('text-slate-600'); bs.classList.remove('bg-indigo-600','text-white'); bs.classList.add('text-slate-600'); renderBulkAttendanceTable(); } else { b.classList.add('hidden'); s.classList.remove('hidden'); bs.classList.add('bg-indigo-600','text-white'); bs.classList.remove('text-slate-600'); bb.classList.remove('bg-indigo-600','text-white'); bb.classList.add('text-slate-600'); showWorkerSummary(); } }
         function renderBulkAttendanceTable() {
             updateBaseDesignDatalist();
@@ -1674,17 +1707,50 @@
             html2pdf().set({ margin: 10, filename: `MahiAndDevanshCo_Machine_${m.no}_${selM}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.style.display = 'none');
         }
 
-        // ====== WORKER STITCH ENTRY & MANAGER APPROVAL ======
+        // ====== WORKER STITCH ENTRY & MANAGER APPROVAL (NO RATE + MULTI DESIGN + EXTRA M/C) ======
+        function getWorkerMachineOptionsHtml() {
+            return machineRules.map(m => m ? `<option value="${m.name}">${m.name}</option>` : '').join('') + `<option value="ALTER">ALTER</option>`;
+        }
+        function addWeDesignRow(designVal = '', frameVal = '', qtyVal = '') {
+            let cont = document.getElementById('we_design_rows'); if (!cont) return;
+            let row = document.createElement('div');
+            row.className = 'we-des-row grid grid-cols-12 gap-1.5 items-center';
+            row.innerHTML = `
+                <input type="text" list="att_base_designs_list" value="${designVal}" placeholder="Design (581+Blw)" class="wed-name col-span-5 border border-indigo-200 p-2 rounded-lg bg-white text-xs font-bold">
+                <input type="number" value="${frameVal}" placeholder="Frame" class="wed-frame col-span-3 border p-2 rounded-lg bg-white text-xs font-bold text-center">
+                <input type="number" value="${qtyVal}" placeholder="Stitches" oninput="syncWeTotalQty()" class="wed-qty col-span-3 border p-2 rounded-lg bg-white text-xs font-bold">
+                <button type="button" onclick="this.closest('.we-des-row').remove(); syncWeTotalQty();" class="col-span-1 text-red-500 font-bold text-sm"><i class="fa-solid fa-xmark"></i></button>`;
+            cont.appendChild(row);
+        }
+        function syncWeTotalQty() {
+            let sum = 0;
+            document.querySelectorAll('#we_design_rows .wed-qty').forEach(inp => sum += (parseFloat(inp.value) || 0));
+            if (sum > 0) document.getElementById('we_qty').value = sum;
+        }
+        function resetWeDesignRows(items = []) {
+            let cont = document.getElementById('we_design_rows'); if (!cont) return;
+            cont.innerHTML = '';
+            if (Array.isArray(items) && items.length) items.forEach(it => addWeDesignRow(it.design || '', it.frame || '', it.qty || ''));
+            else addWeDesignRow();
+        }
         function openWorkerEntryMode() {
             document.getElementById('login_screen').style.display = 'none';
             document.getElementById('worker_entry_screen').classList.remove('hidden');
             document.getElementById('we_date').valueAsDate = new Date();
             updateBaseDesignDatalist();
+            resetWeDesignRows();
             let mw = getActiveWorkers().filter(w => isWorkerMachineType(w));
             document.getElementById('we_worker').innerHTML = mw.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join('') || '<option value="">No Machine Worker</option>';
-            document.getElementById('we_machno').innerHTML = getMachineNoOptionsHtml(false);
-            document.getElementById('we_machine').innerHTML = getMachineOptionsHtml();
+            let mnHtml = getMachineNoOptionsHtml(false);
+            let mtHtml = getWorkerMachineOptionsHtml(); // Sirf Machine Type, Rate Nahi!
+            document.getElementById('we_machno').innerHTML = mnHtml;
+            document.getElementById('we_machine').innerHTML = mtHtml;
             autoSelectMachineType('we_machno', 'we_machine');
+            if (document.getElementById('we_ex_machno')) {
+                document.getElementById('we_ex_machno').innerHTML = mnHtml;
+                document.getElementById('we_ex_machine').innerHTML = mtHtml;
+                autoSelectMachineType('we_ex_machno', 'we_ex_machine');
+            }
         }
         function closeWorkerEntryMode() {
             document.getElementById('worker_entry_screen').classList.add('hidden');
@@ -1693,16 +1759,44 @@
         function submitWorkerPendingEntry(e) {
             e.preventDefault();
             let wId = document.getElementById('we_worker').value, qty = parseFloat(document.getElementById('we_qty').value) || 0;
-            if (!wId || qty <= 0) { alert("Worker aur Stitches sahi dalein!"); return; }
+            if (!wId || qty <= 0) { alert("Worker aur Total Stitches sahi dalein!"); return; }
+            let designItems = [];
+            document.querySelectorAll('#we_design_rows .we-des-row').forEach(r => {
+                let dName = (r.querySelector('.wed-name').value || '').trim();
+                let dFr = parseFloat(r.querySelector('.wed-frame').value) || 0;
+                let dQty = parseFloat(r.querySelector('.wed-qty').value) || 0;
+                if (dName || dFr > 0 || dQty > 0) designItems.push({ design: dName || '-', frame: dFr, qty: dQty });
+            });
+            let totalFrame = designItems.reduce((s, it) => s + it.frame, 0);
+            let designStr = designItems.map(it => it.design).filter(x => x && x !== '-').join(', ') || '-';
+
+            let hasExtra = document.getElementById('we_has_extra')?.checked || false;
+            let exQty = hasExtra ? (parseFloat(document.getElementById('we_ex_qty').value) || 0) : 0;
+            if (hasExtra && exQty <= 0) { alert("Extra Machine ke Stitches / Hours dalein!"); return; }
+
             pendingEntries.push({
                 id: 'P_' + Date.now(), date: document.getElementById('we_date').value, shift: document.getElementById('we_shift').value || 'Day',
                 workerId: wId, machineNo: document.getElementById('we_machno').value || '', machine: document.getElementById('we_machine').value || '',
-                design: (document.getElementById('we_design').value || '').trim() || '-', qty: qty,
-                frame: parseFloat(document.getElementById('we_frame').value) || 0, note: (document.getElementById('we_note').value || '').trim() || '-',
+                design: designStr, designItems: designItems, qty: qty, frame: totalFrame,
+                hasExtraMachine: hasExtra,
+                extraMachineNo: hasExtra ? (document.getElementById('we_ex_machno').value || '') : '',
+                extraMachine: hasExtra ? (document.getElementById('we_ex_machine').value || '') : '',
+                extraDesign: hasExtra ? ((document.getElementById('we_ex_design').value || '').trim() || '-') : '-',
+                extraFrame: hasExtra ? (parseFloat(document.getElementById('we_ex_frame').value) || 0) : 0,
+                extraQty: exQty,
+                note: (document.getElementById('we_note').value || '').trim() || '-',
                 submittedAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
             });
             localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
-            document.getElementById('we_qty').value = ''; document.getElementById('we_frame').value = ''; document.getElementById('we_note').value = '';
+            document.getElementById('we_qty').value = ''; document.getElementById('we_note').value = '';
+            if (document.getElementById('we_has_extra')) {
+                document.getElementById('we_has_extra').checked = false;
+                document.getElementById('we_extra_box').classList.add('hidden');
+                document.getElementById('we_ex_design').value = '';
+                document.getElementById('we_ex_frame').value = '';
+                document.getElementById('we_ex_qty').value = '';
+            }
+            resetWeDesignRows();
             showToast("✅ Entry Manager ko Approval ke liye bhej di gayi!");
             syncToSheet();
         }
@@ -1717,12 +1811,17 @@
             let isMgr = sessionStorage.getItem('karkhana_role') === 'manager';
             listEl.innerHTML = pendingEntries.map(p => {
                 let w = workers.find(x => x && x.id === p.workerId);
-                let estBonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full');
+                let items = (Array.isArray(p.designItems) && p.designItems.length) ? p.designItems : [{ design: p.design, qty: p.qty, frame: p.frame }];
+                let estBonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full', items);
+                let exBonus = p.hasExtraMachine ? calcProductionBonus(getPaymentMode('ExtraStitch'), p.extraMachine, p.extraDesign, p.extraQty, p.extraFrame, p.date, 'Full') : 0;
+                let extraHtml = p.hasExtraMachine ? `<div class="text-xs text-amber-800 bg-amber-100/70 border border-amber-300 px-2 py-1 rounded mt-1.5 font-semibold">+ Extra M/C: [${p.extraMachineNo || '-'}] ${p.extraMachine} | Design: ${p.extraDesign} | Stitches: ${p.extraQty.toLocaleString('en-IN')} | Frame: ${p.extraFrame}</div>` : '';
                 return `<div class="p-4 rounded-xl border-2 border-amber-200 bg-amber-50/40 flex flex-wrap justify-between items-center gap-3">
                     <div>
                         <div class="font-bold text-slate-800">${w ? getWorkerLabel(w) : 'Unknown'} <span class="text-xs font-normal text-slate-500">(${p.date} • ${p.shift} Shift • ${p.submittedAt || ''})</span></div>
-                        <div class="text-xs text-slate-700 mt-1"><span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${p.machineNo || '-'}</span><b>${p.machine}</b> | Design: <b>${p.design}</b> | Stitches: <b class="text-indigo-700">${p.qty.toLocaleString('en-IN')}</b> | Frame: <b>${p.frame}</b></div>
-                        <div class="text-xs mt-1">${!isMgr ? `<span class="text-emerald-700 font-bold">Estimated Bonus: ₹${estBonus.toFixed(0)}</span>` : ''} ${p.note !== '-' ? `<span class="text-red-600 font-semibold ml-2">Note: ${p.note}</span>` : ''}</div>
+                        <div class="text-xs text-slate-700 mt-1"><span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${p.machineNo || '-'}</span><b>${p.machine}</b> | Total Stitches: <b class="text-indigo-700">${p.qty.toLocaleString('en-IN')}</b> | Total Frame: <b>${p.frame}</b></div>
+                        <div class="mt-1.5">${formatDesignSummaryHtml(p)}</div>
+                        ${extraHtml}
+                        <div class="text-xs mt-1">${!isMgr ? `<span class="text-emerald-700 font-bold">Estimated Bonus: ₹${(estBonus + exBonus).toFixed(0)}</span>` : ''} ${p.note !== '-' ? `<span class="text-red-600 font-semibold ml-2">Note: ${p.note}</span>` : ''}</div>
                     </div>
                     <div class="flex gap-2">
                         <button type="button" onclick="approvePendingEntry('${p.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-check mr-1"></i> Approve</button>
@@ -1733,12 +1832,17 @@
         }
         function approvePendingEntry(pId) {
             let p = pendingEntries.find(x => x.id === pId); if (!p) return;
-            let bonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full');
+            let items = (Array.isArray(p.designItems) && p.designItems.length) ? p.designItems : [{ design: p.design, qty: p.qty, frame: p.frame }];
+            let bonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full', items);
+            let exBonus = p.hasExtraMachine ? calcProductionBonus(getPaymentMode('ExtraStitch'), p.extraMachine, p.extraDesign, p.extraQty, p.extraFrame, p.date, 'Full') : 0;
             attendance.push({
                 id: 'A_' + Date.now(), workerId: p.workerId, date: p.date, shift: p.shift || 'Day', status: 'Full',
                 mode: 'Normal', machineNo: p.machineNo, machine: p.machine, design: p.design,
-                designItems: [{ design: p.design, qty: p.qty, frame: p.frame }], frame: p.frame, qty: p.qty,
-                customBonus: 0, note: p.note, finalBonus: bonus, hasExtraMachine: false
+                designItems: items, frame: p.frame, qty: p.qty, customBonus: 0, note: p.note,
+                hasExtraMachine: !!p.hasExtraMachine, extraMode: p.hasExtraMachine ? 'ExtraStitch' : '',
+                extraMachineNo: p.extraMachineNo || '', extraMachine: p.extraMachine || '',
+                extraDesign: p.extraDesign || '-', extraFrame: p.extraFrame || 0, extraQty: p.extraQty || 0,
+                extraBonus: exBonus, finalBonus: bonus + exBonus
             });
             pendingEntries = pendingEntries.filter(x => x.id !== pId);
             saveAllLocal(); renderPendingApprovals(); refreshAllData(); syncToSheet();
@@ -1751,13 +1855,14 @@
             showToast("❌ Entry Rejected!");
         }
 
-        // ====== AI MACHINE DISPLAY SCANNER ======
-        async function scanMachineDisplay(e) {
+        // ====== AI MACHINE DISPLAY SCANNER (MAIN + EXTRA) ======
+        async function scanMachineDisplay(e, isExtra = false) {
             let file = e.target.files[0]; if (!file) return;
             if (!isCloudConfigured()) { alert("Pehle Settings mein Google Sheet Sync URL save karein!"); e.target.value = ''; return; }
-            let btnText = document.getElementById('scan_btn_text'), statusMsg = document.getElementById('scan_status_msg');
-            btnText.innerText = '⏳ Display Padh Raha Hai...';
-            statusMsg.innerText = 'Photo scan ho rahi hai, 2-3 second rukein...';
+            let btnText = document.getElementById(isExtra ? 'scan_ex_btn_text' : 'scan_btn_text');
+            let statusMsg = document.getElementById('scan_status_msg');
+            if (btnText) btnText.innerText = '⏳ Display Padh Raha Hai...';
+            if (!isExtra && statusMsg) statusMsg.innerText = 'Photo scan ho rahi hai, 2-3 second rukein...';
             try {
                 let base64Data = await new Promise((resolve, reject) => {
                     let reader = new FileReader();
@@ -1777,16 +1882,24 @@
                 let result = await res.json();
                 if (result.status === 'ok' && result.data) {
                     let d = result.data;
-                    if (d.stitches) document.getElementById('we_qty').value = d.stitches;
-                    if (d.design) document.getElementById('we_design').value = d.design;
-                    if (d.frame) document.getElementById('we_frame').value = d.frame;
-                    statusMsg.innerHTML = `<span class="text-emerald-700 font-bold">✅ Scan Complete! Ek baar numbers check karke Submit karein.</span>`;
-                    showToast('✅ Display Scan Ho Gaya!');
+                    if (isExtra) {
+                        if (d.stitches) document.getElementById('we_ex_qty').value = d.stitches;
+                        if (d.frame) document.getElementById('we_ex_frame').value = d.frame;
+                        if (Array.isArray(d.items) && d.items.length) document.getElementById('we_ex_design').value = d.items.map(it => it.design).filter(Boolean).join(', ');
+                        showToast('✅ Extra Machine Display Scan Ho Gaya!');
+                    } else {
+                        if (d.stitches) document.getElementById('we_qty').value = d.stitches;
+                        if (Array.isArray(d.items) && d.items.length) resetWeDesignRows(d.items);
+                        if (statusMsg) statusMsg.innerHTML = `<span class="text-emerald-700 font-bold">✅ Scan Complete! ${d.items ? d.items.length + ' Designs' : ''} bhar gaye hain. Check karke Submit karein.</span>`;
+                        showToast('✅ Display Scan Ho Gaya!');
+                    }
                 } else throw new Error('Scan fail');
             } catch (err) {
-                statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ Scan nahi ho paya. Saaf photo lein ya manually bharein.</span>`;
+                if (!isExtra && statusMsg) statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ Scan nahi ho paya. Saaf photo lein ya manually bharein.</span>`;
+                else showToast('❌ Extra Display scan fail hua!');
             } finally {
-                btnText.innerText = '📷 Machine Display Scan Karein'; e.target.value = '';
+                if (btnText) btnText.innerText = isExtra ? '📷 Extra Machine Display Scan Karein' : '📷 Machine Display Scan Karein';
+                e.target.value = '';
             }
         }
 
@@ -1835,3 +1948,4 @@
     </script>
 </body>
 </html>
+
