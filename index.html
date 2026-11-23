@@ -41,8 +41,56 @@
                     <i class="fa-solid fa-lock-open mr-1"></i> Unlock App
                 </button>
             </form>
+            <div class="mt-4 pt-4 border-t border-slate-200">
+             <button type="button" onclick="openWorkerEntryMode()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
+                 <i class="fa-solid fa-helmet-safety mr-1"></i> Machine Worker Stitch Entry
+             </button>
+         </div>
         </div>
     </div>
+    <!-- WORKER ONLY STITCH ENTRY SCREEN -->
+ <div id="worker_entry_screen" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-4">
+     <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-teal-200 overflow-hidden my-4">
+         <div class="bg-teal-700 text-white p-4 flex justify-between items-center">
+             <div>
+                 <h2 class="font-black text-lg">Mahi and Devansh co.</h2>
+                 <p class="text-xs text-teal-100">Machine Worker Stitch Entry (Approval ke liye)</p>
+             </div>
+             <button type="button" onclick="closeWorkerEntryMode()" class="bg-teal-900 hover:bg-teal-950 px-3 py-1.5 rounded-lg text-xs font-bold">
+                 <i class="fa-solid fa-arrow-left mr-1"></i> Back
+             </button>
+         </div>
+         <form id="worker_only_form" onsubmit="submitWorkerPendingEntry(event)" class="p-4 space-y-3">
+             <div class="grid grid-cols-2 gap-3">
+                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Date *</label><input type="date" id="we_date" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm"></div>
+                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="we_shift" class="w-full border p-2.5 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
+             </div>
+             <div>
+                 <label class="block text-xs font-bold text-slate-700 mb-1">Apna Naam / ID Chunein *</label>
+                 <select id="we_worker" required class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50/50 font-bold text-sm"></select>
+             </div>
+             <div class="grid grid-cols-2 gap-3">
+                 <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine No. *</label><select id="we_machno" onchange="autoSelectMachineType('we_machno', 'we_machine')" required class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
+                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="we_machine" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-semibold text-sm"></select></div>
+             </div>
+             <div class="grid grid-cols-2 gap-3">
+                 <div><label class="block text-xs font-bold text-indigo-800 mb-1">Design No.</label><input type="text" id="we_design" list="att_base_designs_list" placeholder="e.g. 1370-C" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-white font-bold text-sm"></div>
+                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Total Frame</label><input type="number" id="we_frame" placeholder="0" class="w-full border p-2.5 rounded-lg bg-white text-sm"></div>
+             </div>
+             <div>
+                 <label class="block text-xs font-bold text-emerald-800 mb-1">Total Stitches / Hours *</label>
+                 <input type="number" step="any" id="we_qty" required placeholder="Stitches dalein..." class="w-full border-2 border-emerald-400 p-3 rounded-xl bg-emerald-50 font-black text-lg text-emerald-900">
+             </div>
+             <div>
+                 <label class="block text-xs font-bold text-slate-700 mb-1">Note (Optional)</label>
+                 <input type="text" id="we_note" placeholder="Koi remark ho toh likhein..." class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm">
+             </div>
+             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-xl shadow-lg text-base transition">
+                 <i class="fa-solid fa-paper-plane mr-1"></i> Manager Ko Approval Bhejein
+             </button>
+         </form>
+     </div>
+ </div>
 
     <!-- Desktop Navbar -->
     <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-3 justify-between items-center">
@@ -106,6 +154,9 @@
                 <button type="button" id="dbtn_d_worker" onclick="openDashPanel('d_worker')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-user-check"></i> Worker Month Search</button>
                 <button type="button" id="dbtn_d_charts" onclick="openDashPanel('d_charts')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-chart-line"></i> Analytics & Graphs</button>
                 <button type="button" id="dbtn_d_balance" onclick="openDashPanel('d_balance')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-wallet"></i> Pagar Balance</button>
+                <button type="button" id="dbtn_d_approval" onclick="openDashPanel('d_approval')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition">
+    <i class="fa-solid fa-bell text-amber-500"></i> Approvals <span id="pending_app_badge" class="ml-1 bg-red-600 text-white px-1.5 py-0.5 rounded-full text-[11px]">0</span>
+</button>
             </div>
 
             <!-- PANEL 1: DAILY PRODUCTION, NOTES & PENDING HAZIRI -->
@@ -195,6 +246,14 @@
                 </div>
             </div>
         </section>
+        <!-- PANEL 5: MANAGER APPROVALS -->
+         <div id="d_approval" class="dash-panel bg-white p-5 rounded-xl shadow-sm border border-amber-300">
+             <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                 <h3 class="font-bold text-lg text-amber-900"><i class="fa-solid fa-user-check text-amber-600"></i> Worker Stitch Approvals (Pending)</h3>
+                 <button type="button" onclick="syncFromSheet(true)" class="bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+             </div>
+             <div id="dash_approval_list" class="space-y-3"></div>
+         </div>
 
         <!-- 2. ATTENDANCE (NEW CLEAN STEP-BY-STEP LAYOUT) -->
         <section id="attendance" class="tab-content">
@@ -691,6 +750,7 @@
         let adminPassword = localStorage.getItem('karkhana_adminPass') || '1234';
         let alterRate = parseFloat(localStorage.getItem('karkhana_alterRate')); if (isNaN(alterRate)) alterRate = 120;
         let paymentModes = [], machineNumbers = [], workerTypes = [], workers = [], designs = [], machineRules = [], attendance = [], advanceData = [];
+        localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
         let bonusChart, compareChart, currentReportType = 'company', currentDashPanel = 'd_daily';
 
         // ====== LOGIN LOCK ======
@@ -765,7 +825,7 @@
             if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
             setSyncBadge('Saving...', 'text-yellow-300');
             try {
-                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, updatedAt: new Date().toISOString() };
+                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, pendingEntries, updatedAt: new Date().toISOString() };
                 let res = await fetch(getScriptUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
                 let result = await res.json();
                 if (result.status === 'ok') { setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Sheet mein upload ho gaya!'); }
@@ -790,6 +850,7 @@
                     if (Array.isArray(d.machineRules)) machineRules = d.machineRules;
                     if (Array.isArray(d.attendance)) attendance = d.attendance;
                     if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
+                    if (Array.isArray(d.pendingEntries)) pendingEntries = d.pendingEntries;
                     migrateWorkersData(); saveAllLocal(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); refreshAllData();
                     setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Latest data sync ho gaya!');
                 } else if (result.status === 'empty') {
@@ -809,6 +870,7 @@
             if (panelId === 'd_worker') renderWorkerSearchPanel();
             if (panelId === 'd_charts') setTimeout(() => { updateCompareChart(); updateChart(); }, 40);
             if (panelId === 'd_balance') renderDashboard();
+            if (panelId === 'd_approval') renderPendingApprovals();
         }
         function shiftDashDate(days) { let inp = document.getElementById('dash_filter_date'), d = inp.value ? new Date(inp.value) : new Date(); d.setDate(d.getDate() + days); inp.value = d.toISOString().slice(0, 10); renderDailyProductionPanel(); }
         function setDashToday() { document.getElementById('dash_filter_date').valueAsDate = new Date(); renderDailyProductionPanel(); }
@@ -1038,6 +1100,7 @@
             designs = getSafeData('karkhana_designs', []);
             machineRules = getSafeData('karkhana_machineRules', [{ id: 'MR1', name: 'Type 25', rateMode: 'single', min: 185000, rate: 1.75, rateSlabs: [] }]);
             attendance = getSafeData('karkhana_att', []); advanceData = getSafeData('karkhana_upad', []);
+            pendingEntries = getSafeData('karkhana_pending', []);
             if (migrateWorkersData()) saveAllLocal();
         }
 
@@ -1085,6 +1148,7 @@
             renderAdvanceStatement();
             if (document.getElementById('reports').classList.contains('active')) setReportType(currentReportType);
             showWorkerSummary();
+            updatePendingApprovalBadge();
         }
 
         function filterWorkerSelect(query, selectId) {
@@ -1653,6 +1717,95 @@
         }
 
         function showToast(msg) { let t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('opacity-0'); setTimeout(() => t.classList.add('opacity-0'), 3000); }
+        // ====== WORKER STITCH ENTRY & MANAGER APPROVAL ======
+     function openWorkerEntryMode() {
+         document.getElementById('login_screen').style.display = 'none';
+         document.getElementById('worker_entry_screen').classList.remove('hidden');
+         document.getElementById('we_date').valueAsDate = new Date();
+         updateBaseDesignDatalist();
+         let mw = getActiveWorkers().filter(w => isWorkerMachineType(w));
+         document.getElementById('we_worker').innerHTML = mw.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join('') || '<option value="">No Machine Worker</option>';
+         document.getElementById('we_machno').innerHTML = getMachineNoOptionsHtml(false);
+         document.getElementById('we_machine').innerHTML = getMachineOptionsHtml();
+         autoSelectMachineType('we_machno', 'we_machine');
+     }
+     function closeWorkerEntryMode() {
+         document.getElementById('worker_entry_screen').classList.add('hidden');
+         checkLoginStatus();
+     }
+     function submitWorkerPendingEntry(e) {
+         e.preventDefault();
+         let wId = document.getElementById('we_worker').value;
+         let qty = parseFloat(document.getElementById('we_qty').value) || 0;
+         if (!wId || qty <= 0) { alert("Worker aur Stitches sahi dalein!"); return; }
+         pendingEntries.push({
+             id: 'P_' + Date.now(),
+             date: document.getElementById('we_date').value,
+             shift: document.getElementById('we_shift').value || 'Day',
+             workerId: wId,
+             machineNo: document.getElementById('we_machno').value || '',
+             machine: document.getElementById('we_machine').value || '',
+             design: (document.getElementById('we_design').value || '').trim() || '-',
+             qty: qty,
+             frame: parseFloat(document.getElementById('we_frame').value) || 0,
+             note: (document.getElementById('we_note').value || '').trim() || '-',
+             submittedAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+         });
+         localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
+         document.getElementById('we_qty').value = '';
+         document.getElementById('we_frame').value = '';
+         document.getElementById('we_note').value = '';
+         showToast("✅ Entry Manager ko Approval ke liye bhej di gayi!");
+         syncToSheet();
+     }
+     function updatePendingApprovalBadge() {
+         let b = document.getElementById('pending_app_badge');
+         if (b) { b.innerText = pendingEntries.length; b.classList.toggle('hidden', pendingEntries.length === 0); }
+     }
+     function renderPendingApprovals() {
+         updatePendingApprovalBadge();
+         let listEl = document.getElementById('dash_approval_list'); if (!listEl) return;
+         if (!pendingEntries.length) { listEl.innerHTML = '<div class="p-6 text-center text-sm text-gray-400 bg-slate-50 rounded-xl border">Koi pending approval nahi hai.</div>'; return; }
+         listEl.innerHTML = pendingEntries.map(p => {
+             let w = workers.find(x => x && x.id === p.workerId);
+             let pmObj = getPaymentMode('Normal');
+             let estBonus = calcProductionBonus(pmObj, p.machine, p.design, p.qty, p.frame, p.date, 'Full');
+             return `<div class="p-4 rounded-xl border-2 border-amber-200 bg-amber-50/40 flex flex-wrap justify-between items-center gap-3">
+                 <div>
+                     <div class="font-bold text-slate-800">${w ? getWorkerLabel(w) : 'Unknown'} <span class="text-xs font-normal text-slate-500">(${p.date} • ${p.shift} Shift • ${p.submittedAt || ''})</span></div>
+                     <div class="text-xs text-slate-700 mt-1">
+                         <span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${p.machineNo || '-'}</span>
+                         <b>${p.machine}</b> | Design: <b>${p.design}</b> | Stitches: <b class="text-indigo-700">${p.qty.toLocaleString('en-IN')}</b> | Frame: <b>${p.frame}</b>
+                     </div>
+                     <div class="text-xs mt-1 text-emerald-700 font-bold">Estimated Bonus: ₹${estBonus.toFixed(0)} ${p.note !== '-' ? `<span class="text-red-600 ml-2">Note: ${p.note}</span>` : ''}</div>
+                 </div>
+                 <div class="flex gap-2">
+                     <button type="button" onclick="approvePendingEntry('${p.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-check mr-1"></i> Approve</button>
+                     <button type="button" onclick="rejectPendingEntry('${p.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i> Reject</button>
+                 </div>
+             </div>`;
+         }).join('');
+     }
+     function approvePendingEntry(pId) {
+         let p = pendingEntries.find(x => x.id === pId); if (!p) return;
+         let pmObj = getPaymentMode('Normal');
+         let bonus = calcProductionBonus(pmObj, p.machine, p.design, p.qty, p.frame, p.date, 'Full');
+         attendance.push({
+             id: 'A_' + Date.now(), workerId: p.workerId, date: p.date, shift: p.shift || 'Day', status: 'Full',
+             mode: 'Normal', machineNo: p.machineNo, machine: p.machine, design: p.design,
+             designItems: [{ design: p.design, qty: p.qty, frame: p.frame }], frame: p.frame, qty: p.qty,
+             customBonus: 0, note: p.note, finalBonus: bonus, hasExtraMachine: false
+         });
+         pendingEntries = pendingEntries.filter(x => x.id !== pId);
+         saveAllLocal(); renderPendingApprovals(); refreshAllData(); syncToSheet();
+         showToast("✅ Entry Approved & Attendance mein add ho gayi!");
+     }
+     function rejectPendingEntry(pId) {
+         if (!confirm("Is entry ko Reject (Delete) karein?")) return;
+         pendingEntries = pendingEntries.filter(x => x.id !== pId);
+         saveAllLocal(); renderPendingApprovals(); syncToSheet();
+         showToast("❌ Entry Rejected!");
+     }
         initApp();
     </script>
 </body>
