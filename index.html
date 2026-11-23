@@ -1177,6 +1177,20 @@
         }
 
         // ====== DAILY PRODUCTION + PENDING HAZIRI ======
+       function openPendingWorkerAtt(wId, dateStr) {
+         switchTab('attendance');
+         switchAttMode('single');
+         cancelEditAttendance(wId);
+         if (dateStr) document.getElementById('h_date').value = dateStr;
+         let dashShift = document.getElementById('dash_filter_shift')?.value;
+         if (dashShift && dashShift !== 'ALL') document.getElementById('h_shift').value = dashShift;
+         document.getElementById('search_w1').value = '';
+         let sel = document.getElementById('h_worker1');
+         if (sel) sel.value = wId;
+         showWorkerSummary();
+         updateLiveBonusPreview();
+         window.scrollTo({ top: 0, behavior: 'smooth' });
+     }
         function renderDailyProductionPanel() {
             let out = document.getElementById('dash_daily_output'), pendBox = document.getElementById('dash_pending_box'); if (!out) return;
             let dStr = document.getElementById('dash_filter_date').value, onlyNotes = document.getElementById('dash_only_notes').checked, shiftFilter = document.getElementById('dash_filter_shift')?.value || 'ALL';
@@ -1187,7 +1201,7 @@
             let pendingW = getActiveWorkers().filter(w => !doneIds.has(w.id));
             if (pendBox) {
                 if (pendingW.length > 0) {
-                    pendBox.innerHTML = `<div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900"><div class="font-bold mb-1.5"><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Pending Haziri (${dStr}): <b>${pendingW.length} Active Workers</b> ki entry abhi baki hai</div><div class="flex flex-wrap gap-1.5">${pendingW.map(w => `<span class="bg-white border border-amber-300 px-2 py-0.5 rounded font-semibold">[${getWorkerCode(w)}] ${w.name}</span>`).join('')}</div></div>`;
+                    pendBox.innerHTML = `<div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900"><div class="font-bold mb-1.5"><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Pending Haziri (${dStr}): <b>${pendingW.length} Active Workers</b> ki entry abhi baki hai <span class="font-normal text-amber-700">(Naam par click karke Haziri bharein)</span></div><div class="flex flex-wrap gap-1.5">${pendingW.map(w => `<button type="button" onclick="openPendingWorkerAtt('${w.id}', '${dStr}')" class="bg-white hover:bg-indigo-600 hover:text-white border border-amber-300 hover:border-indigo-600 px-2.5 py-1 rounded-md font-semibold cursor-pointer transition shadow-sm">[${getWorkerCode(w)}] ${w.name}</button>`).join('')}</div></div>`;
                 } else {
                     pendBox.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-bold text-emerald-800"><i class="fa-solid fa-circle-check mr-1"></i> ${dStr}: Sabhi Active Workers ki Haziri complete hai!</div>`;
                 }
