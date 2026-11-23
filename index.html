@@ -83,7 +83,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Apna Naam / ID Chunein *</label>
-                    <select id="we_worker" required class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50/50 font-bold text-sm"></select>
+                    <select id="we_worker" onchange="applyWorkerDefaultMachine(this.value, 'we_machno', 'we_machine')" required class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50/50 font-bold text-sm"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine No. *</label><select id="we_machno" onchange="autoSelectMachineType('we_machno', 'we_machine')" required class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
@@ -328,7 +328,7 @@
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Date *</label><input type="date" id="h_date" required onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm"></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="h_shift" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-indigo-50/60 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Attendance Status *</label><select id="h_status" onchange="updateLiveBonusPreview()" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Full">✅ Full Day</option><option value="Half">🌗 Half Day</option><option value="Absent">❌ Absent</option></select></div>
-                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label><input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none"><select id="h_worker1" required onchange="showWorkerSummary(); updateLiveBonusPreview();" class="w-full border p-2 rounded-b-lg bg-slate-50 text-sm font-semibold"></select></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label><input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none"><select id="h_worker1" required onchange="applyWorkerDefaultMachine(this.value, 'h_machine_no', 'h_machine'); showWorkerSummary(); updateLiveBonusPreview();"
                         </div>
                         <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-2"></div>
                     </div>
@@ -546,9 +546,10 @@
                             <div><label class="block text-xs font-bold text-emerald-700 mb-1">WhatsApp / Mobile No.</label><input type="tel" id="w_mobile" placeholder="10 digit number" class="w-full border border-emerald-200 p-2 rounded bg-emerald-50/40 text-sm"></div>
                             <div><label class="block text-xs font-bold text-emerald-800 mb-1">Work Status *</label><select id="w_active" class="w-full border border-emerald-300 p-2 rounded bg-emerald-50 font-bold text-emerald-900"><option value="true">🟢 Active (Kaam Par)</option><option value="false">🔴 Inactive (Chutti / Chhod Diya)</option></select></div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Category *</label><select id="w_type" class="w-full border p-2 rounded bg-slate-50"></select></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Salary Rule *</label><select id="w_rule" class="w-full border p-2 rounded bg-slate-50 font-semibold text-indigo-800"><option value="30Days">Rule: 30/31 Days</option><option value="SundayOff">Rule: Sundays Off</option><option value="2Leaves">Rule: 2 Leaves Allowed</option></select></div>
+                            <div><label class="block text-xs font-bold text-teal-800 mb-1">Default Machine No. (Optional)</label><select id="w_def_machno" class="w-full border border-teal-300 p-2 rounded bg-teal-50 font-bold text-sm"></select></div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-xl bg-amber-50/70 border border-amber-200">
                             <div><label class="block text-xs font-bold text-amber-900 mb-1">Fixed Salary (₹) *</label><input type="number" id="w_salary" required class="w-full border border-amber-300 p-2 rounded bg-white font-bold"></div>
@@ -1156,6 +1157,29 @@
             if (mn && mn.defaultType && Array.from(typeEl.options).some(o => o.value === mn.defaultType)) typeEl.value = mn.defaultType;
         }
 
+        function getWorkerDefaultMachine(wId) {
+            let w = workers.find(x => x && x.id === wId);
+            if (w && w.defaultMachineNo) {
+                let mn = machineNumbers.find(m => m && m.no === w.defaultMachineNo);
+                return { machineNo: w.defaultMachineNo, machine: mn?.defaultType || '' };
+            }
+            let lastAtt = attendance.filter(a => a && a.workerId === wId && a.machineNo && a.machineNo !== '-').sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+            if (lastAtt) return { machineNo: lastAtt.machineNo, machine: lastAtt.machine || '' };
+            return null;
+        }
+
+        function applyWorkerDefaultMachine(wId, noSelId, typeSelId) {
+            let def = getWorkerDefaultMachine(wId); if (!def) return;
+            let noEl = document.getElementById(noSelId), typeEl = document.getElementById(typeSelId);
+            if (noEl && def.machineNo && Array.from(noEl.options).some(o => o.value === def.machineNo)) {
+                noEl.value = def.machineNo;
+                autoSelectMachineType(noSelId, typeSelId);
+            }
+            if (typeEl && def.machine && Array.from(typeEl.options).some(o => o.value === def.machine)) {
+                typeEl.value = def.machine;
+            }
+        }
+
         function refreshDropdowns() {
             workers.sort((a, b) => getWorkerCode(a).localeCompare(getWorkerCode(b), undefined, { numeric: true, sensitivity: 'base' }));
             let activeW = getActiveWorkers(), activeHtml = activeW.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name} (${w.type})</option>`).join('');
@@ -1164,6 +1188,7 @@
             let cws = document.getElementById('chartWorkerSelect'); if (cws) cws.innerHTML = `<option value="ALL">Active Workers</option>` + activeW.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join('');
             let hed = document.getElementById('h_extra_design'); if (hed) hed.innerHTML = `<option value="">Manual Entry</option>` + designs.map(d => d ? `<option value="${d.code}">${d.code} (${d.stitches || 0} St)</option>` : '').join('');
             let mnHtml = getMachineNoOptionsHtml(false); ['h_machine_no', 'h_extra_machine_no'].forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = mnHtml || '<option value="-">Add M/C No</option>'; });
+            let wdm = document.getElementById('w_def_machno'); if (wdm) wdm.innerHTML = getMachineNoOptionsHtml(true);
             let mHtml = getMachineOptionsHtml(); ['h_machine', 'h_extra_machine'].forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = mHtml; });
             let defTypeOpts = `<option value="">No Default Type</option>` + machineRules.map(m => m ? `<option value="${m.name}">${m.name}</option>` : '').join('') + `<option value="ALTER">ALTER</option>`;
             ['mn_default_type', 'mn_bulk_type'].forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = defTypeOpts; });
@@ -1175,6 +1200,7 @@
             ['w_type', 'bw_type'].forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = tHtml; });
             let bac = document.getElementById('bulk_att_cat'); if (bac) bac.innerHTML = `<option value="ALL">All Active (${activeW.length})</option>` + tHtml;
         }
+         
 
         // ====== DAILY PRODUCTION + PENDING HAZIRI ======
        function openPendingWorkerAtt(wId, dateStr) {
@@ -1372,7 +1398,7 @@
         function cancelEditAttendance(keepWorkerId) { document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date(); document.getElementById('h_has_extra').checked = false; refreshDropdowns(); resetAttDesignRows(); if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId; document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('h_btn_cancel').classList.add('hidden'); toggleMachineFields(); toggleExtraMachineBox(); updateLiveBonusPreview(); }
 // ====== BULK ATTENDANCE ======
         function switchAttMode(mode) { let s = document.getElementById('att_single_view'), b = document.getElementById('att_bulk_view'), bs = document.getElementById('btn_att_single'), bb = document.getElementById('btn_att_bulk'); if (mode === 'bulk') { s.classList.add('hidden'); b.classList.remove('hidden'); bb.classList.add('bg-indigo-600','text-white'); bb.classList.remove('text-slate-600'); bs.classList.remove('bg-indigo-600','text-white'); bs.classList.add('text-slate-600'); renderBulkAttendanceTable(); } else { b.classList.add('hidden'); s.classList.remove('hidden'); bs.classList.add('bg-indigo-600','text-white'); bs.classList.remove('text-slate-600'); bb.classList.remove('bg-indigo-600','text-white'); bb.classList.add('text-slate-600'); showWorkerSummary(); } }
-        function renderBulkAttendanceTable() {
+     function renderBulkAttendanceTable() {
             updateBaseDesignDatalist();
             let tbody = document.getElementById('bulk_att_body'); if (!tbody) return;
             let dateStr = document.getElementById('bulk_att_date').value || new Date().toISOString().slice(0, 10), shift = document.getElementById('bulk_att_shift')?.value || 'Day', cat = document.getElementById('bulk_att_cat').value || 'ALL', list = getActiveWorkers().filter(w => cat === 'ALL' || w.type === cat);
@@ -1383,6 +1409,12 @@
                 if (!isM) return `<tr class="bulk-att-row ${exists?'bg-emerald-50/40':''}" data-wid="${w.id}" data-wname="${key}" data-ismach="false"><td class="p-2 text-center"><input type="checkbox" class="b-chk w-4 h-4 accent-indigo-600" ${!exists?'checked':''} onchange="updateBulkSelectedCount()"></td><td class="p-2 font-bold"><span class="text-indigo-600 text-[10px]">[${getWorkerCode(w)}]</span> ${w.name} ${badge}</td><td class="p-2"><select class="b-status w-full border p-1.5 rounded bg-indigo-50 font-bold" onchange="onBulkRowChange(this)"><option value="Full">Full</option><option value="Half">Half</option><option value="Absent">Absent</option></select></td><td colspan="8" class="p-2 text-center text-slate-400 italic">Fixed Worker</td><td class="p-2"><input type="text" class="b-note w-full border p-1.5 rounded bg-red-50/40" placeholder="Note..."></td><td class="p-2 text-right font-bold text-emerald-600">₹0</td></tr>`;
                 return `<tr class="bulk-att-row ${exists?'bg-emerald-50/40':''}" data-wid="${w.id}" data-wname="${key}" data-ismach="true"><td class="p-2 text-center"><input type="checkbox" class="b-chk w-4 h-4 accent-indigo-600" onchange="updateBulkSelectedCount()"></td><td class="p-2 font-bold"><span class="text-indigo-600 text-[10px]">[${getWorkerCode(w)}]</span> ${w.name} ${badge}</td><td class="p-2"><select class="b-status w-full border p-1.5 rounded bg-indigo-50 font-bold" onchange="onBulkRowChange(this,true)"><option value="Full">Full</option><option value="Half">Half</option><option value="Absent">Absent</option></select></td><td class="p-2"><select class="b-mode w-full border p-1.5 rounded bg-white" onchange="onBulkRowChange(this)">${pmOpts}</select></td><td class="p-2"><select class="b-machno w-full border border-teal-300 p-1.5 rounded bg-teal-50 font-bold" onchange="onBulkMachNoChange(this)">${mnOpts}</select></td><td class="p-2"><select class="b-machine w-full border p-1.5 rounded bg-white" onchange="onBulkRowChange(this)">${machOpts}</select></td><td class="p-2"><input type="text" list="att_base_designs_list" class="b-base w-full border border-indigo-200 p-1.5 rounded bg-white font-bold" placeholder="1370" oninput="onBulkBaseInput(this)"></td><td class="p-2"><select class="b-design w-full border border-emerald-200 p-1.5 rounded bg-white font-bold" onchange="onBulkDesignChange(this)"><option value="">Manual</option></select></td><td class="p-2"><input type="number" step="any" class="b-qty w-full border p-1.5 rounded bg-white font-bold" placeholder="0" oninput="onBulkRowChange(this,true)"></td><td class="p-2"><input type="number" class="b-frame w-full border p-1.5 rounded bg-white" placeholder="0" oninput="onBulkRowChange(this)"></td><td class="p-2"><input type="number" class="b-custom w-full border p-1.5 rounded bg-emerald-50" value="0" oninput="onBulkRowChange(this)"></td><td class="p-2"><input type="text" class="b-note w-full border p-1.5 rounded bg-red-50/40" placeholder="Note..."></td><td class="p-2 text-right font-bold text-emerald-600 b-est">₹0</td></tr>`;
             }).join('');
+            document.querySelectorAll('#bulk_att_body .bulk-att-row[data-ismach="true"]').forEach(tr => {
+                let def = getWorkerDefaultMachine(tr.dataset.wid); if (!def) return;
+                let noSel = tr.querySelector('.b-machno'), tySel = tr.querySelector('.b-machine');
+                if (noSel && def.machineNo && Array.from(noSel.options).some(o => o.value === def.machineNo)) { noSel.value = def.machineNo; onBulkMachNoChange(noSel); }
+                if (tySel && def.machine && Array.from(tySel.options).some(o => o.value === def.machine)) tySel.value = def.machine;
+            });
             updateBulkSelectedCount();
         }
         function onBulkBaseInput(inpEl) {
@@ -1472,7 +1504,33 @@
             localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
         }
         function toggleWorkerActiveQuick(id) { if (!checkAdmin()) return; let w = workers.find(x => x.id === id); if (!w) return; w.isActive = !isWorkerActive(w); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive'}`); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
-        function editWorker(id) { let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return; document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_mobile').value = w.mobile || ''; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule; document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+       function saveWorker(e) {
+            e.preventDefault();
+            let id = document.getElementById('w_edit_id').value, code = document.getElementById('w_code').value.trim().replace(/\s+/g, ''), name = document.getElementById('w_name').value.trim().replace(/\s+/g, ' '), mobile = (document.getElementById('w_mobile')?.value || '').trim(), isActive = document.getElementById('w_active').value === 'true', newSal = parseFloat(document.getElementById('w_salary').value) || 0, effM = document.getElementById('w_sal_from').value || getSelMonth(), updD = document.getElementById('w_sal_date').value || new Date().toISOString().slice(0, 10), defMach = document.getElementById('w_def_machno')?.value || '';
+            if (workers.some(w => w.id !== id && getWorkerCode(w).toLowerCase() === code.toLowerCase())) { alert(`ID "${code}" already exists!`); return; }
+            if (workers.some(w => w.id !== id && w.name.toLowerCase() === name.toLowerCase())) { alert(`Name "${name}" already exists!`); return; }
+            if (id) {
+                let ex = workers.find(w => w.id === id), hist = Array.isArray(ex?.salaryHistory) ? [...ex.salaryHistory] : [];
+                if (!hist.length || getWorkerSalaryForMonth(ex, effM) !== newSal) {
+                    let idx = hist.findIndex(h => h.effectiveMonth === effM);
+                    if (idx >= 0) hist[idx] = { effectiveMonth: effM, updatedDate: updD, salary: newSal }; else hist.push({ effectiveMonth: effM, updatedDate: updD, salary: newSal });
+                    hist.sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
+                }
+                workers = workers.map(w => w.id === id ? { id, code, name, mobile, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, defaultMachineNo: defMach, isActive, salaryHistory: hist } : w);
+                showToast("Worker Updated!");
+            } else {
+                workers.push({ id: "W_" + Date.now(), code, name, mobile, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, defaultMachineNo: defMach, isActive, salaryHistory: [{ effectiveMonth: effM, updatedDate: updD, salary: newSal }] });
+                showToast("Worker Added!");
+            }
+            localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
+        }
+        function toggleWorkerActiveQuick(id) { if (!checkAdmin()) return; let w = workers.find(x => x.id === id); if (!w) return; w.isActive = !isWorkerActive(w); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive'}`); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
+        function editWorker(id) {
+            let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return;
+            document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_mobile').value = w.mobile || ''; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule;
+            if (document.getElementById('w_def_machno')) document.getElementById('w_def_machno').value = w.defaultMachineNo || '';
+            document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
         function cancelEditWorker() { document.getElementById('w_edit_id').value = ''; document.getElementById('w_form').reset(); document.getElementById('w_code').value = getNextWorkerCode(); document.getElementById('w_active').value = 'true'; document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_form_title').innerText = "Add / Update Worker"; document.getElementById('w_btn_save').innerText = "Save Worker"; document.getElementById('w_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('w_btn_cancel').classList.add('hidden'); }
         function deleteWorker(id) { if (!checkAdmin() || !confirm("Delete Worker?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
         function filterMasterWorkers(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#workerList .m-worker-row').forEach(el => el.style.display = (el.dataset.key || '').includes(q) ? '' : 'none'); }
