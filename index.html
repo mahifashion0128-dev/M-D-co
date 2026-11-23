@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <!-- WORKER ONLY STITCH ENTRY + AI DISPLAY SCANNER + EXTRA MACHINE SCREEN -->
+    <!-- WORKER ONLY STITCH ENTRY + AI DISPLAY SCANNER + DESIGN-WISE + EXTRA MACHINE SCREEN -->
     <div id="worker_entry_screen" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-4">
         <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-teal-200 overflow-hidden my-4">
             <div class="bg-teal-700 text-white p-4 flex justify-between items-center">
@@ -97,6 +97,7 @@
                         <button type="button" onclick="addWeDesignRow()" class="bg-indigo-600 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">+ Add Design</button>
                     </div>
                     <div id="we_design_rows" class="space-y-2"></div>
+                    <div id="we_linked_design_preview" class="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg">Linked Design No.: -</div>
                 </div>
 
                 <div>
@@ -328,7 +329,7 @@
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Date *</label><input type="date" id="h_date" required onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm"></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="h_shift" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-indigo-50/60 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Attendance Status *</label><select id="h_status" onchange="updateLiveBonusPreview()" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Full">✅ Full Day</option><option value="Half">🌗 Half Day</option><option value="Absent">❌ Absent</option></select></div>
-                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label><input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none"><select id="h_worker1" required onchange="applyWorkerDefaultMachine(this.value, 'h_machine_no', 'h_machine'); showWorkerSummary(); updateLiveBonusPreview();"
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label><input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none"><select id="h_worker1" required onchange="applyWorkerDefaultMachine(this.value, 'h_machine_no', 'h_machine'); showWorkerSummary(); updateLiveBonusPreview();" class="w-full border p-2 rounded-b-lg bg-slate-50 text-sm font-semibold"></select></div>
                         </div>
                         <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-2"></div>
                     </div>
@@ -352,10 +353,11 @@
                     <!-- STEP 3: DESIGNS & PRODUCTION -->
                     <div class="machine-only-field bg-white p-4 md:p-5 rounded-xl shadow-sm border border-indigo-200">
                         <div class="flex flex-wrap justify-between items-center gap-2 mb-3 pb-2 border-b">
-                            <div class="text-xs font-black uppercase tracking-wider text-indigo-800 flex items-center gap-2"><span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">3</span> Design & Stitches (Multiple Designs)</div>
+                            <div class="text-xs font-black uppercase tracking-wider text-indigo-800 flex items-center gap-2"><span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">3</span> Lot / Design & Stitches (Multiple Designs)</div>
                             <button type="button" onclick="addAttDesignRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Design</button>
                         </div>
                         <div id="h_design_rows" class="space-y-2.5"></div>
+                        <div id="h_linked_design_preview" class="mt-2 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">Linked Design No.: -</div>
                         <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap justify-between items-center gap-3">
                             <div id="h_design_totals" class="text-xs font-bold text-indigo-800 flex flex-wrap gap-4"></div>
                             <div class="flex items-center gap-2"><label class="text-xs font-bold text-emerald-700">Custom / Extra Bonus (₹):</label><input type="number" id="h_custom" value="0" oninput="updateLiveBonusPreview()" class="w-28 border border-emerald-300 p-1.5 rounded-lg bg-emerald-50 font-bold text-sm text-right"></div>
@@ -412,12 +414,12 @@
                     <div class="flex gap-2"><button type="button" onclick="bulkToggleSelectAll(true)" class="w-1/2 bg-indigo-50 text-indigo-700 border border-indigo-200 py-2 rounded-lg text-xs font-bold">Select All</button><button type="button" onclick="bulkToggleSelectAll(false)" class="w-1/2 bg-slate-100 text-slate-700 border py-2 rounded-lg text-xs font-bold">Clear All</button></div>
                 </div>
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-3 text-xs text-amber-900 flex flex-wrap justify-between items-center gap-2">
-                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> Bulk mein <b>Design No. + Part</b> aur <b>Day/Night Shift</b> support hai!</span>
+                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> Bulk mein <b>Lot / Design No. + Part</b> aur <b>Day/Night Shift</b> support hai!</span>
                     <span id="bulk_att_count_badge" class="bg-indigo-600 text-white px-2.5 py-1 rounded-full font-bold">Selected: 0</span>
                 </div>
                 <div class="overflow-x-auto max-h-[60vh] border rounded-xl border-slate-200 mb-4">
                     <table class="w-full text-left text-xs border-collapse min-w-[1180px]">
-                        <thead class="bg-indigo-50 text-indigo-900 sticky top-0 z-10"><tr><th class="p-2.5 border-b text-center w-10">Save</th><th class="p-2.5 border-b min-w-[145px]">Worker (ID)</th><th class="p-2.5 border-b w-24">Status</th><th class="p-2.5 border-b w-32">Pay Mode</th><th class="p-2.5 border-b w-24">M/C No.</th><th class="p-2.5 border-b w-32">Machine Type</th><th class="p-2.5 border-b w-24">Design No.</th><th class="p-2.5 border-b w-28">Part</th><th class="p-2.5 border-b w-24">Stitches/Hrs</th><th class="p-2.5 border-b w-16">Frame</th><th class="p-2.5 border-b w-20">Custom ₹</th><th class="p-2.5 border-b min-w-[100px]">Remarks</th><th class="p-2.5 border-b text-right w-20">Est. Bonus</th></tr></thead>
+                        <thead class="bg-indigo-50 text-indigo-900 sticky top-0 z-10"><tr><th class="p-2.5 border-b text-center w-10">Save</th><th class="p-2.5 border-b min-w-[145px]">Worker (ID)</th><th class="p-2.5 border-b w-24">Status</th><th class="p-2.5 border-b w-32">Pay Mode</th><th class="p-2.5 border-b w-24">M/C No.</th><th class="p-2.5 border-b w-32">Machine Type</th><th class="p-2.5 border-b w-24">Lot / Des.</th><th class="p-2.5 border-b w-28">Part / Design</th><th class="p-2.5 border-b w-24">Stitches/Hrs</th><th class="p-2.5 border-b w-16">Frame</th><th class="p-2.5 border-b w-20">Custom ₹</th><th class="p-2.5 border-b min-w-[100px]">Remarks</th><th class="p-2.5 border-b text-right w-20">Est. Bonus</th></tr></thead>
                         <tbody id="bulk_att_body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
@@ -478,21 +480,31 @@
 
         <!-- 5. MASTER SETTINGS -->
         <section id="master" class="tab-content">
-            <h2 class="text-2xl font-bold mb-6 text-slate-800">Master Data & Settings</h2>
-            <div class="flex flex-wrap gap-2 mb-4">
-                <button onclick="openMaster('m_admin')" class="bg-gray-800 text-white font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-lock"></i> Security, Sync & Backup</button>
-                <button onclick="openMaster('m_cat')" class="bg-sky-100 text-sky-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-tags"></i> Categories</button>
-                <button onclick="openMaster('m_worker')" class="bg-indigo-100 text-indigo-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-users"></i> Workers & Pagar History</button>
-                <button onclick="openMaster('m_machno')" class="bg-teal-100 text-teal-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-hashtag"></i> Machine No.</button>
-                <button onclick="openMaster('m_design')" class="bg-emerald-100 text-emerald-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-pen-nib"></i> Layered Designs</button>
-                <button onclick="openMaster('m_rule')" class="bg-amber-100 text-amber-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-gears"></i> Machine Rules</button>
-                <button onclick="openMaster('m_alter')" class="bg-rose-100 text-rose-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-clock"></i> Alter Rate</button>
-                <button onclick="openMaster('m_paymode')" class="bg-purple-100 text-purple-800 font-bold px-4 py-3 rounded-lg shadow-sm"><i class="fa-solid fa-sliders"></i> Payment Modes</button>
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">Master Data & Settings</h2>
+
+            <!-- Single-Line Settings Buttons Bar -->
+            <div id="master_menu_bar" class="flex flex-nowrap items-center gap-2 mb-4 overflow-x-auto pb-2">
+                <button type="button" onclick="openMaster('m_admin', this)" class="shrink-0 whitespace-nowrap bg-gray-800 text-white font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-lock mr-1"></i> Security & Sync</button>
+                <button type="button" onclick="openMaster('m_cat', this)" class="shrink-0 whitespace-nowrap bg-sky-100 text-sky-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-tags mr-1"></i> Categories</button>
+                <button type="button" onclick="openMaster('m_worker', this)" class="shrink-0 whitespace-nowrap bg-indigo-100 text-indigo-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-users mr-1"></i> Workers</button>
+                <button type="button" onclick="openMaster('m_machno', this)" class="shrink-0 whitespace-nowrap bg-teal-100 text-teal-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-hashtag mr-1"></i> Machine No.</button>
+                <button type="button" onclick="openMaster('m_design', this)" class="shrink-0 whitespace-nowrap bg-emerald-100 text-emerald-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-layer-group mr-1"></i> Lot & Design No.</button>
+                <button type="button" onclick="openMaster('m_rule', this)" class="shrink-0 whitespace-nowrap bg-amber-100 text-amber-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-gears mr-1"></i> Machine Rules</button>
+                <button type="button" onclick="openMaster('m_alter', this)" class="shrink-0 whitespace-nowrap bg-rose-100 text-rose-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-clock mr-1"></i> Alter Rate</button>
+                <button type="button" onclick="openMaster('m_paymode', this)" class="shrink-0 whitespace-nowrap bg-purple-100 text-purple-800 font-bold px-3.5 py-2.5 rounded-lg shadow-sm text-xs"><i class="fa-solid fa-sliders mr-1"></i> Payment Modes</button>
+            </div>
+
+            <!-- Back Bar When Inside Any Setting Page -->
+            <div id="master_back_bar" class="hidden flex items-center justify-between bg-indigo-50 border border-indigo-200 px-4 py-2.5 rounded-xl mb-4">
+                <button type="button" onclick="closeMasterToMenu()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Settings Menu
+                </button>
+                <span id="master_active_title" class="text-xs font-black text-indigo-900 uppercase tracking-wide"></span>
             </div>
 
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                 <!-- Security, Sync & Backup -->
-                <div id="m_admin" class="master-panel block">
+                <div id="m_admin" class="master-panel">
                     <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg mb-5 text-sm text-indigo-900"><b>App Name:</b> Mahi and Devansh co. &nbsp;|&nbsp; <b>Owner Email:</b> mahifashion0128@gmail.com</div>
                     <h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Admin Security (Login & Edit Password)</h3>
                     <form onsubmit="saveAdminPassword(event)" class="flex gap-2 mb-2 max-w-sm"><input type="password" id="admin_pass" placeholder="Enter New Admin Password" required class="w-full border p-2 rounded bg-slate-50"><button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded font-bold shrink-0">Set Admin Pass</button></form>
@@ -546,7 +558,7 @@
                             <div><label class="block text-xs font-bold text-emerald-700 mb-1">WhatsApp / Mobile No.</label><input type="tel" id="w_mobile" placeholder="10 digit number" class="w-full border border-emerald-200 p-2 rounded bg-emerald-50/40 text-sm"></div>
                             <div><label class="block text-xs font-bold text-emerald-800 mb-1">Work Status *</label><select id="w_active" class="w-full border border-emerald-300 p-2 rounded bg-emerald-50 font-bold text-emerald-900"><option value="true">🟢 Active (Kaam Par)</option><option value="false">🔴 Inactive (Chutti / Chhod Diya)</option></select></div>
                         </div>
-                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Category *</label><select id="w_type" class="w-full border p-2 rounded bg-slate-50"></select></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Salary Rule *</label><select id="w_rule" class="w-full border p-2 rounded bg-slate-50 font-semibold text-indigo-800"><option value="30Days">Rule: 30/31 Days</option><option value="SundayOff">Rule: Sundays Off</option><option value="2Leaves">Rule: 2 Leaves Allowed</option></select></div>
                             <div><label class="block text-xs font-bold text-teal-800 mb-1">Default Machine No. (Optional)</label><select id="w_def_machno" class="w-full border border-teal-300 p-2 rounded bg-teal-50 font-bold text-sm"></select></div>
@@ -580,25 +592,55 @@
                     <div class="mt-4 border-t pt-4"><h4 class="font-bold text-gray-700 mb-2">Saved Machine Numbers (<span id="machno_count_lbl">0</span>):</h4><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="machineNumberList"></div></div>
                 </div>
 
-                <!-- Layered Designs -->
+                <!-- LOT NUMBER & DESIGN BUILDER -->
                 <div id="m_design" class="master-panel">
-                    <h3 class="font-bold text-lg mb-4 text-emerald-700 border-b pb-2" id="d_form_title">Add / Update Design</h3>
+                    <h3 class="font-bold text-lg mb-4 text-emerald-700 border-b pb-2" id="d_form_title">Add / Update Lot & Design Number</h3>
                     <form id="d_form" onsubmit="saveDesign(event)" class="space-y-4 mb-4">
                         <input type="hidden" id="d_edit_id">
-                        <div><label class="block text-xs font-bold text-emerald-800 mb-1">Design Number *</label><input type="text" id="d_code" placeholder="e.g. 1395" required class="w-full border border-emerald-300 p-2.5 rounded-lg font-bold bg-emerald-50 text-base"></div>
-                        <div id="d_variants_box" class="border border-emerald-200 bg-emerald-50/50 p-3 rounded-xl space-y-2">
-                            <div class="flex justify-between items-center pb-1 border-b border-emerald-200"><span class="text-xs font-bold text-emerald-900">Design Parts & Stitches (Plain, C, P, B...)</span><button type="button" onclick="addDesignPartRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Part</button></div>
-                            <div id="d_parts_container" class="space-y-2"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-800 mb-1">Lot / Base Design No. *</label>
+                                <input type="text" id="d_code" placeholder="e.g. 1370" required oninput="previewGeneratedDesignCodes()" class="w-full border border-emerald-300 p-2.5 rounded-lg font-bold bg-emerald-50 text-base">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-indigo-800 mb-1">Lot Chalne Ka Tarika *</label>
+                                <select id="d_lot_mode" onchange="onLotModeChange()" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold text-sm">
+                                    <option value="parts">Part-Wise (C, P, K, B...)</option>
+                                    <option value="allover">ALL OVER (Single Full Design)</option>
+                                </select>
+                            </div>
                         </div>
+
+                        <div id="d_variants_box" class="border border-emerald-200 bg-emerald-50/50 p-3 rounded-xl space-y-2.5">
+                            <div class="flex flex-wrap justify-between items-center gap-2 pb-1.5 border-b border-emerald-200">
+                                <span class="text-xs font-bold text-emerald-900">Sub-Parts & Stitches (Jaise C, P, K, B ya ALL OVER)</span>
+                                <div class="flex gap-1.5">
+                                    <button type="button" id="btn_preset_cpkb" onclick="applyQuickPartsPreset(['C','P','K','B'])" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-900 border border-indigo-300 px-2.5 py-1 rounded-lg text-[11px] font-bold">Quick: C, P, K, B</button>
+                                    <button type="button" id="btn_add_part" onclick="addDesignPartRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Part</button>
+                                </div>
+                            </div>
+                            <div id="d_parts_container" class="space-y-2"></div>
+                            <div id="d_code_preview" class="text-xs font-bold text-indigo-800 bg-white border border-indigo-200 px-3 py-2 rounded-lg">
+                                Ban-ne Wale Design No.: <span class="text-emerald-700">-</span>
+                            </div>
+                            <div id="lot_progress_tracker" class="mt-2 bg-white border border-indigo-200 rounded-xl p-3 space-y-2">
+                                <div class="flex flex-wrap justify-between items-center gap-2">
+                                    <span class="text-xs font-black text-indigo-900"><i class="fa-solid fa-route text-indigo-600 mr-1"></i> Lot Kahan Pahuncha (Live Tracker)</span>
+                                    <span id="lot_tracker_pct" class="text-[11px] font-bold bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full">Lot No. dalein</span>
+                                </div>
+                                <div id="lot_tracker_body" class="text-xs text-slate-600">Upar Lot / Base Design No. likhne par dikhega ki kaunse parts chal chuke hain aur kahan pahuncha hai.</div>
+                            </div>
+                        </div>
+
                         <input type="number" id="d_fixBonus" placeholder="Fixed Basic Bonus (₹)" class="w-full border p-2 rounded">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="border p-3 rounded bg-blue-50"><h4 class="font-bold text-blue-800 text-sm mb-2">Stitch Bonus Layers</h4><div class="flex gap-2 mb-2"><input type="number" id="s_lim1" placeholder="T1 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon1" placeholder="T1 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2 mb-2"><input type="number" id="s_lim2" placeholder="T2 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon2" placeholder="T2 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2"><input type="number" id="s_lim3" placeholder="T3 Limit" class="w-1/2 p-1.5 rounded"><input type="number" id="s_bon3" placeholder="T3 ₹" class="w-1/2 p-1.5 rounded"></div></div>
                             <div class="border p-3 rounded bg-amber-50"><h4 class="font-bold text-amber-800 text-sm mb-2">Frame Bonus Layers</h4><div class="flex gap-2 mb-2"><input type="number" id="f_lim1" placeholder="T1 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon1" placeholder="T1 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2 mb-2"><input type="number" id="f_lim2" placeholder="T2 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon2" placeholder="T2 ₹" class="w-1/2 p-1.5 rounded"></div><div class="flex gap-2"><input type="number" id="f_lim3" placeholder="T3 Frame" class="w-1/2 p-1.5 rounded"><input type="number" id="f_bon3" placeholder="T3 ₹" class="w-1/2 p-1.5 rounded"></div></div>
                         </div>
-                        <div class="flex gap-2"><button type="submit" id="d_btn_save" class="bg-emerald-600 text-white w-full py-2 rounded font-bold">Save Design Rules</button><button type="button" id="d_btn_cancel" onclick="cancelEditDesign()" class="hidden bg-gray-400 text-white px-4 rounded font-bold">Cancel</button></div>
+                        <div class="flex gap-2"><button type="submit" id="d_btn_save" class="bg-emerald-600 text-white w-full py-2 rounded font-bold">Save Lot & Design Rules</button><button type="button" id="d_btn_cancel" onclick="cancelEditDesign()" class="hidden bg-gray-400 text-white px-4 rounded font-bold">Cancel</button></div>
                     </form>
                     <div class="mt-4 border-t pt-4">
-                        <div class="flex flex-wrap justify-between items-center gap-2 mb-2"><h4 class="font-bold text-gray-700">Saved Designs (<span id="design_count_lbl">0</span>):</h4><input type="text" onkeyup="filterMasterDesigns(this.value)" placeholder="🔍 Search Design No..." class="border p-1.5 rounded bg-emerald-50 text-xs w-48 outline-none"></div>
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-2"><h4 class="font-bold text-gray-700">Saved Lots & Designs (<span id="design_count_lbl">0</span>):</h4><input type="text" onkeyup="filterMasterDesigns(this.value)" placeholder="🔍 Search Lot / Design No..." class="border p-1.5 rounded bg-emerald-50 text-xs w-48 outline-none"></div>
                         <div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="designList"></div>
                     </div>
                 </div>
@@ -885,7 +927,7 @@
         function shiftDashDate(days) { let inp = document.getElementById('dash_filter_date'), d = inp.value ? new Date(inp.value) : new Date(); d.setDate(d.getDate() + days); inp.value = d.toISOString().slice(0, 10); renderDailyProductionPanel(); }
         function setDashToday() { document.getElementById('dash_filter_date').valueAsDate = new Date(); renderDailyProductionPanel(); }
 
-        // ====== DESIGN NO. + PART ======
+        // ====== LOT NO. + PART / ALL OVER LINKING ======
         function getBaseDesignCode(code) { if (!code || code === '-') return ''; let idx = String(code).indexOf('-'); return idx > 0 ? String(code).substring(0, idx).trim() : String(code).trim(); }
         function updateBaseDesignDatalist() {
             let dl = document.getElementById('att_base_designs_list');
@@ -900,8 +942,8 @@
             row.className = 'att-design-row grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-slate-50/70 p-2.5 rounded-lg border border-indigo-200';
             let baseVal = (desVal && desVal !== '-') ? getBaseDesignCode(desVal) : '';
             row.innerHTML = `
-                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-indigo-800 mb-1">Design No. ${idx + 1}</label><input type="text" list="att_base_designs_list" value="${baseVal}" placeholder="e.g. 1370" oninput="onAttBaseInput(this)" class="ad-base w-full border border-indigo-300 p-2 rounded-lg bg-white text-sm font-bold outline-none"></div>
-                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-emerald-800 mb-1">Part (Plain / C / P)</label><select class="ad-design w-full border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold" onchange="onAttDesignSelect(this)"></select></div>
+                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-indigo-800 mb-1">Lot / Base No. ${idx + 1}</label><input type="text" list="att_base_designs_list" value="${baseVal}" placeholder="e.g. 1370" oninput="onAttBaseInput(this)" class="ad-base w-full border border-indigo-300 p-2 rounded-lg bg-white text-sm font-bold outline-none"></div>
+                <div class="md:col-span-3"><label class="block text-[11px] font-bold text-emerald-800 mb-1">Part / Mode (C,P,K,B / ALL OVER)</label><select class="ad-design w-full border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold" onchange="onAttDesignSelect(this)"></select></div>
                 <div class="md:col-span-3"><label class="block text-[11px] font-bold text-slate-700 mb-1">Stitches / Hours *</label><input type="number" step="any" value="${qtyVal}" placeholder="0" oninput="updateAttDesignTotals()" class="ad-qty w-full border p-2 rounded-lg bg-white text-sm font-bold"></div>
                 <div class="md:col-span-2"><label class="block text-[11px] font-bold text-slate-700 mb-1">Frame</label><input type="number" value="${frameVal}" placeholder="0" oninput="updateAttDesignTotals()" class="ad-frame w-full border p-2 rounded-lg bg-white text-sm"></div>
                 <div class="md:col-span-1 flex justify-end">${idx === 0 ? '<span class="text-[10px] text-gray-400 py-2">Main</span>' : '<button type="button" onclick="this.closest(\'.att-design-row\').remove(); updateAttDesignTotals();" class="w-full md:w-auto px-2.5 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-200"><i class="fa-solid fa-trash"></i></button>'}</div>`;
@@ -912,13 +954,16 @@
         function onAttBaseInput(inpEl) { populateAttPartOptions(inpEl.closest('.att-design-row'), inpEl.value.trim(), '', true); }
         function populateAttPartOptions(row, baseCode, selectedFullCode = '', autoFillQty = true) {
             let sel = row.querySelector('.ad-design'); if (!sel) return;
-            if (!baseCode) { sel.innerHTML = `<option value="">Manual Entry</option>`; updateLiveBonusPreview(); return; }
+            if (!baseCode) { sel.innerHTML = `<option value="">Manual Entry</option>`; updateAttDesignTotals(); return; }
             let bLow = baseCode.toLowerCase(), matches = designs.filter(d => d && d.code && getBaseDesignCode(d.code).toLowerCase() === bLow);
-            if (!matches.length) { sel.innerHTML = `<option value="${baseCode}">${baseCode} (Manual)</option>`; updateLiveBonusPreview(); return; }
+            if (!matches.length) {
+                sel.innerHTML = `<option value="${baseCode}">${baseCode}</option><option value="${baseCode}-ALL OVER">${baseCode}-ALL OVER</option>`;
+                updateAttDesignTotals();
+                return;
+            }
             sel.innerHTML = (matches.length > 1 ? `<option value="">-- Part Chunein --</option>` : '') + matches.map(d => {
-                let i = d.code.indexOf('-'), partLbl = i > 0 ? d.code.substring(i + 1) : 'Plain';
                 let isSel = (selectedFullCode && d.code === selectedFullCode) || (!selectedFullCode && matches.length === 1);
-                return `<option value="${d.code}" ${isSel ? 'selected' : ''}>${partLbl} (${d.stitches || 0} St)</option>`;
+                return `<option value="${d.code}" ${isSel ? 'selected' : ''}>${d.code} (${d.stitches || 0} St)</option>`;
             }).join('');
             if (autoFillQty && matches.length === 1) { let qInp = row.querySelector('.ad-qty'); if (qInp) qInp.value = matches[0].stitches || ''; }
             updateAttDesignTotals();
@@ -935,6 +980,11 @@
         function updateAttDesignTotals() {
             let el = document.getElementById('h_design_totals'), items = readAttDesignRows();
             if (el) el.innerHTML = `<span>Designs: ${items.length}</span><span>Total Stitches/Hrs: ${items.reduce((s, i) => s + i.qty, 0).toLocaleString('en-IN')}</span><span>Total Frames: ${items.reduce((s, i) => s + i.frame, 0)}</span>`;
+            let lp = document.getElementById('h_linked_design_preview');
+            if (lp) {
+                let linked = items.map(i => i.design).filter(d => d && d !== '-');
+                lp.innerHTML = `Linked Design No.: <span class="text-indigo-900 font-black">${linked.length ? linked.join(', ') : '-'}</span>`;
+            }
             updateLiveBonusPreview();
         }
         function resetAttDesignRows(items) {
@@ -987,8 +1037,7 @@
             document.getElementById('salHistModalBody').innerHTML = hist.map((h, i) => `<tr class="border-b ${i===0?'bg-emerald-50/60 font-bold':''}"><td class="p-2.5">${h.effectiveMonth==='Initial'?'Starting Salary':getMonthName(h.effectiveMonth)+' ('+h.effectiveMonth+')'}</td><td class="p-2.5 text-xs text-slate-600">${h.updatedDate||'-'}</td><td class="p-2.5 text-right text-emerald-700 font-bold">₹${h.salary}</td></tr>`).join('');
             document.getElementById('salHistModal').classList.add('active');
         }
-
-        // ====== MARK PAID, WHATSAPP & CSV ======
+// ====== MARK PAID, WHATSAPP & CSV ======
         function markPagarPaid(wId) {
             if (!checkAdmin()) return;
             let selM = getSelMonth(), w = workers.find(x => x && x.id === wId); if (!w) return;
@@ -1151,12 +1200,12 @@
         }
         function getMachineNoOptionsHtml(includeBlank = false) { return (includeBlank ? '<option value="">-- M/C No --</option>' : '') + machineNumbers.map(m => m ? `<option value="${m.no}">${m.no}${m.defaultType ? ' (' + m.defaultType + ')' : ''}</option>` : '').join(''); }
         function getMachineOptionsHtml() { return machineRules.map(m => m ? `<option value="${m.name}">${m.name} (${m.rateMode === 'slabs' && m.rateSlabs?.length ? 'Slabs' : '₹' + (m.rate || 0)})</option>` : '').join('') + `<option value="ALTER">ALTER (Hourly - ₹${alterRate}/Hr)</option>`; }
+
         function autoSelectMachineType(noSelectId, typeSelectId) {
             let noEl = document.getElementById(noSelectId), typeEl = document.getElementById(typeSelectId); if (!noEl || !typeEl) return;
             let mn = machineNumbers.find(m => m && m.no === noEl.value);
             if (mn && mn.defaultType && Array.from(typeEl.options).some(o => o.value === mn.defaultType)) typeEl.value = mn.defaultType;
         }
-
         function getWorkerDefaultMachine(wId) {
             let w = workers.find(x => x && x.id === wId);
             if (w && w.defaultMachineNo) {
@@ -1167,7 +1216,6 @@
             if (lastAtt) return { machineNo: lastAtt.machineNo, machine: lastAtt.machine || '' };
             return null;
         }
-
         function applyWorkerDefaultMachine(wId, noSelId, typeSelId) {
             let def = getWorkerDefaultMachine(wId); if (!def) return;
             let noEl = document.getElementById(noSelId), typeEl = document.getElementById(typeSelId);
@@ -1200,23 +1248,24 @@
             ['w_type', 'bw_type'].forEach(id => { let el = document.getElementById(id); if (el) el.innerHTML = tHtml; });
             let bac = document.getElementById('bulk_att_cat'); if (bac) bac.innerHTML = `<option value="ALL">All Active (${activeW.length})</option>` + tHtml;
         }
-         
 
-        // ====== DAILY PRODUCTION + PENDING HAZIRI ======
-       function openPendingWorkerAtt(wId, dateStr) {
-         switchTab('attendance');
-         switchAttMode('single');
-         cancelEditAttendance(wId);
-         if (dateStr) document.getElementById('h_date').value = dateStr;
-         let dashShift = document.getElementById('dash_filter_shift')?.value;
-         if (dashShift && dashShift !== 'ALL') document.getElementById('h_shift').value = dashShift;
-         document.getElementById('search_w1').value = '';
-         let sel = document.getElementById('h_worker1');
-         if (sel) sel.value = wId;
-         showWorkerSummary();
-         updateLiveBonusPreview();
-         window.scrollTo({ top: 0, behavior: 'smooth' });
-     }
+        // ====== DAILY PRODUCTION + CLICKABLE PENDING HAZIRI ======
+        function openPendingWorkerAtt(wId, dateStr) {
+            switchTab('attendance');
+            switchAttMode('single');
+            cancelEditAttendance(wId);
+            if (dateStr) document.getElementById('h_date').value = dateStr;
+            let dashShift = document.getElementById('dash_filter_shift')?.value;
+            if (dashShift && dashShift !== 'ALL') document.getElementById('h_shift').value = dashShift;
+            document.getElementById('search_w1').value = '';
+            let sel = document.getElementById('h_worker1');
+            if (sel) sel.value = wId;
+            applyWorkerDefaultMachine(wId, 'h_machine_no', 'h_machine');
+            showWorkerSummary();
+            updateLiveBonusPreview();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function renderDailyProductionPanel() {
             let out = document.getElementById('dash_daily_output'), pendBox = document.getElementById('dash_pending_box'); if (!out) return;
             let dStr = document.getElementById('dash_filter_date').value, onlyNotes = document.getElementById('dash_only_notes').checked, shiftFilter = document.getElementById('dash_filter_shift')?.value || 'ALL';
@@ -1315,8 +1364,24 @@
             if (tabId === 'advance') { renderAdvanceStatement(); if (!document.getElementById('upad_bulk_view').classList.contains('hidden')) renderBulkUpadTable(); }
             if (tabId === 'reports') setReportType(currentReportType);
             if (tabId === 'attendance') { showWorkerSummary(); updateLiveBonusPreview(); if (!document.getElementById('att_bulk_view').classList.contains('hidden')) renderBulkAttendanceTable(); }
+            if (tabId === 'master') closeMasterToMenu();
         }
-        function openMaster(panelId) { document.querySelectorAll('.master-panel').forEach(p => p.style.display = 'none'); document.getElementById(panelId).style.display = 'block'; }
+        function openMaster(panelId, btnEl) {
+            document.querySelectorAll('.master-panel').forEach(p => p.style.display = 'none');
+            let target = document.getElementById(panelId);
+            if (target) target.style.display = 'block';
+            let menuBar = document.getElementById('master_menu_bar'), backBar = document.getElementById('master_back_bar'), titleEl = document.getElementById('master_active_title');
+            if (menuBar) menuBar.classList.add('hidden');
+            if (backBar) backBar.classList.remove('hidden');
+            let lbl = btnEl ? btnEl.innerText.trim() : (document.querySelector(`#master_menu_bar button[onclick*="'${panelId}'"]`)?.innerText.trim() || panelId);
+            if (titleEl) titleEl.innerText = lbl;
+        }
+        function closeMasterToMenu() {
+            document.querySelectorAll('.master-panel').forEach(p => p.style.display = 'none');
+            let menuBar = document.getElementById('master_menu_bar'), backBar = document.getElementById('master_back_bar');
+            if (menuBar) menuBar.classList.remove('hidden');
+            if (backBar) backBar.classList.add('hidden');
+        }
 
         function calcProductionBonus(pmObj, machine, designCode, qty, frame, dateStr, status, designItems = null) {
             if (status === 'Absent') return 0;
@@ -1398,7 +1463,7 @@
         function cancelEditAttendance(keepWorkerId) { document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date(); document.getElementById('h_has_extra').checked = false; refreshDropdowns(); resetAttDesignRows(); if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId; document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('h_btn_cancel').classList.add('hidden'); toggleMachineFields(); toggleExtraMachineBox(); updateLiveBonusPreview(); }
 // ====== BULK ATTENDANCE ======
         function switchAttMode(mode) { let s = document.getElementById('att_single_view'), b = document.getElementById('att_bulk_view'), bs = document.getElementById('btn_att_single'), bb = document.getElementById('btn_att_bulk'); if (mode === 'bulk') { s.classList.add('hidden'); b.classList.remove('hidden'); bb.classList.add('bg-indigo-600','text-white'); bb.classList.remove('text-slate-600'); bs.classList.remove('bg-indigo-600','text-white'); bs.classList.add('text-slate-600'); renderBulkAttendanceTable(); } else { b.classList.add('hidden'); s.classList.remove('hidden'); bs.classList.add('bg-indigo-600','text-white'); bs.classList.remove('text-slate-600'); bb.classList.remove('bg-indigo-600','text-white'); bb.classList.add('text-slate-600'); showWorkerSummary(); } }
-     function renderBulkAttendanceTable() {
+        function renderBulkAttendanceTable() {
             updateBaseDesignDatalist();
             let tbody = document.getElementById('bulk_att_body'); if (!tbody) return;
             let dateStr = document.getElementById('bulk_att_date').value || new Date().toISOString().slice(0, 10), shift = document.getElementById('bulk_att_shift')?.value || 'Day', cat = document.getElementById('bulk_att_cat').value || 'ALL', list = getActiveWorkers().filter(w => cat === 'ALL' || w.type === cat);
@@ -1421,8 +1486,8 @@
             let tr = inpEl.closest('tr'), sel = tr.querySelector('.b-design'), base = inpEl.value.trim();
             if (!base) { sel.innerHTML = '<option value="">Manual</option>'; onBulkRowChange(inpEl); return; }
             let matches = designs.filter(d => d && d.code && getBaseDesignCode(d.code).toLowerCase() === base.toLowerCase());
-            if (!matches.length) { sel.innerHTML = `<option value="${base}">${base}</option>`; onBulkRowChange(inpEl); return; }
-            sel.innerHTML = (matches.length > 1 ? '<option value="">--Part--</option>' : '') + matches.map(d => { let i = d.code.indexOf('-'), lbl = i > 0 ? d.code.substring(i + 1) : 'Plain'; return `<option value="${d.code}" ${matches.length===1?'selected':''}>${lbl} (${d.stitches})</option>`; }).join('');
+            if (!matches.length) { sel.innerHTML = `<option value="${base}">${base}</option><option value="${base}-ALL OVER">${base}-ALL OVER</option>`; onBulkRowChange(inpEl); return; }
+            sel.innerHTML = (matches.length > 1 ? '<option value="">--Part--</option>' : '') + matches.map(d => `<option value="${d.code}" ${matches.length===1?'selected':''}>${d.code} (${d.stitches})</option>`).join('');
             if (matches.length === 1) { tr.querySelector('.b-qty').value = matches[0].stitches; onBulkRowChange(inpEl, true); }
         }
         function onBulkMachNoChange(sel) { let tr = sel.closest('tr'), mn = machineNumbers.find(m => m && m.no === sel.value); if (mn && mn.defaultType) { let ms = tr.querySelector('.b-machine'); if (ms && Array.from(ms.options).some(o => o.value === mn.defaultType)) ms.value = mn.defaultType; } onBulkRowChange(sel); }
@@ -1469,7 +1534,7 @@
         function cancelEditAdvance() { document.getElementById('u_edit_id').value = ''; document.getElementById('upad_form').reset(); document.getElementById('u_date').valueAsDate = new Date(); refreshDropdowns(); document.getElementById('u_btn_save').innerText = "Save Advance"; document.getElementById('u_btn_cancel').classList.add('hidden'); }
         function renderAdvanceStatement() { let selM = getSelMonth(), list = advanceData.filter(u => u && u.date && u.date.startsWith(selM)).sort((a,b) => new Date(b.date) - new Date(a.date)); document.getElementById('advanceStatementBody').innerHTML = !list.length ? '<tr><td colspan="5" class="p-4 text-center text-gray-400">No Advance entries.</td></tr>' : list.map(u => { let w = workers.find(x => x.id === u.workerId); return `<tr class="border-b"><td class="p-3">${u.date}</td><td class="p-3 font-semibold">${w?getWorkerLabel(w):'Unknown'}</td><td class="p-3 text-slate-600">${u.note}</td><td class="p-3 text-right font-bold text-red-600">₹${u.amount}</td><td class="p-3 text-center"><button type="button" onclick="triggerEditAdvance('${u.id}')" class="text-indigo-600 mr-3"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAdvance('${u.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`; }).join(''); }
 
-        // ====== MASTER CRUD ======
+        // ====== MASTER CRUD (WITH LOT / SUB-PARTS & LIVE TRACKER) ======
         function saveBulkWorkers() {
             let raw = (document.getElementById('bw_text').value || '').trim(); if (!raw) return;
             let defType = document.getElementById('bw_type').value, defRule = document.getElementById('bw_rule').value, effM = getSelMonth(), td = new Date().toISOString().slice(0, 10), add = 0, dup = 0, ts = Date.now();
@@ -1484,27 +1549,6 @@
             alert(`Added: ${add}, Skipped Duplicate: ${dup}`);
         }
         function saveWorker(e) {
-            e.preventDefault();
-            let id = document.getElementById('w_edit_id').value, code = document.getElementById('w_code').value.trim().replace(/\s+/g, ''), name = document.getElementById('w_name').value.trim().replace(/\s+/g, ' '), mobile = (document.getElementById('w_mobile')?.value || '').trim(), isActive = document.getElementById('w_active').value === 'true', newSal = parseFloat(document.getElementById('w_salary').value) || 0, effM = document.getElementById('w_sal_from').value || getSelMonth(), updD = document.getElementById('w_sal_date').value || new Date().toISOString().slice(0, 10);
-            if (workers.some(w => w.id !== id && getWorkerCode(w).toLowerCase() === code.toLowerCase())) { alert(`ID "${code}" already exists!`); return; }
-            if (workers.some(w => w.id !== id && w.name.toLowerCase() === name.toLowerCase())) { alert(`Name "${name}" already exists!`); return; }
-            if (id) {
-                let ex = workers.find(w => w.id === id), hist = Array.isArray(ex?.salaryHistory) ? [...ex.salaryHistory] : [];
-                if (!hist.length || getWorkerSalaryForMonth(ex, effM) !== newSal) {
-                    let idx = hist.findIndex(h => h.effectiveMonth === effM);
-                    if (idx >= 0) hist[idx] = { effectiveMonth: effM, updatedDate: updD, salary: newSal }; else hist.push({ effectiveMonth: effM, updatedDate: updD, salary: newSal });
-                    hist.sort((a, b) => (a.effectiveMonth || '').localeCompare(b.effectiveMonth || ''));
-                }
-                workers = workers.map(w => w.id === id ? { id, code, name, mobile, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, isActive, salaryHistory: hist } : w);
-                showToast("Worker Updated!");
-            } else {
-                workers.push({ id: "W_" + Date.now(), code, name, mobile, type: document.getElementById('w_type').value, fixSalary: newSal, rule: document.getElementById('w_rule').value, isActive, salaryHistory: [{ effectiveMonth: effM, updatedDate: updD, salary: newSal }] });
-                showToast("Worker Added!");
-            }
-            localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
-        }
-        function toggleWorkerActiveQuick(id) { if (!checkAdmin()) return; let w = workers.find(x => x.id === id); if (!w) return; w.isActive = !isWorkerActive(w); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive'}`); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
-       function saveWorker(e) {
             e.preventDefault();
             let id = document.getElementById('w_edit_id').value, code = document.getElementById('w_code').value.trim().replace(/\s+/g, ''), name = document.getElementById('w_name').value.trim().replace(/\s+/g, ' '), mobile = (document.getElementById('w_mobile')?.value || '').trim(), isActive = document.getElementById('w_active').value === 'true', newSal = parseFloat(document.getElementById('w_salary').value) || 0, effM = document.getElementById('w_sal_from').value || getSelMonth(), updD = document.getElementById('w_sal_date').value || new Date().toISOString().slice(0, 10), defMach = document.getElementById('w_def_machno')?.value || '';
             if (workers.some(w => w.id !== id && getWorkerCode(w).toLowerCase() === code.toLowerCase())) { alert(`ID "${code}" already exists!`); return; }
@@ -1525,12 +1569,7 @@
             localStorage.setItem('karkhana_workers', JSON.stringify(workers)); cancelEditWorker(); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet();
         }
         function toggleWorkerActiveQuick(id) { if (!checkAdmin()) return; let w = workers.find(x => x.id === id); if (!w) return; w.isActive = !isWorkerActive(w); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); showToast(`${w.name}: ${w.isActive ? '🟢 Active' : '🔴 Inactive'}`); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
-        function editWorker(id) {
-            let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return;
-            document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_mobile').value = w.mobile || ''; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule;
-            if (document.getElementById('w_def_machno')) document.getElementById('w_def_machno').value = w.defaultMachineNo || '';
-            document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        function editWorker(id) { let w = workers.find(x => x.id === id); if (!w || !checkAdmin()) return; document.getElementById('w_edit_id').value = w.id; document.getElementById('w_code').value = getWorkerCode(w); document.getElementById('w_name').value = w.name; document.getElementById('w_mobile').value = w.mobile || ''; document.getElementById('w_active').value = isWorkerActive(w) ? 'true' : 'false'; document.getElementById('w_type').value = w.type; document.getElementById('w_salary').value = getWorkerSalaryForMonth(w, getSelMonth()); document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_rule').value = w.rule; if (document.getElementById('w_def_machno')) document.getElementById('w_def_machno').value = w.defaultMachineNo || ''; document.getElementById('w_form_title').innerText = "Update Worker / Pagar"; document.getElementById('w_btn_save').innerText = "Update Worker"; document.getElementById('w_btn_save').classList.replace('bg-indigo-600', 'bg-emerald-600'); document.getElementById('w_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         function cancelEditWorker() { document.getElementById('w_edit_id').value = ''; document.getElementById('w_form').reset(); document.getElementById('w_code').value = getNextWorkerCode(); document.getElementById('w_active').value = 'true'; document.getElementById('w_sal_from').value = getSelMonth(); document.getElementById('w_sal_date').valueAsDate = new Date(); document.getElementById('w_form_title').innerText = "Add / Update Worker"; document.getElementById('w_btn_save').innerText = "Save Worker"; document.getElementById('w_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('w_btn_cancel').classList.add('hidden'); }
         function deleteWorker(id) { if (!checkAdmin() || !confirm("Delete Worker?")) return; workers = workers.filter(w => w.id !== id); localStorage.setItem('karkhana_workers', JSON.stringify(workers)); refreshDropdowns(); renderMasterLists(); refreshAllData(); syncToSheet(); }
         function filterMasterWorkers(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#workerList .m-worker-row').forEach(el => el.style.display = (el.dataset.key || '').includes(q) ? '' : 'none'); }
@@ -1546,27 +1585,112 @@
         function cancelEditCategory() { document.getElementById('c_edit_id').value = ''; document.getElementById('c_form').reset(); document.getElementById('c_btn_cancel').classList.add('hidden'); }
         function deleteWorkerType(id) { if (!checkAdmin() || !confirm("Delete?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
 
+        function buildDesignNumber(lotNo, partName) {
+            let lot = String(lotNo || '').trim();
+            let part = String(partName || '').trim().replace(/^-+/, '');
+            if (!lot) return part || '-';
+            if (!part || part.toLowerCase() === 'plain') return lot;
+            return `${lot}-${part}`;
+        }
+        function onLotModeChange() {
+            let mode = document.getElementById('d_lot_mode')?.value || 'parts';
+            let presetBtn = document.getElementById('btn_preset_cpkb'), addBtn = document.getElementById('btn_add_part');
+            if (presetBtn) presetBtn.classList.toggle('hidden', mode === 'allover');
+            if (addBtn) addBtn.classList.toggle('hidden', mode === 'allover');
+            if (mode === 'allover') resetDesignPartRows([{ part: 'ALL OVER', stitch: '' }]);
+            else resetDesignPartRows([{ part: 'C', stitch: '' }, { part: 'P', stitch: '' }, { part: 'K', stitch: '' }, { part: 'B', stitch: '' }]);
+            previewGeneratedDesignCodes();
+        }
+        function applyQuickPartsPreset(partsArr) {
+            if (document.getElementById('d_lot_mode')) document.getElementById('d_lot_mode').value = 'parts';
+            resetDesignPartRows(partsArr.map(p => ({ part: p, stitch: '' })));
+            previewGeneratedDesignCodes();
+        }
+        function renderLotProgressTracker(lotNo) {
+            let bodyEl = document.getElementById('lot_tracker_body'), pctEl = document.getElementById('lot_tracker_pct');
+            if (!bodyEl || !pctEl) return;
+            let lot = String(lotNo || '').trim();
+            if (!lot) { pctEl.innerText = 'Lot No. dalein'; bodyEl.innerHTML = 'Upar Lot / Base Design No. likhne par dikhega ki kaunse parts chal chuke hain aur kahan pahuncha hai.'; return; }
+            let lLow = lot.toLowerCase();
+            let masterParts = designs.filter(d => d && d.code && getBaseDesignCode(d.code).toLowerCase() === lLow);
+            let doneMap = {}, lastHit = null;
+            attendance.forEach(a => {
+                if (!a) return;
+                let items = (Array.isArray(a.designItems) && a.designItems.length) ? a.designItems : [{ design: a.design, qty: a.qty, frame: a.frame }];
+                items.forEach(it => {
+                    if (!it || !it.design || it.design === '-') return;
+                    if (getBaseDesignCode(it.design).toLowerCase() === lLow) {
+                        if (!doneMap[it.design]) doneMap[it.design] = { qty: 0, frame: 0, count: 0 };
+                        doneMap[it.design].qty += (parseFloat(it.qty) || 0);
+                        doneMap[it.design].frame += (parseFloat(it.frame) || 0);
+                        doneMap[it.design].count += 1;
+                        let w = workers.find(x => x && x.id === a.workerId);
+                        lastHit = { date: a.date, shift: a.shift || 'Day', machNo: a.machineNo || '-', design: it.design, worker: w ? getWorkerLabel(w) : 'Unknown' };
+                    }
+                });
+            });
+            let expectedCodes = masterParts.length ? masterParts.map(m => m.code) : Object.keys(doneMap);
+            if (!expectedCodes.length) { pctEl.innerText = 'New Lot'; bodyEl.innerHTML = `Lot <b>${lot}</b> ki abhi koi entry ya rule save nahi hai.`; return; }
+            let doneCount = expectedCodes.filter(c => doneMap[c] && doneMap[c].count > 0).length;
+            let pct = Math.round((doneCount / expectedCodes.length) * 100);
+            pctEl.innerText = `${doneCount}/${expectedCodes.length} Done (${pct}%)`;
+            let pillsHtml = expectedCodes.map(code => {
+                let st = doneMap[code];
+                if (st && st.count > 0) return `<span class="inline-block bg-emerald-50 border border-emerald-300 text-emerald-800 px-2 py-1 rounded-lg text-[11px] font-bold mr-1.5 mb-1">✓ ${code}: ${st.qty.toLocaleString('en-IN')} st (${st.frame} fr)</span>`;
+                return `<span class="inline-block bg-amber-50 border border-amber-300 text-amber-800 px-2 py-1 rounded-lg text-[11px] font-bold mr-1.5 mb-1">⏳ ${code}: Baki</span>`;
+            }).join('');
+            let locHtml = lastHit
+                ? `<div class="mt-2 pt-2 border-t border-slate-100 text-[11px] text-indigo-900 font-semibold">📍 Aakhiri Location: <b>${lastHit.machNo}</b> (${lastHit.design}) • ${lastHit.date} (${lastHit.shift}) • ${lastHit.worker}</div>`
+                : `<div class="mt-2 pt-2 border-t border-slate-100 text-[11px] text-amber-700 font-semibold">📍 Abhi kisi machine par entry nahi hui hai.</div>`;
+            bodyEl.innerHTML = `<div class="flex flex-wrap">${pillsHtml}</div>${locHtml}`;
+        }
+        function previewGeneratedDesignCodes() {
+            let el = document.getElementById('d_code_preview');
+            let lot = (document.getElementById('d_code')?.value || '').trim();
+            if (el) {
+                let codes = [];
+                document.querySelectorAll('#d_parts_container .d-part-row').forEach(r => {
+                    let p = (r.querySelector('.dp-name')?.value || '').trim();
+                    codes.push(buildDesignNumber(lot || 'LOT', p || 'PLAIN'));
+                });
+                el.innerHTML = `Ban-ne Wale Design No.: <span class="text-emerald-700 font-black">${codes.length ? codes.join(', ') : '-'}</span>`;
+            }
+            renderLotProgressTracker(lot);
+        }
         function addDesignPartRow(partVal = '', stitchVal = '') {
             let cont = document.getElementById('d_parts_container'); if (!cont) return;
             let idx = cont.children.length, row = document.createElement('div');
             row.className = 'd-part-row grid grid-cols-12 gap-2 items-center';
-            row.innerHTML = `<input type="text" value="${partVal}" placeholder="Part (Plain / C / P / B)" class="dp-name col-span-5 border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold"><input type="number" value="${stitchVal}" placeholder="Stitches (e.g. 25620)" class="dp-stitch col-span-6 border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold"><div class="col-span-1 text-center">${idx === 0 ? '<span class="text-[10px] text-gray-400">1</span>' : '<button type="button" onclick="this.closest(\'.d-part-row\').remove()" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button>'}</div>`;
+            row.innerHTML = `<input type="text" value="${partVal}" placeholder="Part (C / P / K / B / ALL OVER)" oninput="previewGeneratedDesignCodes()" class="dp-name col-span-5 border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold"><input type="number" value="${stitchVal}" placeholder="Stitches (e.g. 25620)" class="dp-stitch col-span-6 border border-emerald-300 p-2 rounded-lg bg-white text-sm font-bold"><div class="col-span-1 text-center">${idx === 0 ? '<span class="text-[10px] text-gray-400">1</span>' : '<button type="button" onclick="this.closest(\'.d-part-row\').remove(); previewGeneratedDesignCodes();" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button>'}</div>`;
             cont.appendChild(row);
+            previewGeneratedDesignCodes();
         }
-        function resetDesignPartRows(items = null) { let cont = document.getElementById('d_parts_container'); if (!cont) return; cont.innerHTML = ''; if (Array.isArray(items) && items.length) items.forEach(it => addDesignPartRow(it.part, it.stitch)); else { addDesignPartRow('', ''); addDesignPartRow('C', ''); } }
+        function resetDesignPartRows(items = null) {
+            let cont = document.getElementById('d_parts_container'); if (!cont) return;
+            cont.innerHTML = '';
+            if (Array.isArray(items) && items.length) items.forEach(it => addDesignPartRow(it.part, it.stitch));
+            else { addDesignPartRow('C', ''); addDesignPartRow('P', ''); addDesignPartRow('K', ''); addDesignPartRow('B', ''); }
+            previewGeneratedDesignCodes();
+        }
         function saveDesign(e) {
             e.preventDefault();
-            let id = document.getElementById('d_edit_id').value, g = k => parseFloat(document.getElementById(k).value) || 0, baseCode = document.getElementById('d_code').value.trim();
-            let commonRules = { fixBonus: g('d_fixBonus'), sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'), fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3') };
+            let id = document.getElementById('d_edit_id').value, g = k => parseFloat(document.getElementById(k).value) || 0;
+            let baseCode = document.getElementById('d_code').value.trim(), lotMode = document.getElementById('d_lot_mode')?.value || 'parts';
+            let commonRules = { lotNo: baseCode, lotMode, fixBonus: g('d_fixBonus'), sLim1: g('s_lim1'), sBon1: g('s_bon1'), sLim2: g('s_lim2'), sBon2: g('s_bon2'), sLim3: g('s_lim3'), sBon3: g('s_bon3'), fLim1: g('f_lim1'), fBon1: g('f_bon1'), fLim2: g('f_lim2'), fBon2: g('f_bon2'), fLim3: g('f_lim3'), fBon3: g('f_bon3') };
             let rows = [];
-            document.querySelectorAll('#d_parts_container .d-part-row').forEach(r => { let pName = (r.querySelector('.dp-name').value || '').trim().replace(/^-+/, ''), st = parseFloat(r.querySelector('.dp-stitch').value) || 0; if (st > 0) rows.push({ pName, st }); });
-            if (!rows.length) { alert("Kam se kam 1 Part ke Stitches dalein!"); return; }
-            if (id) { let first = rows[0], fullCode = (!first.pName || first.pName.toLowerCase() === 'plain') ? baseCode : `${baseCode}-${first.pName}`; designs = designs.map(d => d.id === id ? { id, code: fullCode, stitches: first.st, ...commonRules } : d); showToast("Design Updated!"); }
-            else { let ts = Date.now(), toAdd = rows.map((r, i) => ({ id: `D_${ts}_${i}`, code: (!r.pName || r.pName.toLowerCase() === 'plain') ? baseCode : `${baseCode}-${r.pName}`, stitches: r.st, ...commonRules })); designs.push(...toAdd); showToast(`✅ ${toAdd.length} Part(s) Saved!`); }
+            document.querySelectorAll('#d_parts_container .d-part-row').forEach(r => {
+                let pName = (r.querySelector('.dp-name').value || '').trim().replace(/^-+/, '');
+                if (lotMode === 'allover' && !pName) pName = 'ALL OVER';
+                let st = parseFloat(r.querySelector('.dp-stitch').value) || 0;
+                if (st > 0) rows.push({ pName, st });
+            });
+            if (!rows.length) { alert("Kam se kam 1 Part/Design ke Stitches dalein!"); return; }
+            if (id) { let first = rows[0], fullCode = buildDesignNumber(baseCode, first.pName); designs = designs.map(d => d.id === id ? { id, code: fullCode, subPart: first.pName || 'Plain', stitches: first.st, ...commonRules } : d); showToast("Lot & Design Updated!"); }
+            else { let ts = Date.now(), toAdd = rows.map((r, i) => ({ id: `D_${ts}_${i}`, code: buildDesignNumber(baseCode, r.pName), subPart: r.pName || 'Plain', stitches: r.st, ...commonRules })); designs.push(...toAdd); showToast(`✅ ${toAdd.length} Design No. Saved!`); }
             localStorage.setItem('karkhana_designs', JSON.stringify(designs)); cancelEditDesign(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet();
         }
-        function editDesign(id) { let d = designs.find(x => x.id === id); if (!d || !checkAdmin()) return; document.getElementById('d_edit_id').value = d.id; let idx = (d.code || '').indexOf('-'); document.getElementById('d_code').value = idx > 0 ? d.code.substring(0, idx) : d.code; resetDesignPartRows([{ part: idx > 0 ? d.code.substring(idx + 1) : '', stitch: d.stitches }]); document.getElementById('d_fixBonus').value = d.fixBonus || ''; const map = { s_lim1:'sLim1', s_bon1:'sBon1', s_lim2:'sLim2', s_bon2:'sBon2', s_lim3:'sLim3', s_bon3:'sBon3', f_lim1:'fLim1', f_bon1:'fBon1', f_lim2:'fLim2', f_bon2:'fBon2', f_lim3:'fLim3', f_bon3:'fBon3' }; Object.keys(map).forEach(k => document.getElementById(k).value = d[map[k]] || ''); document.getElementById('d_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function cancelEditDesign() { document.getElementById('d_edit_id').value = ''; document.getElementById('d_form').reset(); resetDesignPartRows(); document.getElementById('d_btn_cancel').classList.add('hidden'); }
+        function editDesign(id) { let d = designs.find(x => x.id === id); if (!d || !checkAdmin()) return; document.getElementById('d_edit_id').value = d.id; let lot = d.lotNo || getBaseDesignCode(d.code); document.getElementById('d_code').value = lot; let idx = (d.code || '').indexOf('-'); let partVal = d.subPart || (idx > 0 ? d.code.substring(idx + 1) : ''); let mode = d.lotMode || (String(partVal).toUpperCase() === 'ALL OVER' ? 'allover' : 'parts'); if (document.getElementById('d_lot_mode')) document.getElementById('d_lot_mode').value = mode; resetDesignPartRows([{ part: partVal, stitch: d.stitches }]); document.getElementById('d_fixBonus').value = d.fixBonus || ''; const map = { s_lim1:'sLim1', s_bon1:'sBon1', s_lim2:'sLim2', s_bon2:'sBon2', s_lim3:'sLim3', s_bon3:'sBon3', f_lim1:'fLim1', fBon1:'fBon1', f_lim2:'fLim2', fBon2:'fBon2', f_lim3:'fLim3', fBon3:'fBon3' }; Object.keys(map).forEach(k => document.getElementById(k).value = d[map[k]] || ''); document.getElementById('d_btn_cancel').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function cancelEditDesign() { document.getElementById('d_edit_id').value = ''; document.getElementById('d_form').reset(); if (document.getElementById('d_lot_mode')) document.getElementById('d_lot_mode').value = 'parts'; resetDesignPartRows(); document.getElementById('d_btn_cancel').classList.add('hidden'); }
         function deleteDesign(id) { if (!checkAdmin() || !confirm("Delete?")) return; designs = designs.filter(d => d.id !== id); localStorage.setItem('karkhana_designs', JSON.stringify(designs)); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet(); }
         function filterMasterDesigns(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#designList .m-design-row').forEach(el => el.style.display = (el.dataset.key || '').includes(q) ? '' : 'none'); }
 
@@ -1592,10 +1716,10 @@
             workers.sort((a, b) => getWorkerCode(a).localeCompare(getWorkerCode(b), undefined, { numeric: true, sensitivity: 'base' }));
             document.getElementById('workerList').innerHTML = workers.map(w => {
                 let active = isWorkerActive(w), latest = getLatestSalaryRecord(w), hc = Array.isArray(w.salaryHistory) ? w.salaryHistory.length : 1;
-                return `<div class="m-worker-row p-3 border-b flex flex-wrap justify-between items-center gap-2 ${active?'':'bg-red-50/50 opacity-80'}" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()} ${w.mobile||''} ${active?'active':'inactive'}"><div><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1">${getWorkerCode(w)}</span><b>${w.name}</b> ${w.mobile?`<span class="text-xs text-slate-500 ml-1">📞 ${w.mobile}</span>`:''} <button type="button" onclick="toggleWorkerActiveQuick('${w.id}')" class="ml-1 px-2 py-0.5 rounded text-[10px] font-bold ${active?'bg-emerald-100 text-emerald-800':'bg-red-100 text-red-700'}">${active?'🟢 Active':'🔴 Inactive'}</button><div class="text-xs mt-1"><span class="text-emerald-700 font-bold">₹${latest.salary}</span> <button type="button" onclick="showSalaryHistoryModal('${w.id}')" class="ml-2 text-indigo-600 underline font-semibold">📜 Pagar History (${hc})</button></div></div><div><button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`;
+                return `<div class="m-worker-row p-3 border-b flex flex-wrap justify-between items-center gap-2 ${active?'':'bg-red-50/50 opacity-80'}" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()} ${w.mobile||''} ${active?'active':'inactive'}"><div><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1">${getWorkerCode(w)}</span><b>${w.name}</b> ${w.defaultMachineNo?`<span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded text-[10px] font-bold ml-1">M/C: ${w.defaultMachineNo}</span>`:''} ${w.mobile?`<span class="text-xs text-slate-500 ml-1">📞 ${w.mobile}</span>`:''} <button type="button" onclick="toggleWorkerActiveQuick('${w.id}')" class="ml-1 px-2 py-0.5 rounded text-[10px] font-bold ${active?'bg-emerald-100 text-emerald-800':'bg-red-100 text-red-700'}">${active?'🟢 Active':'🔴 Inactive'}</button><div class="text-xs mt-1"><span class="text-emerald-700 font-bold">₹${latest.salary}</span> <button type="button" onclick="showSalaryHistoryModal('${w.id}')" class="ml-2 text-indigo-600 underline font-semibold">📜 Pagar History (${hc})</button></div></div><div><button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`;
             }).join('');
             let dc = document.getElementById('design_count_lbl'); if (dc) dc.innerText = designs.length;
-            document.getElementById('designList').innerHTML = designs.map(d => `<div class="m-design-row p-3 border-b flex justify-between items-center text-xs" data-key="${(d.code||'').toLowerCase()}"><div><b class="text-sm">${d.code}</b> (${d.stitches} St, Fix: ₹${d.fixBonus||0})</div><div><button type="button" onclick="editDesign('${d.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteDesign('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+            document.getElementById('designList').innerHTML = designs.map(d => `<div class="m-design-row p-3 border-b flex justify-between items-center text-xs" data-key="${(d.code||'').toLowerCase()} ${getBaseDesignCode(d.code).toLowerCase()}"><div><b class="text-sm text-emerald-900">${d.code}</b> <span class="text-gray-500">(${d.stitches} St, Fix: ₹${d.fixBonus||0})</span></div><div><button type="button" onclick="editDesign('${d.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteDesign('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
             document.getElementById('machineRuleList').innerHTML = machineRules.map(m => `<div class="p-3 border-b flex justify-between items-center"><div><b>${m.name}</b> <div class="text-xs">${m.rateMode==='slabs'&&m.rateSlabs?.length ? formatSlabsSummary(m.rateSlabs) : `Min:${m.min}, ₹${m.rate}/1k`}</div></div><div><button type="button" onclick="editMachineRule('${m.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteRule('${m.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
         }
 
@@ -1783,27 +1907,39 @@
         function getWorkerMachineOptionsHtml() {
             return machineRules.map(m => m ? `<option value="${m.name}">${m.name}</option>` : '').join('') + `<option value="ALTER">ALTER</option>`;
         }
+        function updateWeLinkedDesignPreview() {
+            let lp = document.getElementById('we_linked_design_preview'); if (!lp) return;
+            let names = [];
+            document.querySelectorAll('#we_design_rows .we-des-row').forEach(r => {
+                let d = (r.querySelector('.wed-name')?.value || '').trim();
+                if (d) names.push(d);
+            });
+            lp.innerHTML = `Linked Design No.: <span class="text-indigo-900 font-black">${names.length ? names.join(', ') : '-'}</span>`;
+        }
         function addWeDesignRow(designVal = '', frameVal = '', qtyVal = '') {
             let cont = document.getElementById('we_design_rows'); if (!cont) return;
             let row = document.createElement('div');
             row.className = 'we-des-row grid grid-cols-12 gap-1.5 items-center';
             row.innerHTML = `
-                <input type="text" list="att_base_designs_list" value="${designVal}" placeholder="Design (581+Blw)" class="wed-name col-span-5 border border-indigo-200 p-2 rounded-lg bg-white text-xs font-bold">
+                <input type="text" list="att_base_designs_list" value="${designVal}" placeholder="Design (581+Blw / 1370-C)" oninput="updateWeLinkedDesignPreview()" class="wed-name col-span-5 border border-indigo-200 p-2 rounded-lg bg-white text-xs font-bold">
                 <input type="number" value="${frameVal}" placeholder="Frame" class="wed-frame col-span-3 border p-2 rounded-lg bg-white text-xs font-bold text-center">
                 <input type="number" value="${qtyVal}" placeholder="Stitches" oninput="syncWeTotalQty()" class="wed-qty col-span-3 border p-2 rounded-lg bg-white text-xs font-bold">
-                <button type="button" onclick="this.closest('.we-des-row').remove(); syncWeTotalQty();" class="col-span-1 text-red-500 font-bold text-sm"><i class="fa-solid fa-xmark"></i></button>`;
+                <button type="button" onclick="this.closest('.we-des-row').remove(); syncWeTotalQty(); updateWeLinkedDesignPreview();" class="col-span-1 text-red-500 font-bold text-sm"><i class="fa-solid fa-xmark"></i></button>`;
             cont.appendChild(row);
+            updateWeLinkedDesignPreview();
         }
         function syncWeTotalQty() {
             let sum = 0;
             document.querySelectorAll('#we_design_rows .wed-qty').forEach(inp => sum += (parseFloat(inp.value) || 0));
             if (sum > 0) document.getElementById('we_qty').value = sum;
+            updateWeLinkedDesignPreview();
         }
         function resetWeDesignRows(items = []) {
             let cont = document.getElementById('we_design_rows'); if (!cont) return;
             cont.innerHTML = '';
             if (Array.isArray(items) && items.length) items.forEach(it => addWeDesignRow(it.design || '', it.frame || '', it.qty || ''));
             else addWeDesignRow();
+            updateWeLinkedDesignPreview();
         }
         function openWorkerEntryMode() {
             document.getElementById('login_screen').style.display = 'none';
@@ -1814,10 +1950,11 @@
             let mw = getActiveWorkers().filter(w => isWorkerMachineType(w));
             document.getElementById('we_worker').innerHTML = mw.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join('') || '<option value="">No Machine Worker</option>';
             let mnHtml = getMachineNoOptionsHtml(false);
-            let mtHtml = getWorkerMachineOptionsHtml(); // Sirf Machine Type, Rate Nahi!
+            let mtHtml = getWorkerMachineOptionsHtml();
             document.getElementById('we_machno').innerHTML = mnHtml;
             document.getElementById('we_machine').innerHTML = mtHtml;
             autoSelectMachineType('we_machno', 'we_machine');
+            if (mw.length) applyWorkerDefaultMachine(mw[0].id, 'we_machno', 'we_machine');
             if (document.getElementById('we_ex_machno')) {
                 document.getElementById('we_ex_machno').innerHTML = mnHtml;
                 document.getElementById('we_ex_machine').innerHTML = mtHtml;
@@ -1841,7 +1978,6 @@
             });
             let totalFrame = designItems.reduce((s, it) => s + it.frame, 0);
             let designStr = designItems.map(it => it.design).filter(x => x && x !== '-').join(', ') || '-';
-
             let hasExtra = document.getElementById('we_has_extra')?.checked || false;
             let exQty = hasExtra ? (parseFloat(document.getElementById('we_ex_qty').value) || 0) : 0;
             if (hasExtra && exQty <= 0) { alert("Extra Machine ke Stitches / Hours dalein!"); return; }
@@ -2020,4 +2156,3 @@
     </script>
 </body>
 </html>
-
