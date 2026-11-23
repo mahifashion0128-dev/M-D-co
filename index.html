@@ -28,69 +28,85 @@
 </head>
 <body>
 
-    <!-- LOGIN PASSWORD SCREEN -->
+    <!-- LOGIN SCREEN (ADMIN / MANAGER / WORKER) -->
     <div id="login_screen" class="fixed inset-0 bg-indigo-950 z-[9999] flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center border border-indigo-200">
             <img src="logo.png?v=3" onerror="this.style.display='none'" class="w-40 h-auto mx-auto mb-3 object-contain" alt="Logo">
             <h1 class="text-xl font-black text-indigo-900">Mahi and Devansh co.</h1>
-            <p class="text-xs text-slate-500 mb-5">App kholne ke liye Password dalein</p>
+            <p class="text-xs text-slate-500 mb-4">App kholne ke liye Password dalein</p>
             <form onsubmit="handleAppLogin(event)" class="space-y-3">
                 <input type="password" id="login_pass_input" placeholder="Enter Password..." required autofocus class="w-full border-2 border-indigo-200 focus:border-indigo-600 p-3 rounded-xl text-center text-lg font-bold tracking-widest outline-none bg-slate-50">
                 <div id="login_err" class="hidden text-xs font-bold text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">Galat Password! Dobara try karein.</div>
                 <button type="submit" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3 rounded-xl shadow-lg transition">
-                    <i class="fa-solid fa-lock-open mr-1"></i> Unlock App
+                    <i class="fa-solid fa-lock-open mr-1"></i> Unlock App (Admin)
                 </button>
             </form>
+            <div class="mt-3">
+                <button type="button" onclick="handleManagerLogin()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
+                    <i class="fa-solid fa-user-tie mr-1"></i> Manager Panel Login
+                </button>
+            </div>
             <div class="mt-4 pt-4 border-t border-slate-200">
-             <button type="button" onclick="openWorkerEntryMode()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
-                 <i class="fa-solid fa-helmet-safety mr-1"></i> Machine Worker Stitch Entry
-             </button>
-         </div>
+                <button type="button" onclick="openWorkerEntryMode()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
+                    <i class="fa-solid fa-helmet-safety mr-1"></i> Machine Worker Stitch Entry
+                </button>
+            </div>
         </div>
     </div>
-    <!-- WORKER ONLY STITCH ENTRY SCREEN -->
- <div id="worker_entry_screen" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-4">
-     <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-teal-200 overflow-hidden my-4">
-         <div class="bg-teal-700 text-white p-4 flex justify-between items-center">
-             <div>
-                 <h2 class="font-black text-lg">Mahi and Devansh co.</h2>
-                 <p class="text-xs text-teal-100">Machine Worker Stitch Entry (Approval ke liye)</p>
-             </div>
-             <button type="button" onclick="closeWorkerEntryMode()" class="bg-teal-900 hover:bg-teal-950 px-3 py-1.5 rounded-lg text-xs font-bold">
-                 <i class="fa-solid fa-arrow-left mr-1"></i> Back
-             </button>
-         </div>
-         <form id="worker_only_form" onsubmit="submitWorkerPendingEntry(event)" class="p-4 space-y-3">
-             <div class="grid grid-cols-2 gap-3">
-                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Date *</label><input type="date" id="we_date" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm"></div>
-                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="we_shift" class="w-full border p-2.5 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
-             </div>
-             <div>
-                 <label class="block text-xs font-bold text-slate-700 mb-1">Apna Naam / ID Chunein *</label>
-                 <select id="we_worker" required class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50/50 font-bold text-sm"></select>
-             </div>
-             <div class="grid grid-cols-2 gap-3">
-                 <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine No. *</label><select id="we_machno" onchange="autoSelectMachineType('we_machno', 'we_machine')" required class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
-                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="we_machine" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-semibold text-sm"></select></div>
-             </div>
-             <div class="grid grid-cols-2 gap-3">
-                 <div><label class="block text-xs font-bold text-indigo-800 mb-1">Design No.</label><input type="text" id="we_design" list="att_base_designs_list" placeholder="e.g. 1370-C" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-white font-bold text-sm"></div>
-                 <div><label class="block text-xs font-bold text-slate-700 mb-1">Total Frame</label><input type="number" id="we_frame" placeholder="0" class="w-full border p-2.5 rounded-lg bg-white text-sm"></div>
-             </div>
-             <div>
-                 <label class="block text-xs font-bold text-emerald-800 mb-1">Total Stitches / Hours *</label>
-                 <input type="number" step="any" id="we_qty" required placeholder="Stitches dalein..." class="w-full border-2 border-emerald-400 p-3 rounded-xl bg-emerald-50 font-black text-lg text-emerald-900">
-             </div>
-             <div>
-                 <label class="block text-xs font-bold text-slate-700 mb-1">Note (Optional)</label>
-                 <input type="text" id="we_note" placeholder="Koi remark ho toh likhein..." class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm">
-             </div>
-             <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-xl shadow-lg text-base transition">
-                 <i class="fa-solid fa-paper-plane mr-1"></i> Manager Ko Approval Bhejein
-             </button>
-         </form>
-     </div>
- </div>
+
+    <!-- WORKER ONLY STITCH ENTRY + AI DISPLAY SCANNER SCREEN -->
+    <div id="worker_entry_screen" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-4">
+        <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-teal-200 overflow-hidden my-4">
+            <div class="bg-teal-700 text-white p-4 flex justify-between items-center">
+                <div>
+                    <h2 class="font-black text-lg">Mahi and Devansh co.</h2>
+                    <p class="text-xs text-teal-100">Machine Worker Stitch Entry (Approval ke liye)</p>
+                </div>
+                <button type="button" onclick="closeWorkerEntryMode()" class="bg-teal-900 hover:bg-teal-950 px-3 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                </button>
+            </div>
+            <form id="worker_only_form" onsubmit="submitWorkerPendingEntry(event)" class="p-4 space-y-3">
+                <!-- AI DISPLAY SCANNER BUTTON -->
+                <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 p-3 rounded-xl text-center">
+                    <label class="inline-flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow transition text-sm">
+                        <i class="fa-solid fa-camera text-base"></i>
+                        <span id="scan_btn_text">📷 Machine Display Scan Karein</span>
+                        <input type="file" id="we_scan_input" accept="image/*" capture="environment" onchange="scanMachineDisplay(event)" class="hidden">
+                    </label>
+                    <p id="scan_status_msg" class="text-[11px] text-indigo-700 font-semibold mt-1.5">Photo khinche — Stitches, Design aur Frame apne aap bhar jayenge</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Date *</label><input type="date" id="we_date" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="we_shift" class="w-full border p-2.5 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Apna Naam / ID Chunein *</label>
+                    <select id="we_worker" required class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50/50 font-bold text-sm"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine No. *</label><select id="we_machno" onchange="autoSelectMachineType('we_machno', 'we_machine')" required class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="we_machine" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-semibold text-sm"></select></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold text-indigo-800 mb-1">Design No.</label><input type="text" id="we_design" list="att_base_designs_list" placeholder="e.g. 1370-C" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-white font-bold text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Total Frame</label><input type="number" id="we_frame" placeholder="0" class="w-full border p-2.5 rounded-lg bg-white text-sm"></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-emerald-800 mb-1">Total Stitches / Hours *</label>
+                    <input type="number" step="any" id="we_qty" required placeholder="Stitches dalein..." class="w-full border-2 border-emerald-400 p-3 rounded-xl bg-emerald-50 font-black text-lg text-emerald-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Note (Optional)</label>
+                    <input type="text" id="we_note" placeholder="Koi remark ho toh likhein..." class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-xl shadow-lg text-base transition">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Manager Ko Approval Bhejein
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Desktop Navbar -->
     <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-3 justify-between items-center">
@@ -148,15 +164,16 @@
                     Estimated Net Pagar: <span id="dash_total_pagar" class="text-xl">₹0</span>
                 </div>
             </div>
+
+            <!-- Active Workers & Category Count Strip -->
             <div id="dash_worker_stats" class="flex flex-wrap items-center gap-2 mb-4 bg-white p-3 rounded-xl shadow-sm border border-indigo-100"></div>
+
             <div class="flex flex-wrap gap-2 mb-5">
                 <button type="button" id="dbtn_d_daily" onclick="openDashPanel('d_daily')" class="dash-nav-btn bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-calendar-day"></i> Daily Production & Notes</button>
                 <button type="button" id="dbtn_d_worker" onclick="openDashPanel('d_worker')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-user-check"></i> Worker Month Search</button>
                 <button type="button" id="dbtn_d_charts" onclick="openDashPanel('d_charts')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-chart-line"></i> Analytics & Graphs</button>
                 <button type="button" id="dbtn_d_balance" onclick="openDashPanel('d_balance')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-wallet"></i> Pagar Balance</button>
-                <button type="button" id="dbtn_d_approval" onclick="openDashPanel('d_approval')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition">
-    <i class="fa-solid fa-bell text-amber-500"></i> Approvals <span id="pending_app_badge" class="ml-1 bg-red-600 text-white px-1.5 py-0.5 rounded-full text-[11px]">0</span>
-</button>
+                <button type="button" id="dbtn_d_approval" onclick="openDashPanel('d_approval')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-4 py-2.5 rounded-xl shadow-sm text-sm transition"><i class="fa-solid fa-bell text-amber-500"></i> Approvals <span id="pending_app_badge" class="ml-1 bg-red-600 text-white px-1.5 py-0.5 rounded-full text-[11px] hidden">0</span></button>
             </div>
 
             <!-- PANEL 1: DAILY PRODUCTION, NOTES & PENDING HAZIRI -->
@@ -178,7 +195,6 @@
                         </label>
                     </div>
                 </div>
-                <!-- Pending Haziri Alert Box -->
                 <div id="dash_pending_box" class="mb-4"></div>
                 <div id="dash_daily_output"></div>
             </div>
@@ -232,6 +248,15 @@
                 </div>
             </div>
 
+            <!-- PANEL 5: MANAGER APPROVALS -->
+            <div id="d_approval" class="dash-panel bg-white p-5 rounded-xl shadow-sm border border-amber-300">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                    <h3 class="font-bold text-lg text-amber-900"><i class="fa-solid fa-user-check text-amber-600"></i> Worker Stitch Approvals (Pending)</h3>
+                    <button type="button" onclick="syncFromSheet(true)" class="bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+                </div>
+                <div id="dash_approval_list" class="space-y-3"></div>
+            </div>
+
             <!-- PANEL 4: PAGAR BALANCE -->
             <div id="d_balance" class="dash-panel">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -246,16 +271,8 @@
                 </div>
             </div>
         </section>
-        <!-- PANEL 5: MANAGER APPROVALS -->
-         <div id="d_approval" class="dash-panel bg-white p-5 rounded-xl shadow-sm border border-amber-300">
-             <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                 <h3 class="font-bold text-lg text-amber-900"><i class="fa-solid fa-user-check text-amber-600"></i> Worker Stitch Approvals (Pending)</h3>
-                 <button type="button" onclick="syncFromSheet(true)" class="bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
-             </div>
-             <div id="dash_approval_list" class="space-y-3"></div>
-         </div>
 
-        <!-- 2. ATTENDANCE (NEW CLEAN STEP-BY-STEP LAYOUT) -->
+        <!-- 2. ATTENDANCE (STEP-BY-STEP LAYOUT) -->
         <section id="attendance" class="tab-content">
             <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                 <h2 class="text-2xl font-bold text-slate-800">Attendance & Production Entry</h2>
@@ -275,30 +292,10 @@
                             <span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">1</span> Basic Details (Date, Shift, Worker & Haziri)
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Date *</label>
-                                <input type="date" id="h_date" required onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label>
-                                <select id="h_shift" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-indigo-50/60 font-bold text-sm">
-                                    <option value="Day">☀️ Day Shift</option>
-                                    <option value="Night">🌙 Night Shift</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Attendance Status *</label>
-                                <select id="h_status" onchange="updateLiveBonusPreview()" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold text-sm">
-                                    <option value="Full">✅ Full Day</option>
-                                    <option value="Half">🌗 Half Day</option>
-                                    <option value="Absent">❌ Absent</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label>
-                                <input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none">
-                                <select id="h_worker1" required onchange="showWorkerSummary(); updateLiveBonusPreview();" class="w-full border p-2 rounded-b-lg bg-slate-50 text-sm font-semibold"></select>
-                            </div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Date *</label><input type="date" id="h_date" required onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 font-bold text-sm"></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="h_shift" class="w-full border border-indigo-200 p-2.5 rounded-lg bg-indigo-50/60 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Attendance Status *</label><select id="h_status" onchange="updateLiveBonusPreview()" class="w-full border border-indigo-300 p-2.5 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Full">✅ Full Day</option><option value="Half">🌗 Half Day</option><option value="Absent">❌ Absent</option></select></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Primary Worker (Active) *</label><input type="text" id="search_w1" onkeyup="filterWorkerSelect(this.value, 'h_worker1')" placeholder="🔍 Search ID / Name..." class="w-full border border-b-0 p-1.5 text-xs rounded-t-lg bg-indigo-50 outline-none"><select id="h_worker1" required onchange="showWorkerSummary(); updateLiveBonusPreview();" class="w-full border p-2 rounded-b-lg bg-slate-50 text-sm font-semibold"></select></div>
                         </div>
                         <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-2"></div>
                     </div>
@@ -309,24 +306,12 @@
                             <span class="bg-teal-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">2</span> Machine & Payment Mode
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-teal-800 mb-1">Machine Number *</label>
-                                <select id="h_machine_no" onchange="autoSelectMachineType('h_machine_no', 'h_machine'); updateLiveBonusPreview();" class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label>
-                                <select id="h_machine" onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Payment Mode *</label>
-                                <select id="h_mode" onchange="toggleWorker2(); updateLiveBonusPreview();" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select>
-                            </div>
+                            <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine Number *</label><select id="h_machine_no" onchange="autoSelectMachineType('h_machine_no', 'h_machine'); updateLiveBonusPreview();" class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="h_machine" onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Payment Mode *</label><select id="h_mode" onchange="toggleWorker2(); updateLiveBonusPreview();" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
                             <div id="worker2_div" class="hidden md:col-span-3 bg-indigo-50 p-3 rounded-lg border border-indigo-200">
                                 <label class="block text-xs font-bold text-indigo-700 mb-1">Secondary Worker (50-50 Shared) *</label>
-                                <div class="flex flex-col sm:flex-row gap-2">
-                                    <input type="text" id="search_w2" onkeyup="filterWorkerSelect(this.value, 'h_worker2')" placeholder="🔍 Search 2nd Worker..." class="sm:w-1/3 border border-indigo-300 p-2 text-xs rounded-lg bg-white outline-none">
-                                    <select id="h_worker2" class="sm:w-2/3 border border-indigo-300 p-2 rounded-lg bg-white text-sm font-semibold"></select>
-                                </div>
+                                <div class="flex flex-col sm:flex-row gap-2"><input type="text" id="search_w2" onkeyup="filterWorkerSelect(this.value, 'h_worker2')" placeholder="🔍 Search 2nd Worker..." class="sm:w-1/3 border border-indigo-300 p-2 text-xs rounded-lg bg-white outline-none"><select id="h_worker2" class="sm:w-2/3 border border-indigo-300 p-2 rounded-lg bg-white text-sm font-semibold"></select></div>
                             </div>
                         </div>
                     </div>
@@ -334,24 +319,17 @@
                     <!-- STEP 3: DESIGNS & PRODUCTION -->
                     <div class="machine-only-field bg-white p-4 md:p-5 rounded-xl shadow-sm border border-indigo-200">
                         <div class="flex flex-wrap justify-between items-center gap-2 mb-3 pb-2 border-b">
-                            <div class="text-xs font-black uppercase tracking-wider text-indigo-800 flex items-center gap-2">
-                                <span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">3</span> Design & Stitches (Multiple Designs)
-                            </div>
-                            <button type="button" onclick="addAttDesignRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
-                                <i class="fa-solid fa-plus"></i> Add Design
-                            </button>
+                            <div class="text-xs font-black uppercase tracking-wider text-indigo-800 flex items-center gap-2"><span class="bg-indigo-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">3</span> Design & Stitches (Multiple Designs)</div>
+                            <button type="button" onclick="addAttDesignRow()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Design</button>
                         </div>
                         <div id="h_design_rows" class="space-y-2.5"></div>
                         <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap justify-between items-center gap-3">
                             <div id="h_design_totals" class="text-xs font-bold text-indigo-800 flex flex-wrap gap-4"></div>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-bold text-emerald-700">Custom / Extra Bonus (₹):</label>
-                                <input type="number" id="h_custom" value="0" oninput="updateLiveBonusPreview()" class="w-28 border border-emerald-300 p-1.5 rounded-lg bg-emerald-50 font-bold text-sm text-right">
-                            </div>
+                            <div class="flex items-center gap-2"><label class="text-xs font-bold text-emerald-700">Custom / Extra Bonus (₹):</label><input type="number" id="h_custom" value="0" oninput="updateLiveBonusPreview()" class="w-28 border border-emerald-300 p-1.5 rounded-lg bg-emerald-50 font-bold text-sm text-right"></div>
                         </div>
                     </div>
 
-                    <!-- STEP 4: EXTRA MACHINE (OPTIONAL) -->
+                    <!-- STEP 4: EXTRA MACHINE -->
                     <div class="machine-only-field bg-amber-50 p-4 rounded-xl shadow-sm border-2 border-amber-200">
                         <label class="flex items-center gap-2.5 cursor-pointer font-bold text-amber-900 text-sm select-none">
                             <input type="checkbox" id="h_has_extra" onchange="toggleExtraMachineBox(); updateLiveBonusPreview();" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
@@ -367,17 +345,11 @@
                         </div>
                     </div>
 
-                    <!-- STEP 5: REMARKS, LIVE BONUS PREVIEW & SAVE -->
+                    <!-- STEP 5: REMARKS & SAVE -->
                     <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-4">
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-bold text-red-600 mb-1">Remarks / Notes (Half Day ya Absent par zaroori)</label>
-                                <input type="text" id="h_note" placeholder="Chutti ka karan, machine issue, ya koi special note..." class="w-full border border-red-200 p-2.5 rounded-lg bg-red-50/60 text-sm">
-                            </div>
-                            <div id="h_live_bonus_box" class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-center">
-                                <div class="text-[11px] font-bold text-emerald-700 uppercase">Estimated Bonus</div>
-                                <div id="h_live_bonus_val" class="text-2xl font-black text-emerald-800">₹0</div>
-                            </div>
+                            <div class="md:col-span-2"><label class="block text-xs font-bold text-red-600 mb-1">Remarks / Notes (Half Day ya Absent par zaroori)</label><input type="text" id="h_note" placeholder="Chutti ka karan, machine issue, ya koi special note..." class="w-full border border-red-200 p-2.5 rounded-lg bg-red-50/60 text-sm"></div>
+                            <div id="h_live_bonus_box" class="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-xl text-center"><div class="text-[11px] font-bold text-emerald-700 uppercase">Estimated Bonus</div><div id="h_live_bonus_val" class="text-2xl font-black text-emerald-800">₹0</div></div>
                         </div>
                         <div class="flex gap-2">
                             <button type="submit" id="h_btn_save" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base"><i class="fa-solid fa-check-circle mr-1"></i> Save Entry</button>
@@ -401,19 +373,13 @@
             <div id="att_bulk_view" class="hidden bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4 pb-4 border-b border-slate-200 items-end">
                     <div><label class="block text-xs font-bold text-slate-700 mb-1">Attendance Date *</label><input type="date" id="bulk_att_date" onchange="renderBulkAttendanceTable()" class="w-full border p-2 rounded-lg bg-slate-50 font-bold text-sm"></div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label>
-                        <select id="bulk_att_shift" onchange="renderBulkAttendanceTable()" class="w-full border border-indigo-200 p-2 rounded-lg bg-indigo-50 font-bold text-sm">
-                            <option value="Day">☀️ Day Shift</option>
-                            <option value="Night">🌙 Night Shift</option>
-                        </select>
-                    </div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Shift *</label><select id="bulk_att_shift" onchange="renderBulkAttendanceTable()" class="w-full border border-indigo-200 p-2 rounded-lg bg-indigo-50 font-bold text-sm"><option value="Day">☀️ Day Shift</option><option value="Night">🌙 Night Shift</option></select></div>
                     <div><label class="block text-xs font-bold text-slate-700 mb-1">Filter Category</label><select id="bulk_att_cat" onchange="renderBulkAttendanceTable()" class="w-full border p-2 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
                     <div><label class="block text-xs font-bold text-slate-700 mb-1">Search Active Worker</label><input type="text" id="bulk_att_search" onkeyup="filterBulkAttRows(this.value)" placeholder="🔍 ID ya Naam..." class="w-full border p-2 rounded-lg bg-indigo-50 text-sm outline-none"></div>
                     <div class="flex gap-2"><button type="button" onclick="bulkToggleSelectAll(true)" class="w-1/2 bg-indigo-50 text-indigo-700 border border-indigo-200 py-2 rounded-lg text-xs font-bold">Select All</button><button type="button" onclick="bulkToggleSelectAll(false)" class="w-1/2 bg-slate-100 text-slate-700 border py-2 rounded-lg text-xs font-bold">Clear All</button></div>
                 </div>
                 <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-3 text-xs text-amber-900 flex flex-wrap justify-between items-center gap-2">
-                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> Bulk mein bhi ab <b>Design No. + Part</b> aur <b>Day/Night Shift</b> support hai!</span>
+                    <span><i class="fa-solid fa-circle-info text-amber-600"></i> Bulk mein <b>Design No. + Part</b> aur <b>Day/Night Shift</b> support hai!</span>
                     <span id="bulk_att_count_badge" class="bg-indigo-600 text-white px-2.5 py-1 rounded-full font-bold">Selected: 0</span>
                 </div>
                 <div class="overflow-x-auto max-h-[60vh] border rounded-xl border-slate-200 mb-4">
@@ -425,8 +391,7 @@
                 <button type="button" onclick="saveBulkAttendance()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base"><i class="fa-solid fa-floppy-disk"></i> Save All Selected Attendance Entries</button>
             </div>
         </section>
-
-        <!-- 3. ADVANCE -->
+<!-- 3. ADVANCE -->
         <section id="advance" class="tab-content">
             <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                 <h2 class="text-2xl font-bold text-slate-800">Advance (Upad) & Pagar Payments</h2>
@@ -496,8 +461,11 @@
                 <div id="m_admin" class="master-panel block">
                     <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg mb-5 text-sm text-indigo-900"><b>App Name:</b> Mahi and Devansh co. &nbsp;|&nbsp; <b>Owner Email:</b> mahifashion0128@gmail.com</div>
                     <h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">Admin Security (Login & Edit Password)</h3>
-                    <form onsubmit="saveAdminPassword(event)" class="flex gap-2 mb-3 max-w-sm"><input type="password" id="admin_pass" placeholder="Enter New Password" required class="w-full border p-2 rounded bg-slate-50"><button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded font-bold">Set Password</button></form>
-                    <p class="text-xs text-gray-500 mb-6">Default password is: <b>1234</b>.</p>
+                    <form onsubmit="saveAdminPassword(event)" class="flex gap-2 mb-2 max-w-sm"><input type="password" id="admin_pass" placeholder="Enter New Admin Password" required class="w-full border p-2 rounded bg-slate-50"><button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded font-bold shrink-0">Set Admin Pass</button></form>
+                    <p class="text-xs text-gray-500 mb-5">Default Admin password: <b>1234</b>.</p>
+
+                    <h4 class="font-bold text-sm mb-2 text-amber-800">Manager Panel Password (Default: 5678)</h4>
+                    <form onsubmit="saveManagerPassword(event)" class="flex gap-2 mb-6 max-w-sm"><input type="password" id="manager_pass" placeholder="Enter New Manager Password" required class="w-full border border-amber-300 p-2 rounded bg-amber-50/40"><button type="submit" class="bg-amber-600 text-white px-4 py-2 rounded font-bold shrink-0">Set Manager Pass</button></form>
 
                     <div class="border-t pt-4 mb-6">
                         <h3 class="font-bold text-lg mb-2 text-indigo-800"><i class="fa-solid fa-cloud"></i> Google Sheet Live Sync</h3>
@@ -525,7 +493,7 @@
                     <div class="mt-4 border-t pt-4"><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="categoryList"></div></div>
                 </div>
 
-                <!-- Workers (+ Mobile Number) -->
+                <!-- Workers -->
                 <div id="m_worker" class="master-panel">
                     <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-2 mb-4"><h3 class="font-bold text-lg text-indigo-700" id="w_form_title">Add / Update Worker</h3><button type="button" onclick="document.getElementById('bulk_worker_box').classList.toggle('hidden')" class="bg-amber-100 text-amber-900 px-3 py-1.5 rounded-lg text-xs font-bold border border-amber-300"><i class="fa-solid fa-bolt"></i> Bulk Add Workers</button></div>
                     <div id="bulk_worker_box" class="hidden mb-5 p-4 rounded-xl border-2 border-amber-300 bg-amber-50 space-y-3">
@@ -577,22 +545,15 @@
                     <div class="mt-4 border-t pt-4"><h4 class="font-bold text-gray-700 mb-2">Saved Machine Numbers (<span id="machno_count_lbl">0</span>):</h4><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="machineNumberList"></div></div>
                 </div>
 
-                <!-- Layered Designs (+ Search Box) -->
+                <!-- Layered Designs -->
                 <div id="m_design" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-emerald-700 border-b pb-2" id="d_form_title">Add / Update Design</h3>
                     <form id="d_form" onsubmit="saveDesign(event)" class="space-y-4 mb-4">
                         <input type="hidden" id="d_edit_id">
-                        <div>
-                            <label class="block text-xs font-bold text-emerald-800 mb-1">Design Number *</label>
-                            <input type="text" id="d_code" placeholder="e.g. 1395" required class="w-full border border-emerald-300 p-2.5 rounded-lg font-bold bg-emerald-50 text-base">
-                        </div>
+                        <div><label class="block text-xs font-bold text-emerald-800 mb-1">Design Number *</label><input type="text" id="d_code" placeholder="e.g. 1395" required class="w-full border border-emerald-300 p-2.5 rounded-lg font-bold bg-emerald-50 text-base"></div>
                         <div id="d_variants_box" class="border border-emerald-200 bg-emerald-50/50 p-3 rounded-xl space-y-2">
-                            <div class="flex justify-between items-center pb-1 border-b border-emerald-200">
-                                <span class="text-xs font-bold text-emerald-900">Design Parts & Stitches (Plain, C, P, B...)</span>
-                                <button type="button" onclick="addDesignPartRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Part</button>
-                            </div>
+                            <div class="flex justify-between items-center pb-1 border-b border-emerald-200"><span class="text-xs font-bold text-emerald-900">Design Parts & Stitches (Plain, C, P, B...)</span><button type="button" onclick="addDesignPartRow()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm"><i class="fa-solid fa-plus"></i> Add Part</button></div>
                             <div id="d_parts_container" class="space-y-2"></div>
-                            <p class="text-[11px] text-emerald-700">Tip: Part khali chhodne par Plain (e.g. <b>1395</b>) save hoga; <b>C</b> ya <b>P</b> likhne par <b>1395-C</b>, <b>1395-P</b> ban jayega.</p>
                         </div>
                         <input type="number" id="d_fixBonus" placeholder="Fixed Basic Bonus (₹)" class="w-full border p-2 rounded">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -602,10 +563,7 @@
                         <div class="flex gap-2"><button type="submit" id="d_btn_save" class="bg-emerald-600 text-white w-full py-2 rounded font-bold">Save Design Rules</button><button type="button" id="d_btn_cancel" onclick="cancelEditDesign()" class="hidden bg-gray-400 text-white px-4 rounded font-bold">Cancel</button></div>
                     </form>
                     <div class="mt-4 border-t pt-4">
-                        <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
-                            <h4 class="font-bold text-gray-700">Saved Designs (<span id="design_count_lbl">0</span>):</h4>
-                            <input type="text" onkeyup="filterMasterDesigns(this.value)" placeholder="🔍 Search Design No..." class="border p-1.5 rounded bg-emerald-50 text-xs w-48 outline-none">
-                        </div>
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-2"><h4 class="font-bold text-gray-700">Saved Designs (<span id="design_count_lbl">0</span>):</h4><input type="text" onkeyup="filterMasterDesigns(this.value)" placeholder="🔍 Search Design No..." class="border p-1.5 rounded bg-emerald-50 text-xs w-48 outline-none"></div>
                         <div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="designList"></div>
                     </div>
                 </div>
@@ -738,8 +696,9 @@
         <button onclick="switchTab('master', this)" class="mob-nav-btn flex flex-col items-center p-2 text-slate-500"><i class="fa-solid fa-gear mb-1"></i> Master</button>
     </nav>
     <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-xl opacity-0 z-[110] font-medium"><span id="toastMsg">Saved!</span></div>
+
     <script>
-        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw69t3R29UVOYoY7V8ljsptyelErlw66g3ukZsF4mT4huuLgoOzLnM4vu8zU';
+        const DEFAULT_SCRIPT_URL = 'MERA_COPIED_URL_YAHAN_PASTE_KAREIN';
         const DEFAULT_PAYMENT_MODES = [
             { id: 'Normal', name: 'Normal (Base + Bonus)', dayMult: 1, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
             { id: 'ExtraStitch', name: 'Extra Machine (Stitch Bonus)', dayMult: 0, bonusType: 'stitch', bonusMult: 1, flatBonus: 0, isShared: false },
@@ -748,32 +707,44 @@
         ];
 
         let adminPassword = localStorage.getItem('karkhana_adminPass') || '1234';
+        let managerPassword = localStorage.getItem('karkhana_managerPass') || '5678';
         let alterRate = parseFloat(localStorage.getItem('karkhana_alterRate')); if (isNaN(alterRate)) alterRate = 120;
-        let paymentModes = [], machineNumbers = [], workerTypes = [], workers = [], designs = [], machineRules = [], attendance = [], advanceData = [];
-        localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
+        let paymentModes = [], machineNumbers = [], workerTypes = [], workers = [], designs = [], machineRules = [], attendance = [], advanceData = [], pendingEntries = [];
         let bonusChart, compareChart, currentReportType = 'company', currentDashPanel = 'd_daily';
 
-        // ====== LOGIN LOCK ======
+        // ====== LOGIN & ROLE LOCK ======
         function checkLoginStatus() {
             let screen = document.getElementById('login_screen'); if (!screen) return;
-            if (sessionStorage.getItem('karkhana_unlocked') === 'true') screen.style.display = 'none';
-            else { screen.style.display = 'flex'; let inp = document.getElementById('login_pass_input'); if (inp) setTimeout(() => inp.focus(), 100); }
+            if (sessionStorage.getItem('karkhana_unlocked') === 'true') {
+                screen.style.display = 'none';
+                applyRoleUI(sessionStorage.getItem('karkhana_role') || 'admin');
+            } else {
+                screen.style.display = 'flex';
+                let inp = document.getElementById('login_pass_input'); if (inp) setTimeout(() => inp.focus(), 100);
+            }
         }
         function handleAppLogin(e) {
             e.preventDefault();
             let entered = document.getElementById('login_pass_input').value, errEl = document.getElementById('login_err');
             if (entered === adminPassword) {
                 sessionStorage.setItem('karkhana_unlocked', 'true');
+                sessionStorage.setItem('karkhana_role', 'admin');
                 document.getElementById('login_screen').style.display = 'none';
                 document.getElementById('login_pass_input').value = '';
                 errEl.classList.add('hidden');
+                applyRoleUI('admin');
             } else {
                 errEl.classList.remove('hidden');
                 document.getElementById('login_pass_input').value = '';
                 document.getElementById('login_pass_input').focus();
             }
         }
-        function lockApp() { sessionStorage.removeItem('karkhana_unlocked'); checkLoginStatus(); }
+        function lockApp() {
+            sessionStorage.removeItem('karkhana_unlocked');
+            sessionStorage.removeItem('karkhana_role');
+            applyRoleUI('admin');
+            checkLoginStatus();
+        }
 
         // ====== SYNC & BACKUP ======
         function getScriptUrl() { let s = (localStorage.getItem('karkhana_scriptUrl') || '').trim(); return (s && s.startsWith('https://script.google.com/')) ? s : DEFAULT_SCRIPT_URL; }
@@ -782,15 +753,17 @@
         function setSyncBadge(text, colorClass) { document.querySelectorAll('.sync-status-text').forEach(el => el.innerText = text); document.querySelectorAll('.sync-badge').forEach(el => { el.classList.remove('text-emerald-300','text-yellow-300','text-red-300','text-gray-300'); el.classList.add(colorClass); }); }
 
         function saveAllLocal() {
-            localStorage.setItem('karkhana_adminPass', adminPassword); localStorage.setItem('karkhana_alterRate', String(alterRate));
+            localStorage.setItem('karkhana_adminPass', adminPassword); localStorage.setItem('karkhana_managerPass', managerPassword);
+            localStorage.setItem('karkhana_alterRate', String(alterRate));
             localStorage.setItem('karkhana_paymentModes', JSON.stringify(paymentModes)); localStorage.setItem('karkhana_machineNumbers', JSON.stringify(machineNumbers));
             localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); localStorage.setItem('karkhana_workers', JSON.stringify(workers));
             localStorage.setItem('karkhana_designs', JSON.stringify(designs)); localStorage.setItem('karkhana_machineRules', JSON.stringify(machineRules));
             localStorage.setItem('karkhana_att', JSON.stringify(attendance)); localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
+            localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
         }
 
         function downloadBackupJSON() {
-            let payload = { appName: 'Mahi and Devansh co.', backupDate: new Date().toISOString(), adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData };
+            let payload = { appName: 'Mahi and Devansh co.', backupDate: new Date().toISOString(), adminPassword, managerPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, pendingEntries };
             let blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
             let a = document.createElement('a'); a.href = URL.createObjectURL(blob);
             a.download = `MahiAndDevanshCo_Backup_${new Date().toISOString().slice(0, 10)}.json`;
@@ -804,6 +777,7 @@
                 try {
                     let d = JSON.parse(ev.target.result);
                     if (d.adminPassword) adminPassword = d.adminPassword;
+                    if (d.managerPassword) managerPassword = d.managerPassword;
                     if (d.alterRate !== undefined) alterRate = parseFloat(d.alterRate) || 120;
                     if (Array.isArray(d.paymentModes)) paymentModes = d.paymentModes;
                     if (Array.isArray(d.machineNumbers)) machineNumbers = d.machineNumbers;
@@ -813,6 +787,7 @@
                     if (Array.isArray(d.machineRules)) machineRules = d.machineRules;
                     if (Array.isArray(d.attendance)) attendance = d.attendance;
                     if (Array.isArray(d.advanceData)) advanceData = d.advanceData;
+                    if (Array.isArray(d.pendingEntries)) pendingEntries = d.pendingEntries;
                     migrateWorkersData(); saveAllLocal(); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); refreshAllData(); syncToSheet();
                     showToast('✅ Backup Restored Successfully!');
                 } catch(err) { alert('Galat Backup File!'); }
@@ -825,7 +800,7 @@
             if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
             setSyncBadge('Saving...', 'text-yellow-300');
             try {
-                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, pendingEntries, updatedAt: new Date().toISOString() };
+                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, managerPassword, alterRate, paymentModes, machineNumbers, workerTypes, workers, designs, machineRules, attendance, advanceData, pendingEntries, updatedAt: new Date().toISOString() };
                 let res = await fetch(getScriptUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
                 let result = await res.json();
                 if (result.status === 'ok') { setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Sheet mein upload ho gaya!'); }
@@ -841,6 +816,7 @@
                 if (result.status === 'ok' && result.data) {
                     let d = result.data;
                     if (d.adminPassword) adminPassword = d.adminPassword;
+                    if (d.managerPassword) managerPassword = d.managerPassword;
                     if (d.alterRate !== undefined && !isNaN(parseFloat(d.alterRate))) alterRate = parseFloat(d.alterRate);
                     if (Array.isArray(d.paymentModes) && d.paymentModes.length) paymentModes = d.paymentModes;
                     if (Array.isArray(d.machineNumbers) && d.machineNumbers.length) machineNumbers = d.machineNumbers;
@@ -875,7 +851,7 @@
         function shiftDashDate(days) { let inp = document.getElementById('dash_filter_date'), d = inp.value ? new Date(inp.value) : new Date(); d.setDate(d.getDate() + days); inp.value = d.toISOString().slice(0, 10); renderDailyProductionPanel(); }
         function setDashToday() { document.getElementById('dash_filter_date').valueAsDate = new Date(); renderDailyProductionPanel(); }
 
-        // ====== DESIGN NO. + PART (SINGLE & BULK) ======
+        // ====== DESIGN NO. + PART ======
         function getBaseDesignCode(code) { if (!code || code === '-') return ''; let idx = String(code).indexOf('-'); return idx > 0 ? String(code).substring(0, idx).trim() : String(code).trim(); }
         function updateBaseDesignDatalist() {
             let dl = document.getElementById('att_base_designs_list');
@@ -923,8 +899,7 @@
             return rows;
         }
         function updateAttDesignTotals() {
-            let el = document.getElementById('h_design_totals');
-            let items = readAttDesignRows();
+            let el = document.getElementById('h_design_totals'), items = readAttDesignRows();
             if (el) el.innerHTML = `<span>Designs: ${items.length}</span><span>Total Stitches/Hrs: ${items.reduce((s, i) => s + i.qty, 0).toLocaleString('en-IN')}</span><span>Total Frames: ${items.reduce((s, i) => s + i.frame, 0)}</span>`;
             updateLiveBonusPreview();
         }
@@ -939,29 +914,19 @@
             return a.design || '-';
         }
 
-        // ====== LIVE BONUS PREVIEW IN SINGLE ATTENDANCE ======
         function updateLiveBonusPreview() {
             let valEl = document.getElementById('h_live_bonus_val'); if (!valEl) return;
-            let w = workers.find(x => x && x.id === document.getElementById('h_worker1')?.value);
-            let status = document.getElementById('h_status')?.value || 'Full';
+            let w = workers.find(x => x && x.id === document.getElementById('h_worker1')?.value), status = document.getElementById('h_status')?.value || 'Full';
             if (!isWorkerMachineType(w) || status === 'Absent') { valEl.innerText = '₹0'; return; }
-            let date = document.getElementById('h_date')?.value || new Date().toISOString().slice(0, 10);
-            let pmObj = getPaymentMode(document.getElementById('h_mode')?.value);
-            let machine = document.getElementById('h_machine')?.value || '';
-            let designItems = readAttDesignRows();
-            let qty = designItems.reduce((s, i) => s + i.qty, 0), frame = designItems.reduce((s, i) => s + i.frame, 0);
-            let designCode = designItems.map(i => i.design).filter(d => d && d !== '-').join(', ') || '-';
-            let customBonus = parseFloat(document.getElementById('h_custom')?.value) || 0;
-            let primaryBonus = calcProductionBonus(pmObj, machine, designCode, qty, frame, date, status, designItems);
-            let extraBonus = 0;
-            if (document.getElementById('h_has_extra')?.checked) {
-                extraBonus = calcProductionBonus(getPaymentMode(document.getElementById('h_extra_mode')?.value), document.getElementById('h_extra_machine')?.value, document.getElementById('h_extra_design')?.value || '-', parseFloat(document.getElementById('h_extra_qty')?.value) || 0, parseFloat(document.getElementById('h_extra_frame')?.value) || 0, date, status);
-            }
-            let tot = primaryBonus + extraBonus + customBonus;
-            valEl.innerText = '₹' + tot.toFixed(0);
+            let date = document.getElementById('h_date')?.value || new Date().toISOString().slice(0, 10), pmObj = getPaymentMode(document.getElementById('h_mode')?.value), machine = document.getElementById('h_machine')?.value || '';
+            let designItems = readAttDesignRows(), qty = designItems.reduce((s, i) => s + i.qty, 0), frame = designItems.reduce((s, i) => s + i.frame, 0);
+            let designCode = designItems.map(i => i.design).filter(d => d && d !== '-').join(', ') || '-', customBonus = parseFloat(document.getElementById('h_custom')?.value) || 0;
+            let primaryBonus = calcProductionBonus(pmObj, machine, designCode, qty, frame, date, status, designItems), extraBonus = 0;
+            if (document.getElementById('h_has_extra')?.checked) extraBonus = calcProductionBonus(getPaymentMode(document.getElementById('h_extra_mode')?.value), document.getElementById('h_extra_machine')?.value, document.getElementById('h_extra_design')?.value || '-', parseFloat(document.getElementById('h_extra_qty')?.value) || 0, parseFloat(document.getElementById('h_extra_frame')?.value) || 0, date, status);
+            valEl.innerText = '₹' + (primaryBonus + extraBonus + customBonus).toFixed(0);
         }
 
-        // ====== WORKER HELPERS & SALARY HISTORY ======
+        // ====== WORKER HELPERS (0-100 SORTING) ======
         function getWorkerCode(w) { return (w && w.code) ? w.code : (w ? w.id : '-'); }
         function getWorkerLabel(w) { return w ? `[${getWorkerCode(w)}] ${w.name}` : 'Unknown'; }
         function isWorkerActive(w) { return w && w.isActive !== false; }
@@ -989,7 +954,7 @@
             document.getElementById('salHistModal').classList.add('active');
         }
 
-        // ====== MARK PAGAR PAID & WHATSAPP SHARE ======
+        // ====== MARK PAID, WHATSAPP & CSV ======
         function markPagarPaid(wId) {
             if (!checkAdmin()) return;
             let selM = getSelMonth(), w = workers.find(x => x && x.id === wId); if (!w) return;
@@ -1000,22 +965,16 @@
             let lastDay = selM + '-' + String(getDaysInMonth(selM)).padStart(2, '0');
             advanceData.push({ id: "U_PAID_" + Date.now(), date: lastDay, workerId: wId, amount: Math.round(net), note: `✅ Final Pagar Paid (${getMonthName(selM)})` });
             localStorage.setItem('karkhana_upad', JSON.stringify(advanceData));
-            showToast(`✅ ${w.name} ka Pagar Paid Mark ho gaya!`);
-            refreshAllData(); syncToSheet();
+            showToast(`✅ ${w.name} ka Pagar Paid Mark ho gaya!`); refreshAllData(); syncToSheet();
         }
-
         function shareWorkerWhatsApp(wId) {
             let selM = getSelMonth(), w = workers.find(x => x && x.id === wId); if (!w) return;
             let wA = attendance.filter(a => a.workerId === wId && a.date.startsWith(selM)), wU = advanceData.filter(u => u.workerId === wId && u.date.startsWith(selM));
             let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0), prev = calculatePreviousBalance(w, selM), net = (base + bon) - upd + prev;
             let msg = `*Mahi and Devansh co.*\n*Salary Slip — ${getMonthName(selM)}*\n\nWorker: ${w.name} (${getWorkerCode(w)})\nAttendance: ${eff} Days\nBase Pagar: ₹${base.toFixed(0)}\nTotal Bonus: ₹${bon.toFixed(0)}\nPichla Baki: ₹${prev.toFixed(0)}\nAdvance / Paid: -₹${upd.toFixed(0)}\n------------------\n*Net Payable: ₹${net.toFixed(0)}*`;
-            let phone = (w.mobile || '').replace(/\D/g, '');
-            if (phone.length === 10) phone = '91' + phone;
-            let url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+            let phone = (w.mobile || '').replace(/\D/g, ''); if (phone.length === 10) phone = '91' + phone;
+            window.open(phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
-
-        // ====== EXCEL (CSV) EXPORTS ======
         function exportSalaryCSV() {
             let selM = getSelMonth(), rows = [['Worker ID', 'Name', 'Mobile', 'Category', 'Month Rate', 'Days', 'Base Salary', 'Bonus', 'Pichla Baki', 'Advance/Paid', 'Net Payable']];
             workers.forEach(w => {
@@ -1033,12 +992,10 @@
         }
         function downloadCSV(rows, filename) {
             let csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
-            showToast('Excel (CSV) Downloaded!');
+            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }), a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = filename; a.click(); showToast('Excel (CSV) Downloaded!');
         }
-
-        // ====== SLABS & CHARTS ======
+// ====== SLABS & CHARTS ======
         function toggleMachineRateMode() {
             let mode = document.getElementById('m_rateMode').value;
             document.getElementById('m_single_rate_box').classList.toggle('hidden', mode === 'slabs');
@@ -1099,7 +1056,8 @@
             workers = getSafeData('karkhana_workers', [{ id: "W1", code: "W01", name: "Ramesh Bhai", mobile: "", type: "Machine Worker", fixSalary: 18000, rule: "30Days", isActive: true, salaryHistory: [{ effectiveMonth: '2020-01', updatedDate: '', salary: 18000 }] }]);
             designs = getSafeData('karkhana_designs', []);
             machineRules = getSafeData('karkhana_machineRules', [{ id: 'MR1', name: 'Type 25', rateMode: 'single', min: 185000, rate: 1.75, rateSlabs: [] }]);
-            attendance = getSafeData('karkhana_att', []); advanceData = getSafeData('karkhana_upad', []);
+            attendance = getSafeData('karkhana_att', []);
+            advanceData = getSafeData('karkhana_upad', []);
             pendingEntries = getSafeData('karkhana_pending', []);
             if (migrateWorkersData()) saveAllLocal();
         }
@@ -1121,7 +1079,7 @@
         }
 
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isCloudConfigured()) syncFromSheet(false); });
-        function saveAdminPassword(e) { e.preventDefault(); adminPassword = document.getElementById('admin_pass').value; localStorage.setItem('karkhana_adminPass', adminPassword); showToast("Password Updated!"); document.getElementById('admin_pass').value = ''; syncToSheet(); }
+        function saveAdminPassword(e) { e.preventDefault(); adminPassword = document.getElementById('admin_pass').value; localStorage.setItem('karkhana_adminPass', adminPassword); showToast("Admin Password Updated!"); document.getElementById('admin_pass').value = ''; syncToSheet(); }
         function getSelMonth() { return document.getElementById('app_month').value; }
         function getMonthName(ymStr) { if (!ymStr) return ""; return new Date(ymStr + "-01").toLocaleString('en-IN', { month: 'long', year: 'numeric' }); }
         function getDaysInMonth(ymStr) { if (!ymStr) return 30; let p = ymStr.split('-'); return new Date(p[0], p[1], 0).getDate(); }
@@ -1145,10 +1103,10 @@
             if (currentDashPanel === 'd_daily') renderDailyProductionPanel();
             if (currentDashPanel === 'd_worker') renderWorkerSearchPanel();
             if (currentDashPanel === 'd_charts') { updateChart(); updateCompareChart(); }
+            if (currentDashPanel === 'd_approval') renderPendingApprovals();
             renderAdvanceStatement();
             if (document.getElementById('reports').classList.contains('active')) setReportType(currentReportType);
             showWorkerSummary();
-            updatePendingApprovalBadge();
         }
 
         function filterWorkerSelect(query, selectId) {
@@ -1195,10 +1153,7 @@
             let pendingW = getActiveWorkers().filter(w => !doneIds.has(w.id));
             if (pendBox) {
                 if (pendingW.length > 0) {
-                    pendBox.innerHTML = `<div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900">
-                        <div class="font-bold mb-1.5 flex items-center justify-between"><span><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Pending Haziri (${dStr}): <b>${pendingW.length} Active Workers</b> ki entry abhi baki hai</span></div>
-                        <div class="flex flex-wrap gap-1.5">${pendingW.map(w => `<span class="bg-white border border-amber-300 px-2 py-0.5 rounded font-semibold">[${getWorkerCode(w)}] ${w.name}</span>`).join('')}</div>
-                    </div>`;
+                    pendBox.innerHTML = `<div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900"><div class="font-bold mb-1.5"><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Pending Haziri (${dStr}): <b>${pendingW.length} Active Workers</b> ki entry abhi baki hai</div><div class="flex flex-wrap gap-1.5">${pendingW.map(w => `<span class="bg-white border border-amber-300 px-2 py-0.5 rounded font-semibold">[${getWorkerCode(w)}] ${w.name}</span>`).join('')}</div></div>`;
                 } else {
                     pendBox.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 text-xs font-bold text-emerald-800"><i class="fa-solid fa-circle-check mr-1"></i> ${dStr}: Sabhi Active Workers ki Haziri complete hai!</div>`;
                 }
@@ -1315,7 +1270,7 @@
             return (baseAuto * (pmObj.bonusMult ?? 1)) + (parseFloat(pmObj.flatBonus) || 0);
         }
 
-        // ====== SINGLE ATTENDANCE SAVE (WITH DUPLICATE WARNING & SHIFT) ======
+        // ====== SINGLE ATTENDANCE SAVE ======
         function saveAttendance(e) {
             e.preventDefault();
             let editId = document.getElementById('h_edit_id').value, status = document.getElementById('h_status').value, note = document.getElementById('h_note').value.trim();
@@ -1368,7 +1323,7 @@
         function deleteAttendance(id) { if (!checkAdmin() || !confirm("Delete Entry?")) return; let kw = document.getElementById('h_worker1').value; attendance = attendance.filter(a => a && a.id !== id); localStorage.setItem('karkhana_att', JSON.stringify(attendance)); if (document.getElementById('h_edit_id').value === id) cancelEditAttendance(kw); showToast("Deleted!"); refreshAllData(); syncToSheet(); }
         function cancelEditAttendance(keepWorkerId) { document.getElementById('h_edit_id').value = ''; document.getElementById('att_form').reset(); document.getElementById('h_date').valueAsDate = new Date(); document.getElementById('h_has_extra').checked = false; refreshDropdowns(); resetAttDesignRows(); if (keepWorkerId && Array.from(document.getElementById('h_worker1').options).some(o => o.value === keepWorkerId)) document.getElementById('h_worker1').value = keepWorkerId; document.getElementById('h_btn_save').innerText = "Save Entry"; document.getElementById('h_btn_save').classList.replace('bg-emerald-600', 'bg-indigo-600'); document.getElementById('h_btn_cancel').classList.add('hidden'); toggleMachineFields(); toggleExtraMachineBox(); updateLiveBonusPreview(); }
 
-        // ====== BULK ATTENDANCE (WITH SHIFT + DESIGN NO. & PART) ======
+        // ====== BULK ATTENDANCE ======
         function switchAttMode(mode) { let s = document.getElementById('att_single_view'), b = document.getElementById('att_bulk_view'), bs = document.getElementById('btn_att_single'), bb = document.getElementById('btn_att_bulk'); if (mode === 'bulk') { s.classList.add('hidden'); b.classList.remove('hidden'); bb.classList.add('bg-indigo-600','text-white'); bb.classList.remove('text-slate-600'); bs.classList.remove('bg-indigo-600','text-white'); bs.classList.add('text-slate-600'); renderBulkAttendanceTable(); } else { b.classList.add('hidden'); s.classList.remove('hidden'); bs.classList.add('bg-indigo-600','text-white'); bs.classList.remove('text-slate-600'); bb.classList.remove('bg-indigo-600','text-white'); bb.classList.add('text-slate-600'); showWorkerSummary(); } }
         function renderBulkAttendanceTable() {
             updateBaseDesignDatalist();
@@ -1530,7 +1485,7 @@
             document.getElementById('categoryList').innerHTML = workerTypes.map(t => `<div class="p-3 border-b flex justify-between items-center"><div><b>${t.name}</b> <span class="text-xs text-gray-500">(${t.hasProduction?'Machine':'Fixed'})</span></div><div><button type="button" onclick="editWorkerType('${t.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorkerType('${t.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
             document.getElementById('worker_count_lbl').innerText = `${getActiveWorkers().length} Active / ${workers.length} Total`;
             workers.sort((a, b) => getWorkerCode(a).localeCompare(getWorkerCode(b), undefined, { numeric: true, sensitivity: 'base' }));
-            document.getElementById('workerList').innerHTML = workers.map(w => { 
+            document.getElementById('workerList').innerHTML = workers.map(w => {
                 let active = isWorkerActive(w), latest = getLatestSalaryRecord(w), hc = Array.isArray(w.salaryHistory) ? w.salaryHistory.length : 1;
                 return `<div class="m-worker-row p-3 border-b flex flex-wrap justify-between items-center gap-2 ${active?'':'bg-red-50/50 opacity-80'}" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()} ${w.mobile||''} ${active?'active':'inactive'}"><div><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs font-bold mr-1">${getWorkerCode(w)}</span><b>${w.name}</b> ${w.mobile?`<span class="text-xs text-slate-500 ml-1">📞 ${w.mobile}</span>`:''} <button type="button" onclick="toggleWorkerActiveQuick('${w.id}')" class="ml-1 px-2 py-0.5 rounded text-[10px] font-bold ${active?'bg-emerald-100 text-emerald-800':'bg-red-100 text-red-700'}">${active?'🟢 Active':'🔴 Inactive'}</button><div class="text-xs mt-1"><span class="text-emerald-700 font-bold">₹${latest.salary}</span> <button type="button" onclick="showSalaryHistoryModal('${w.id}')" class="ml-2 text-indigo-600 underline font-semibold">📜 Pagar History (${hc})</button></div></div><div><button type="button" onclick="editWorker('${w.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteWorker('${w.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`;
             }).join('');
@@ -1539,7 +1494,7 @@
             document.getElementById('machineRuleList').innerHTML = machineRules.map(m => `<div class="p-3 border-b flex justify-between items-center"><div><b>${m.name}</b> <div class="text-xs">${m.rateMode==='slabs'&&m.rateSlabs?.length ? formatSlabsSummary(m.rateSlabs) : `Min:${m.min}, ₹${m.rate}/1k`}</div></div><div><button type="button" onclick="editMachineRule('${m.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteRule('${m.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
         }
 
-        // ====== CALCULATIONS, REPORTS & PDF ======
+        // ====== CALCULATIONS, DASHBOARD, REPORTS & PDF ======
         function calcEffDays(wAtt) { return wAtt.reduce((s, a) => s + (((a.status || 'Full') === 'Full' ? 1 : (a.status === 'Half' ? 0.5 : 0)) * (getPaymentMode(a.mode).dayMult ?? 1)), 0); }
         function calculateEarnedSalary(worker, effDays, monthStr) {
             let tDays = getDaysInMonth(monthStr), div = tDays;
@@ -1552,6 +1507,23 @@
             let ms = [...new Set([...pA.map(a => a.date.substring(0,7)), ...pU.map(u => u.date.substring(0,7))])], pe = 0, pb = 0;
             ms.forEach(pm => { let mA = pA.filter(a => a.date.startsWith(pm)); pe += calculateEarnedSalary(worker, calcEffDays(mA), pm); pb += mA.reduce((s, a) => s + (a.finalBonus || 0), 0); });
             return (pe + pb) - pU.reduce((s, u) => s + (u.amount || 0), 0);
+        }
+
+        function getWorkerPendingMonthsHtml(worker, selM) {
+            let allA = attendance.filter(a => a && a.workerId === worker.id && a.date && a.date.substring(0, 7) <= selM);
+            let allU = advanceData.filter(u => u && u.workerId === worker.id && u.date && u.date.substring(0, 7) <= selM);
+            let months = [...new Set([...allA.map(a => a.date.substring(0, 7)), ...allU.map(u => u.date.substring(0, 7))])].sort();
+            let tags = [];
+            months.forEach(m => {
+                let mA = allA.filter(a => a.date.startsWith(m)), mU = allU.filter(u => u.date.startsWith(m));
+                let mNet = Math.round(calculateEarnedSalary(worker, calcEffDays(mA), m) + mA.reduce((s, a) => s + (a.finalBonus || 0), 0) - mU.reduce((s, u) => s + (u.amount || 0), 0));
+                if (mNet !== 0) {
+                    let lbl = new Date(m + "-01").toLocaleString('en-IN', { month: 'short', year: '2-digit' });
+                    let cls = mNet < 0 ? 'bg-red-50 text-red-700 border-red-200' : (m < selM ? 'bg-amber-50 text-amber-800 border-amber-300' : 'bg-indigo-50 text-indigo-700 border-indigo-200');
+                    tags.push(`<span class="inline-block border px-1.5 py-0.5 rounded text-[10px] font-bold ${cls}">${lbl}: ${mNet > 0 ? '+' : '-'}₹${Math.abs(mNet)}</span>`);
+                }
+            });
+            return tags.length ? `<div class="flex flex-wrap gap-1 mt-1">${tags.join('')}</div>` : '';
         }
 
         function buildMachineReportData(selM) {
@@ -1580,25 +1552,6 @@
             return map;
         }
 
-       function getWorkerPendingMonthsHtml(worker, selM) {
-            let allA = attendance.filter(a => a && a.workerId === worker.id && a.date && a.date.substring(0, 7) <= selM);
-            let allU = advanceData.filter(u => u && u.workerId === worker.id && u.date && u.date.substring(0, 7) <= selM);
-            let months = [...new Set([...allA.map(a => a.date.substring(0, 7)), ...allU.map(u => u.date.substring(0, 7))])].sort();
-            let tags = [];
-            months.forEach(m => {
-                let mA = allA.filter(a => a.date.startsWith(m));
-                let mU = allU.filter(u => u.date.startsWith(m));
-                let mNet = Math.round(calculateEarnedSalary(worker, calcEffDays(mA), m) + mA.reduce((s, a) => s + (a.finalBonus || 0), 0) - mU.reduce((s, u) => s + (u.amount || 0), 0));
-                if (mNet !== 0) {
-                    let lbl = new Date(m + "-01").toLocaleString('en-IN', { month: 'short', year: '2-digit' });
-                    let cls = mNet < 0 ? 'bg-red-50 text-red-700 border-red-200' : (m < selM ? 'bg-amber-50 text-amber-800 border-amber-300' : 'bg-indigo-50 text-indigo-700 border-indigo-200');
-                    let sign = mNet > 0 ? '+' : '-';
-                    tags.push(`<span class="inline-block border px-1.5 py-0.5 rounded text-[10px] font-bold ${cls}">${lbl}: ${sign}₹${Math.abs(mNet)}</span>`);
-                }
-            });
-            return tags.length ? `<div class="flex flex-wrap gap-1 mt-1">${tags.join('')}</div>` : '';
-        }
-
         function renderDashboard() {
             let activeList = getActiveWorkers(), catCounts = {};
             activeList.forEach(w => { let t = w.type || 'Other'; catCounts[t] = (catCounts[t] || 0) + 1; });
@@ -1617,19 +1570,15 @@
             }).sort((a, b) => b.net - a.net).forEach(st => {
                 let paidBtn = st.net > 0 ? `<button onclick="markPagarPaid('${st.w.id}')" class="ml-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded text-[11px] font-bold shrink-0">Mark Paid</button>` : '';
                 let monthTags = getWorkerPendingMonthsHtml(st.w, selM);
-                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between items-start gap-2 border-l-4 ${st.net < 0 ? 'border-red-500' : 'border-emerald-500'}">
-                    <div class="cursor-pointer min-w-0" onclick="showUpadModal('${st.w.id}')">
-                        <div class="font-bold"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(st.w)}]</span>${st.w.name}${!isWorkerActive(st.w)?' <span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">Inactive</span>':''}</div>
-                        ${monthTags}
-                    </div>
-                    <div class="flex items-center shrink-0 pt-0.5"><span class="font-bold ${st.net < 0 ? 'text-red-600' : 'text-emerald-700'}">₹${st.net.toFixed(0)}</span>${paidBtn}</div>
-                </div>`;
+                let card = `<div class="bg-white p-3 rounded shadow-sm flex justify-between items-start gap-2 border-l-4 ${st.net < 0 ? 'border-red-500' : 'border-emerald-500'}"><div class="cursor-pointer min-w-0" onclick="showUpadModal('${st.w.id}')"><div class="font-bold"><span class="text-indigo-600 text-xs mr-1">[${getWorkerCode(st.w)}]</span>${st.w.name}${!isWorkerActive(st.w)?' <span class="text-[10px] bg-red-100 text-red-700 px-1 rounded">Inactive</span>':''}</div>${monthTags}</div><div class="flex items-center shrink-0 pt-0.5"><span class="font-bold ${st.net < 0 ? 'text-red-600' : 'text-emerald-700'}">₹${st.net.toFixed(0)}</span>${paidBtn}</div></div>`;
                 if (st.net < 0) neg += card; else pos += card;
             });
             document.getElementById('dash_total_pagar').innerText = '₹' + totPagar.toFixed(0);
             document.getElementById('dashListPositive').innerHTML = pos || '<p class="text-sm text-gray-500">No data</p>';
             document.getElementById('dashListNegative').innerHTML = neg || '<p class="text-sm text-gray-500">Sabka balance positive hai.</p>';
+            updatePendingApprovalBadge();
         }
+
         function updateChart() {
             let c = document.getElementById('bonusChart'); if (!c) return;
             let sw = document.getElementById('chartWorkerSelect')?.value || 'ALL', selM = getSelMonth(), labels = [], data = [];
@@ -1653,7 +1602,17 @@
             compareChart = new Chart(c.getContext('2d'), { type: isPie ? 'pie' : 'bar', data: { labels, datasets: [{ label: type === 'worker' ? 'Total Earned (₹)' : (type === 'month' ? 'Pagar/Month (₹)' : 'Total Stitches'), data, backgroundColor: ['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'], borderRadius: isPie ? 0 : 4, maxBarThickness: 40 }] }, options: isPie ? { responsive: true, maintainAspectRatio: false } : { responsive: true, maintainAspectRatio: false, scales: { x: { ticks: { autoSkip: false, maxRotation: 45 } }, y: { beginAtZero: true } } } });
         }
 
-        function showUpadModal(wId) { let selM = getSelMonth(), w = workers.find(x => x.id === wId), wU = advanceData.filter(u => u.workerId === wId && u.date.startsWith(selM)); document.getElementById('modalWorkerName').innerHTML = `${getWorkerLabel(w)}<br><span class="text-sm font-normal text-red-100">${getMonthName(selM)}</span>`; document.getElementById('modalUpadBody').innerHTML = wU.map(u => `<tr><td class="p-2 border-b">${u.date}</td><td class="p-2 border-b">${u.note}</td><td class="p-2 border-b text-right font-bold">₹${u.amount}</td></tr>`).join(''); document.getElementById('modalUpadTotal').innerText = wU.reduce((s, u) => s + u.amount, 0); document.getElementById('upadModal').classList.add('active'); }
+        function showUpadModal(wId) {
+            let selM = getSelMonth(), w = workers.find(x => x.id === wId); if (!w) return;
+            let wU = advanceData.filter(u => u.workerId === wId && u.date.startsWith(selM));
+            document.getElementById('modalWorkerName').innerHTML = `${getWorkerLabel(w)}<br><span class="text-sm font-normal text-red-100">${getMonthName(selM)}</span>`;
+            let monthTags = getWorkerPendingMonthsHtml(w, selM), bodyEl = document.getElementById('modalUpadBody'), summaryBox = document.getElementById('modalPendingSummary');
+            if (!summaryBox) { summaryBox = document.createElement('div'); summaryBox.id = 'modalPendingSummary'; bodyEl.closest('table').parentElement.insertBefore(summaryBox, bodyEl.closest('table')); }
+            summaryBox.innerHTML = monthTags ? `<div class="mb-3 p-2.5 bg-slate-50 border border-slate-200 rounded-lg"><div class="text-[11px] font-bold text-slate-600 mb-1">Month-Wise Baki / Upad Details:</div>${monthTags}</div>` : '';
+            bodyEl.innerHTML = wU.length ? wU.map(u => `<tr><td class="p-2 border-b">${u.date}</td><td class="p-2 border-b">${u.note}</td><td class="p-2 border-b text-right font-bold">₹${u.amount}</td></tr>`).join('') : '<tr><td colspan="3" class="p-3 text-center text-xs text-gray-400">Is mahine koi Upad nahi hai.</td></tr>';
+            document.getElementById('modalUpadTotal').innerText = wU.reduce((s, u) => s + u.amount, 0);
+            document.getElementById('upadModal').classList.add('active');
+        }
 
         function setReportType(type) {
             currentReportType = type; let selM = getSelMonth(), html = '';
@@ -1663,13 +1622,12 @@
                 let mA = attendance.filter(a => a.date.startsWith(selM)), mU = advanceData.filter(u => u.date.startsWith(selM));
                 let tB = mA.reduce((s, a) => s + (a.finalBonus || 0), 0), tU = mU.reduce((s, u) => s + (u.amount || 0), 0), tS = workers.reduce((s, w) => s + calculateEarnedSalary(w, calcEffDays(mA.filter(a => a.workerId === w.id)), selM), 0);
                 html = `<div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div onclick="showAnalysisDetail('base')" class="p-4 bg-indigo-50 rounded-lg cursor-pointer border border-indigo-200"><div class="text-xs font-bold text-indigo-700">Base Salary</div><div class="text-2xl font-black">₹${tS.toFixed(0)}</div></div><div onclick="showAnalysisDetail('bonus')" class="p-4 bg-emerald-50 rounded-lg cursor-pointer border border-emerald-200"><div class="text-xs font-bold text-emerald-700">Total Bonus</div><div class="text-2xl font-black">₹${tB.toFixed(0)}</div></div><div onclick="showAnalysisDetail('upad')" class="p-4 bg-red-50 rounded-lg cursor-pointer border border-red-200"><div class="text-xs font-bold text-red-700">Total Advance / Paid</div><div class="text-2xl font-black text-red-600">₹${tU.toFixed(0)}</div></div><div onclick="showAnalysisDetail('net')" class="p-4 bg-gray-800 rounded-lg cursor-pointer text-white"><div class="text-xs font-bold text-gray-300">Net Payable</div><div class="text-2xl font-black">₹${((tS + tB) - tU).toFixed(0)}</div></div></div>`;
-        } else if (type === 'worker') {
+            } else if (type === 'worker') {
                 html = `<div class="mb-4 flex flex-wrap justify-between items-center gap-2"><h3 class="font-bold text-lg text-indigo-800">Worker ID Wise Report (${getMonthName(selM)})</h3><input type="text" onkeyup="filterReportCards(this.value,'worker-rep-card')" placeholder="🔍 Search ID or Name..." class="border p-2 rounded-lg bg-indigo-50 text-sm w-full md:w-64"></div>` +
                     workers.map(w => {
                         let wA = attendance.filter(a => a.workerId === w.id && a.date.startsWith(selM)).sort((a,b) => new Date(a.date) - new Date(b.date)), wU = advanceData.filter(u => u.workerId === w.id && u.date.startsWith(selM));
                         let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0);
-                        let curNet = (base + bon) - upd, prev = calculatePreviousBalance(w, selM), net = curNet + prev;
-                        let monthTags = getWorkerPendingMonthsHtml(w, selM);
+                        let curNet = (base + bon) - upd, prev = calculatePreviousBalance(w, selM), net = curNet + prev, monthTags = getWorkerPendingMonthsHtml(w, selM);
                         return `<div class="worker-rep-card border rounded-lg mb-3" data-key="${getWorkerCode(w).toLowerCase()} ${w.name.toLowerCase()}"><div class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer" onclick="document.getElementById('det_${w.id}').classList.toggle('hidden')"><div><h3 class="font-bold text-lg"><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-xs mr-2">${getWorkerCode(w)}</span>${w.name} <span class="text-xs text-gray-500">(Rate: ₹${getWorkerSalaryForMonth(w, selM)})</span></h3><div class="text-xs mt-1">Days: <b>${eff}</b> | Base: ₹${base.toFixed(0)} | Bonus: <b class="text-emerald-700">₹${bon.toFixed(0)}</b> | Upad/Paid: <b class="text-red-600">₹${upd.toFixed(0)}</b></div><div class="text-xs mt-1 flex flex-wrap gap-2 items-center"><span class="bg-white border px-2 py-0.5 rounded font-semibold text-slate-700">Is Mahine Ka: <b>₹${curNet.toFixed(0)}</b></span><span class="border px-2 py-0.5 rounded font-bold ${prev < 0 ? 'bg-red-50 text-red-700 border-red-200' : (prev > 0 ? 'bg-amber-50 text-amber-800 border-amber-300' : 'bg-slate-100 text-slate-500')}">Pichla Baki: ${prev > 0 ? '+' : ''}₹${prev.toFixed(0)}</span><span class="bg-indigo-100 text-indigo-900 border border-indigo-200 px-2 py-0.5 rounded font-black">Total Net: ₹${net.toFixed(0)}</span></div>${monthTags}</div><i class="fa-solid fa-chevron-down text-indigo-600"></i></div><div id="det_${w.id}" class="hidden p-4 border-t bg-white"><div class="flex flex-wrap gap-2 mb-3"><button onclick="downloadWorkerPDF('${w.id}')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-solid fa-file-pdf mr-1"></i> Download PDF</button><button onclick="shareWorkerWhatsApp('${w.id}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp Slip</button>${net > 0 ? `<button onclick="markPagarPaid('${w.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg font-bold text-xs"><i class="fa-solid fa-check-double mr-1"></i> Mark Pagar Paid (₹${net.toFixed(0)})</button>` : '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-lg font-bold text-xs">✅ Hisab Clear</span>'}</div><div class="overflow-x-auto"><table class="w-full text-sm text-left border"><thead class="bg-gray-100"><tr><th class="p-2">Date & Shift</th><th class="p-2">Details & Designs</th><th class="p-2 text-right">Bonus</th></tr></thead><tbody>${wA.length ? wA.map(a => `<tr class="border-b"><td class="p-2">${a.date} (${a.shift||'Day'})</td><td class="p-2">${a.machineNo?`[${a.machineNo}] `:''}${a.status} (${a.machine!=='NONE'?a.machine:'Fixed'}) ${formatDesignSummaryHtml(a)}<div class="text-xs text-red-500">${a.note!=='-'?a.note:''}</div></td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`).join('') : '<tr><td colspan="3" class="p-2 text-center text-gray-400">No Data</td></tr>'}</tbody></table></div></div></div>`;
                     }).join('');
             } else {
@@ -1716,96 +1674,163 @@
             html2pdf().set({ margin: 10, filename: `MahiAndDevanshCo_Machine_${m.no}_${selM}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.style.display = 'none');
         }
 
-        function showToast(msg) { let t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('opacity-0'); setTimeout(() => t.classList.add('opacity-0'), 3000); }
         // ====== WORKER STITCH ENTRY & MANAGER APPROVAL ======
-     function openWorkerEntryMode() {
-         document.getElementById('login_screen').style.display = 'none';
-         document.getElementById('worker_entry_screen').classList.remove('hidden');
-         document.getElementById('we_date').valueAsDate = new Date();
-         updateBaseDesignDatalist();
-         let mw = getActiveWorkers().filter(w => isWorkerMachineType(w));
-         document.getElementById('we_worker').innerHTML = mw.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join('') || '<option value="">No Machine Worker</option>';
-         document.getElementById('we_machno').innerHTML = getMachineNoOptionsHtml(false);
-         document.getElementById('we_machine').innerHTML = getMachineOptionsHtml();
-         autoSelectMachineType('we_machno', 'we_machine');
-     }
-     function closeWorkerEntryMode() {
-         document.getElementById('worker_entry_screen').classList.add('hidden');
-         checkLoginStatus();
-     }
-     function submitWorkerPendingEntry(e) {
-         e.preventDefault();
-         let wId = document.getElementById('we_worker').value;
-         let qty = parseFloat(document.getElementById('we_qty').value) || 0;
-         if (!wId || qty <= 0) { alert("Worker aur Stitches sahi dalein!"); return; }
-         pendingEntries.push({
-             id: 'P_' + Date.now(),
-             date: document.getElementById('we_date').value,
-             shift: document.getElementById('we_shift').value || 'Day',
-             workerId: wId,
-             machineNo: document.getElementById('we_machno').value || '',
-             machine: document.getElementById('we_machine').value || '',
-             design: (document.getElementById('we_design').value || '').trim() || '-',
-             qty: qty,
-             frame: parseFloat(document.getElementById('we_frame').value) || 0,
-             note: (document.getElementById('we_note').value || '').trim() || '-',
-             submittedAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-         });
-         localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
-         document.getElementById('we_qty').value = '';
-         document.getElementById('we_frame').value = '';
-         document.getElementById('we_note').value = '';
-         showToast("✅ Entry Manager ko Approval ke liye bhej di gayi!");
-         syncToSheet();
-     }
-     function updatePendingApprovalBadge() {
-         let b = document.getElementById('pending_app_badge');
-         if (b) { b.innerText = pendingEntries.length; b.classList.toggle('hidden', pendingEntries.length === 0); }
-     }
-     function renderPendingApprovals() {
-         updatePendingApprovalBadge();
-         let listEl = document.getElementById('dash_approval_list'); if (!listEl) return;
-         if (!pendingEntries.length) { listEl.innerHTML = '<div class="p-6 text-center text-sm text-gray-400 bg-slate-50 rounded-xl border">Koi pending approval nahi hai.</div>'; return; }
-         listEl.innerHTML = pendingEntries.map(p => {
-             let w = workers.find(x => x && x.id === p.workerId);
-             let pmObj = getPaymentMode('Normal');
-             let estBonus = calcProductionBonus(pmObj, p.machine, p.design, p.qty, p.frame, p.date, 'Full');
-             return `<div class="p-4 rounded-xl border-2 border-amber-200 bg-amber-50/40 flex flex-wrap justify-between items-center gap-3">
-                 <div>
-                     <div class="font-bold text-slate-800">${w ? getWorkerLabel(w) : 'Unknown'} <span class="text-xs font-normal text-slate-500">(${p.date} • ${p.shift} Shift • ${p.submittedAt || ''})</span></div>
-                     <div class="text-xs text-slate-700 mt-1">
-                         <span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${p.machineNo || '-'}</span>
-                         <b>${p.machine}</b> | Design: <b>${p.design}</b> | Stitches: <b class="text-indigo-700">${p.qty.toLocaleString('en-IN')}</b> | Frame: <b>${p.frame}</b>
-                     </div>
-                     <div class="text-xs mt-1 text-emerald-700 font-bold">Estimated Bonus: ₹${estBonus.toFixed(0)} ${p.note !== '-' ? `<span class="text-red-600 ml-2">Note: ${p.note}</span>` : ''}</div>
-                 </div>
-                 <div class="flex gap-2">
-                     <button type="button" onclick="approvePendingEntry('${p.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-check mr-1"></i> Approve</button>
-                     <button type="button" onclick="rejectPendingEntry('${p.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i> Reject</button>
-                 </div>
-             </div>`;
-         }).join('');
-     }
-     function approvePendingEntry(pId) {
-         let p = pendingEntries.find(x => x.id === pId); if (!p) return;
-         let pmObj = getPaymentMode('Normal');
-         let bonus = calcProductionBonus(pmObj, p.machine, p.design, p.qty, p.frame, p.date, 'Full');
-         attendance.push({
-             id: 'A_' + Date.now(), workerId: p.workerId, date: p.date, shift: p.shift || 'Day', status: 'Full',
-             mode: 'Normal', machineNo: p.machineNo, machine: p.machine, design: p.design,
-             designItems: [{ design: p.design, qty: p.qty, frame: p.frame }], frame: p.frame, qty: p.qty,
-             customBonus: 0, note: p.note, finalBonus: bonus, hasExtraMachine: false
-         });
-         pendingEntries = pendingEntries.filter(x => x.id !== pId);
-         saveAllLocal(); renderPendingApprovals(); refreshAllData(); syncToSheet();
-         showToast("✅ Entry Approved & Attendance mein add ho gayi!");
-     }
-     function rejectPendingEntry(pId) {
-         if (!confirm("Is entry ko Reject (Delete) karein?")) return;
-         pendingEntries = pendingEntries.filter(x => x.id !== pId);
-         saveAllLocal(); renderPendingApprovals(); syncToSheet();
-         showToast("❌ Entry Rejected!");
-     }
+        function openWorkerEntryMode() {
+            document.getElementById('login_screen').style.display = 'none';
+            document.getElementById('worker_entry_screen').classList.remove('hidden');
+            document.getElementById('we_date').valueAsDate = new Date();
+            updateBaseDesignDatalist();
+            let mw = getActiveWorkers().filter(w => isWorkerMachineType(w));
+            document.getElementById('we_worker').innerHTML = mw.map(w => `<option value="${w.id}">[${getWorkerCode(w)}] ${w.name}</option>`).join('') || '<option value="">No Machine Worker</option>';
+            document.getElementById('we_machno').innerHTML = getMachineNoOptionsHtml(false);
+            document.getElementById('we_machine').innerHTML = getMachineOptionsHtml();
+            autoSelectMachineType('we_machno', 'we_machine');
+        }
+        function closeWorkerEntryMode() {
+            document.getElementById('worker_entry_screen').classList.add('hidden');
+            checkLoginStatus();
+        }
+        function submitWorkerPendingEntry(e) {
+            e.preventDefault();
+            let wId = document.getElementById('we_worker').value, qty = parseFloat(document.getElementById('we_qty').value) || 0;
+            if (!wId || qty <= 0) { alert("Worker aur Stitches sahi dalein!"); return; }
+            pendingEntries.push({
+                id: 'P_' + Date.now(), date: document.getElementById('we_date').value, shift: document.getElementById('we_shift').value || 'Day',
+                workerId: wId, machineNo: document.getElementById('we_machno').value || '', machine: document.getElementById('we_machine').value || '',
+                design: (document.getElementById('we_design').value || '').trim() || '-', qty: qty,
+                frame: parseFloat(document.getElementById('we_frame').value) || 0, note: (document.getElementById('we_note').value || '').trim() || '-',
+                submittedAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+            });
+            localStorage.setItem('karkhana_pending', JSON.stringify(pendingEntries));
+            document.getElementById('we_qty').value = ''; document.getElementById('we_frame').value = ''; document.getElementById('we_note').value = '';
+            showToast("✅ Entry Manager ko Approval ke liye bhej di gayi!");
+            syncToSheet();
+        }
+        function updatePendingApprovalBadge() {
+            let b = document.getElementById('pending_app_badge');
+            if (b) { b.innerText = pendingEntries.length; b.classList.toggle('hidden', pendingEntries.length === 0); }
+        }
+        function renderPendingApprovals() {
+            updatePendingApprovalBadge();
+            let listEl = document.getElementById('dash_approval_list'); if (!listEl) return;
+            if (!pendingEntries.length) { listEl.innerHTML = '<div class="p-6 text-center text-sm text-gray-400 bg-slate-50 rounded-xl border">Koi pending approval nahi hai.</div>'; return; }
+            let isMgr = sessionStorage.getItem('karkhana_role') === 'manager';
+            listEl.innerHTML = pendingEntries.map(p => {
+                let w = workers.find(x => x && x.id === p.workerId);
+                let estBonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full');
+                return `<div class="p-4 rounded-xl border-2 border-amber-200 bg-amber-50/40 flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <div class="font-bold text-slate-800">${w ? getWorkerLabel(w) : 'Unknown'} <span class="text-xs font-normal text-slate-500">(${p.date} • ${p.shift} Shift • ${p.submittedAt || ''})</span></div>
+                        <div class="text-xs text-slate-700 mt-1"><span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${p.machineNo || '-'}</span><b>${p.machine}</b> | Design: <b>${p.design}</b> | Stitches: <b class="text-indigo-700">${p.qty.toLocaleString('en-IN')}</b> | Frame: <b>${p.frame}</b></div>
+                        <div class="text-xs mt-1">${!isMgr ? `<span class="text-emerald-700 font-bold">Estimated Bonus: ₹${estBonus.toFixed(0)}</span>` : ''} ${p.note !== '-' ? `<span class="text-red-600 font-semibold ml-2">Note: ${p.note}</span>` : ''}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="approvePendingEntry('${p.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow"><i class="fa-solid fa-check mr-1"></i> Approve</button>
+                        <button type="button" onclick="rejectPendingEntry('${p.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-xmark mr-1"></i> Reject</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        function approvePendingEntry(pId) {
+            let p = pendingEntries.find(x => x.id === pId); if (!p) return;
+            let bonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full');
+            attendance.push({
+                id: 'A_' + Date.now(), workerId: p.workerId, date: p.date, shift: p.shift || 'Day', status: 'Full',
+                mode: 'Normal', machineNo: p.machineNo, machine: p.machine, design: p.design,
+                designItems: [{ design: p.design, qty: p.qty, frame: p.frame }], frame: p.frame, qty: p.qty,
+                customBonus: 0, note: p.note, finalBonus: bonus, hasExtraMachine: false
+            });
+            pendingEntries = pendingEntries.filter(x => x.id !== pId);
+            saveAllLocal(); renderPendingApprovals(); refreshAllData(); syncToSheet();
+            showToast("✅ Entry Approved & Attendance mein add ho gayi!");
+        }
+        function rejectPendingEntry(pId) {
+            if (!confirm("Is entry ko Reject (Delete) karein?")) return;
+            pendingEntries = pendingEntries.filter(x => x.id !== pId);
+            saveAllLocal(); renderPendingApprovals(); syncToSheet();
+            showToast("❌ Entry Rejected!");
+        }
+
+        // ====== AI MACHINE DISPLAY SCANNER ======
+        async function scanMachineDisplay(e) {
+            let file = e.target.files[0]; if (!file) return;
+            if (!isCloudConfigured()) { alert("Pehle Settings mein Google Sheet Sync URL save karein!"); e.target.value = ''; return; }
+            let btnText = document.getElementById('scan_btn_text'), statusMsg = document.getElementById('scan_status_msg');
+            btnText.innerText = '⏳ Display Padh Raha Hai...';
+            statusMsg.innerText = 'Photo scan ho rahi hai, 2-3 second rukein...';
+            try {
+                let base64Data = await new Promise((resolve, reject) => {
+                    let reader = new FileReader();
+                    reader.onload = function(ev) {
+                        let img = new Image();
+                        img.onload = function() {
+                            let canvas = document.createElement('canvas'), maxW = 1024, scale = img.width > maxW ? maxW / img.width : 1;
+                            canvas.width = img.width * scale; canvas.height = img.height * scale;
+                            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                            resolve(canvas.toDataURL('image/jpeg', 0.75).split(',')[1]);
+                        };
+                        img.onerror = reject; img.src = ev.target.result;
+                    };
+                    reader.onerror = reject; reader.readAsDataURL(file);
+                });
+                let res = await fetch(getScriptUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'scan_display', imageBase64: base64Data }) });
+                let result = await res.json();
+                if (result.status === 'ok' && result.data) {
+                    let d = result.data;
+                    if (d.stitches) document.getElementById('we_qty').value = d.stitches;
+                    if (d.design) document.getElementById('we_design').value = d.design;
+                    if (d.frame) document.getElementById('we_frame').value = d.frame;
+                    statusMsg.innerHTML = `<span class="text-emerald-700 font-bold">✅ Scan Complete! Ek baar numbers check karke Submit karein.</span>`;
+                    showToast('✅ Display Scan Ho Gaya!');
+                } else throw new Error('Scan fail');
+            } catch (err) {
+                statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ Scan nahi ho paya. Saaf photo lein ya manually bharein.</span>`;
+            } finally {
+                btnText.innerText = '📷 Machine Display Scan Karein'; e.target.value = '';
+            }
+        }
+
+        // ====== SEPARATE MANAGER PANEL ======
+        function saveManagerPassword(e) {
+            e.preventDefault();
+            managerPassword = document.getElementById('manager_pass').value;
+            localStorage.setItem('karkhana_managerPass', managerPassword);
+            document.getElementById('manager_pass').value = '';
+            showToast("Manager Password Updated!");
+            syncToSheet();
+        }
+        function handleManagerLogin() {
+            let entered = document.getElementById('login_pass_input').value.trim();
+            if (!entered) entered = prompt("Manager Password dalein:");
+            if (entered === managerPassword) {
+                sessionStorage.setItem('karkhana_unlocked', 'true');
+                sessionStorage.setItem('karkhana_role', 'manager');
+                document.getElementById('login_screen').style.display = 'none';
+                document.getElementById('login_pass_input').value = '';
+                document.getElementById('login_err').classList.add('hidden');
+                applyRoleUI('manager');
+                switchTab('dashboard');
+                openDashPanel('d_approval');
+                showToast("👔 Manager Panel Open!");
+            } else if (entered !== null) {
+                alert("Galat Manager Password!");
+            }
+        }
+        function applyRoleUI(role) {
+            let isMgr = (role === 'manager');
+            document.querySelectorAll('nav button').forEach(btn => {
+                let oc = btn.getAttribute('onclick') || '';
+                if (oc.includes("'advance'") || oc.includes("'reports'") || oc.includes("'master'")) btn.style.display = isMgr ? 'none' : '';
+            });
+            ['dbtn_d_charts', 'dbtn_d_balance', 'dash_total_pagar'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) (id === 'dash_total_pagar' ? el.parentElement : el).style.display = isMgr ? 'none' : '';
+            });
+            let lb = document.getElementById('h_live_bonus_box');
+            if (lb) lb.style.display = isMgr ? 'none' : '';
+        }
+
+        function showToast(msg) { let t = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg; t.classList.remove('opacity-0'); setTimeout(() => t.classList.add('opacity-0'), 3000); }
         initApp();
     </script>
 </body>
