@@ -68,7 +68,6 @@
             </div>
             <form id="worker_only_form" onsubmit="submitWorkerPendingEntry(event)" class="p-4 space-y-3">
                 <input type="hidden" id="we_photo_thumb">
-                <!-- AI DISPLAY SCANNER BUTTON -->
                 <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 p-3 rounded-xl text-center">
                     <label class="inline-flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow transition text-sm">
                         <i class="fa-solid fa-camera text-base"></i>
@@ -79,7 +78,6 @@
                     <img id="we_photo_preview" class="hidden mt-2 mx-auto max-h-28 rounded-lg border border-indigo-200 shadow-sm" alt="Scan Proof">
                 </div>
 
-                <!-- LIVE DUPLICATE WARNING FOR WORKER -->
                 <div id="we_dup_warn" class="hidden bg-red-50 border-2 border-red-300 text-red-700 p-2.5 rounded-xl text-xs font-bold"></div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -92,16 +90,14 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine No. *</label><select id="we_machno" onchange="autoSelectMachineType('we_machno', 'we_machine')" required class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
-                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="we_machine" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-semibold text-sm"></select></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine / Alter Rule *</label><select id="we_machine" required class="w-full border p-2.5 rounded-lg bg-slate-50 font-semibold text-sm"></select></div>
                 </div>
 
-                <!-- OPTIONAL LOT SELECTOR -->
                 <div>
                     <label class="block text-xs font-bold text-purple-800 mb-1">Running Lot No. (Optional)</label>
                     <select id="we_lot_sel" onchange="onWeLotSelect(this.value)" class="w-full border border-purple-200 p-2 rounded-lg bg-purple-50/50 font-bold text-xs"></select>
                 </div>
 
-                <!-- DESIGN-WISE ROWS -->
                 <div class="bg-slate-50 border border-indigo-200 p-3 rounded-xl space-y-2">
                     <div class="flex justify-between items-center border-b border-indigo-100 pb-1.5">
                         <span class="text-xs font-bold text-indigo-800">Design-Wise Frame & Stitches</span>
@@ -116,7 +112,6 @@
                     <input type="number" step="any" id="we_qty" required placeholder="Stitches dalein..." class="w-full border-2 border-emerald-400 p-3 rounded-xl bg-emerald-50 font-black text-lg text-emerald-900">
                 </div>
 
-                <!-- EXTRA MACHINE (OPTIONAL) -->
                 <div class="bg-amber-50 border-2 border-amber-200 p-3 rounded-xl">
                     <label class="flex items-center gap-2 cursor-pointer font-bold text-amber-900 text-xs select-none">
                         <input type="checkbox" id="we_has_extra" onchange="document.getElementById('we_extra_box').classList.toggle('hidden', !this.checked)" class="w-4 h-4 accent-amber-600 rounded">
@@ -130,7 +125,7 @@
                         </label>
                         <div class="grid grid-cols-2 gap-2">
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra M/C No.</label><select id="we_ex_machno" onchange="autoSelectMachineType('we_ex_machno', 'we_ex_machine')" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></select></div>
-                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra M/C Type</label><select id="we_ex_machine" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Rule</label><select id="we_ex_machine" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Design</label><input type="text" id="we_ex_design" list="att_base_designs_list" placeholder="Design No." class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></div>
@@ -143,7 +138,6 @@
                     </div>
                 </div>
 
-                <!-- SHIFT HANDOVER NOTE (OPTIONAL) -->
                 <div class="bg-sky-50 border border-sky-200 p-3 rounded-xl space-y-2">
                     <div class="text-xs font-bold text-sky-900"><i class="fa-solid fa-repeat mr-1"></i> Next Shift Handover Note (Optional)</div>
                     <div class="grid grid-cols-3 gap-2">
@@ -163,7 +157,7 @@
         </div>
     </div>
 
-    <!-- Desktop Navbar -->
+    <!-- Desktop Navbar (Lot Track button right next to Reports) -->
     <nav class="hidden md:flex fixed top-0 w-full bg-indigo-900 text-white shadow-md z-50 px-6 py-3 justify-between items-center">
         <div class="flex flex-col">
             <div class="font-bold text-xl flex items-center gap-2 leading-tight">
@@ -191,7 +185,6 @@
             <button onclick="switchTab('master')" class="hover:text-yellow-300 transition text-yellow-200"><i class="fa-solid fa-gear"></i> Settings</button>
         </div>
     </nav>
-    
 
     <!-- Mobile Header -->
     <div class="md:hidden bg-indigo-900 p-3 flex justify-between items-center text-white gap-2">
@@ -222,10 +215,8 @@
                 </div>
             </div>
 
-            <!-- Active Workers & Category Count Strip -->
             <div id="dash_worker_stats" class="flex flex-wrap items-center gap-2 mb-4 bg-white p-3 rounded-xl shadow-sm border border-indigo-100"></div>
 
-            <!-- Dashboard Navigation -->
             <div class="flex flex-wrap gap-2 mb-5">
                 <button type="button" id="dbtn_d_daily" onclick="openDashPanel('d_daily')" class="dash-nav-btn bg-indigo-700 text-white font-bold px-3.5 py-2 rounded-xl shadow-sm text-xs md:text-sm transition"><i class="fa-solid fa-calendar-day mr-1"></i> Daily & Shift Compare</button>
                 <button type="button" id="dbtn_d_worker" onclick="openDashPanel('d_worker')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-3.5 py-2 rounded-xl shadow-sm text-xs md:text-sm transition"><i class="fa-solid fa-user-check mr-1"></i> Worker Search</button>
@@ -236,31 +227,7 @@
                 <button type="button" id="dbtn_d_balance" onclick="openDashPanel('d_balance')" class="dash-nav-btn bg-white border text-slate-700 font-bold px-3.5 py-2 rounded-xl shadow-sm text-xs md:text-sm transition"><i class="fa-solid fa-wallet mr-1"></i> Pagar Balance</button>
             </div>
 
-            <!-- PANEL 1: DAILY PRODUCTION, PENDING HAZIRI, OWNER WHATSAPP & DAY VS NIGHT -->
-            <div id="d_daily" class="dash-panel block bg-white p-5 rounded-xl shadow-sm border border-indigo-200">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-                    <h3 class="font-bold text-lg text-indigo-900"><i class="fa-solid fa-clipboard-list text-indigo-600"></i> Daily Production & Notes</h3>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" onclick="shiftDashDate(-1)" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold border"><i class="fa-solid fa-chevron-left"></i></button>
-                        <input type="date" id="dash_filter_date" onchange="renderDailyProductionPanel()" class="border border-indigo-300 p-2 rounded-lg bg-indigo-50 font-bold text-sm">
-                        <button type="button" onclick="shiftDashDate(1)" class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold border"><i class="fa-solid fa-chevron-right"></i></button>
-                        <button type="button" onclick="setDashToday()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-2 rounded-lg text-xs font-bold">Today</button>
-                        <select id="dash_filter_shift" onchange="renderDailyProductionPanel()" class="border border-indigo-300 p-2 rounded-lg bg-slate-50 text-xs font-bold">
-                            <option value="ALL">All Shifts</option>
-                            <option value="Day">☀️ Day Shift</option>
-                            <option value="Night">🌙 Night Shift</option>
-                        </select>
-                        <label class="flex items-center gap-1.5 text-xs font-bold text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200 cursor-pointer select-none">
-                            <input type="checkbox" id="dash_only_notes" onchange="renderDailyProductionPanel()" class="accent-red-600 w-4 h-4"> Only Notes
-                        </label>
-                        <button type="button" onclick="sendOwnerDailyWhatsApp()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm">
-                            <i class="fa-brands fa-whatsapp mr-1"></i> Owner Summary
-                        </button>
-                    </div>
-                </div>
-                <div id="dash_pending_box" class="mb-4"></div>
-                <div id="dash_daily_output"></div>
-                <!-- PANEL 1: DAILY PRODUCTION, PENDING HAZIRI (CATEGORY-WISE), OWNER WHATSAPP & DAY VS NIGHT -->
+            <!-- PANEL 1: DAILY PRODUCTION, CATEGORY-WISE PENDING HAZIRI, OWNER WHATSAPP & DAY VS NIGHT -->
             <div id="d_daily" class="dash-panel block bg-white p-5 rounded-xl shadow-sm border border-indigo-200">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-slate-100">
                     <h3 class="font-bold text-lg text-indigo-900"><i class="fa-solid fa-clipboard-list text-indigo-600"></i> Daily Production & Notes</h3>
@@ -425,14 +392,14 @@
                         <div id="w1_summary" class="text-xs font-bold text-indigo-700 mt-2"></div>
                     </div>
 
-                    <!-- STEP 2: MACHINE & PAYMENT MODE -->
+                    <!-- STEP 2: MACHINE / ALTER & PAYMENT MODE -->
                     <div class="machine-only-field bg-white p-4 md:p-5 rounded-xl shadow-sm border border-teal-200">
                         <div class="text-xs font-black uppercase tracking-wider text-teal-800 mb-3 flex items-center gap-2 border-b pb-2">
-                            <span class="bg-teal-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">2</span> Machine & Payment Mode
+                            <span class="bg-teal-600 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-[11px]">2</span> Machine / Alter Rule & Payment Mode
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div><label class="block text-xs font-bold text-teal-800 mb-1">Machine Number *</label><select id="h_machine_no" onchange="autoSelectMachineType('h_machine_no', 'h_machine'); updateLiveBonusPreview();" class="w-full border border-teal-300 p-2.5 rounded-lg bg-teal-50 font-bold text-sm"></select></div>
-                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine Type *</label><select id="h_machine" onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
+                            <div><label class="block text-xs font-bold text-slate-700 mb-1">Machine / Alter Rule *</label><select id="h_machine" onchange="updateLiveBonusPreview()" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
                             <div><label class="block text-xs font-bold text-slate-700 mb-1">Payment Mode *</label><select id="h_mode" onchange="toggleWorker2(); updateLiveBonusPreview();" class="w-full border p-2.5 rounded-lg bg-slate-50 text-sm font-semibold"></select></div>
                             <div id="worker2_div" class="hidden md:col-span-3 bg-indigo-50 p-3 rounded-lg border border-indigo-200">
                                 <label class="block text-xs font-bold text-indigo-700 mb-1">Secondary Worker (50-50 Shared) *</label>
@@ -467,7 +434,7 @@
                         <div id="extra_machine_box" class="hidden grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mt-3 pt-3 border-t border-amber-200">
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Mode *</label><select id="h_extra_mode" onchange="toggleExtraWorker2(); updateLiveBonusPreview();" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra M/C No. *</label><select id="h_extra_machine_no" onchange="autoSelectMachineType('h_extra_machine_no', 'h_extra_machine'); updateLiveBonusPreview();" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></select></div>
-                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Type *</label><select id="h_extra_machine" onchange="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
+                            <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Rule *</label><select id="h_extra_machine" onchange="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-semibold"></select></div>
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Design</label><select id="h_extra_design" onchange="fillExtraDesignStitches(); updateLiveBonusPreview();" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs"></select></div>
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Stitches/Hrs</label><input type="number" step="any" id="h_extra_qty" oninput="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs font-bold"></div>
                             <div><label class="block text-[11px] font-bold text-amber-900 mb-1">Extra Frame</label><input type="number" id="h_extra_frame" oninput="updateLiveBonusPreview()" class="w-full border border-amber-300 p-2 rounded-lg bg-white text-xs"></div>
@@ -520,7 +487,7 @@
                 </div>
                 <div class="overflow-x-auto max-h-[60vh] border rounded-xl border-slate-200 mb-4">
                     <table class="w-full text-left text-xs border-collapse min-w-[1180px]">
-                        <thead class="bg-indigo-50 text-indigo-900 sticky top-0 z-10"><tr><th class="p-2.5 border-b text-center w-10">Save</th><th class="p-2.5 border-b min-w-[145px]">Worker (ID)</th><th class="p-2.5 border-b w-24">Status</th><th class="p-2.5 border-b w-32">Pay Mode</th><th class="p-2.5 border-b w-24">M/C No.</th><th class="p-2.5 border-b w-32">Machine Type</th><th class="p-2.5 border-b w-24">Design Base</th><th class="p-2.5 border-b w-28">Part / Design</th><th class="p-2.5 border-b w-24">Stitches/Hrs</th><th class="p-2.5 border-b w-16">Frame</th><th class="p-2.5 border-b w-20">Custom ₹</th><th class="p-2.5 border-b min-w-[100px]">Remarks</th><th class="p-2.5 border-b text-right w-20">Est. Bonus</th></tr></thead>
+                        <thead class="bg-indigo-50 text-indigo-900 sticky top-0 z-10"><tr><th class="p-2.5 border-b text-center w-10">Save</th><th class="p-2.5 border-b min-w-[145px]">Worker (ID)</th><th class="p-2.5 border-b w-24">Status</th><th class="p-2.5 border-b w-32">Pay Mode</th><th class="p-2.5 border-b w-24">M/C No.</th><th class="p-2.5 border-b w-32">M/C / Alter Rule</th><th class="p-2.5 border-b w-24">Design Base</th><th class="p-2.5 border-b w-28">Part / Design</th><th class="p-2.5 border-b w-24">Stitches/Hrs</th><th class="p-2.5 border-b w-16">Frame</th><th class="p-2.5 border-b w-20">Custom ₹</th><th class="p-2.5 border-b min-w-[100px]">Remarks</th><th class="p-2.5 border-b text-right w-20">Est. Bonus</th></tr></thead>
                         <tbody id="bulk_att_body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
@@ -580,7 +547,8 @@
             </div>
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200" id="reportRenderArea"></div>
         </section>
-        <!-- 5. MASTER SETTINGS (SINGLE-LINE BAR + BACK BUTTON + SEPARATE LOT & DESIGN) -->
+
+        <!-- 5. MASTER SETTINGS (SINGLE-LINE BAR + MERGED MACHINE & ALTER RULES) -->
         <section id="master" class="tab-content">
             <h2 class="text-2xl font-bold mb-4 text-slate-800">Master Data & Settings</h2>
 
@@ -782,7 +750,7 @@
                     </div>
                 </div>
 
-               <!-- Machine & Alter Rules (Stitch + Multiple Alter Bonus Rules) -->
+                <!-- MERGED MACHINE & ALTER RULES (STITCH + MULTIPLE ALTER BONUS RULES) -->
                 <div id="m_rule" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-amber-700 border-b pb-2" id="m_form_title">Machine & Alter Rates + Layer Bonus</h3>
                     <form id="m_form" onsubmit="saveMachineRule(event)" class="space-y-4 mb-4">
@@ -830,7 +798,7 @@
                     </form>
                     <div class="mt-4 border-t pt-4"><div class="max-h-64 overflow-y-auto border rounded bg-slate-50 text-sm divide-y" id="machineRuleList"></div></div>
                 </div>
-               
+
                 <!-- Payment Modes -->
                 <div id="m_paymode" class="master-panel">
                     <h3 class="font-bold text-lg mb-4 text-purple-700 border-b pb-2" id="pm_form_title">Manage Payment Modes</h3>
@@ -894,7 +862,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2.5">
                     <div><label class="block font-bold mb-1">Machine No.</label><select id="ea_machno" onchange="autoSelectMachineType('ea_machno', 'ea_machine')" class="w-full border p-2 rounded-lg font-bold bg-teal-50"></select></div>
-                    <div><label class="block font-bold mb-1">Machine Type</label><select id="ea_machine" class="w-full border p-2 rounded-lg font-semibold"></select></div>
+                    <div><label class="block font-bold mb-1">Machine / Alter Rule</label><select id="ea_machine" class="w-full border p-2 rounded-lg font-semibold"></select></div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
                     <div><label class="block font-bold mb-1">Design(s)</label><input type="text" id="ea_design" class="w-full border p-2 rounded-lg font-bold"></div>
@@ -1341,12 +1309,12 @@
             let present = dayAtt.filter(a => a.status !== 'Absent').length, absent = dayAtt.filter(a => a.status === 'Absent').length;
             let daySt = 0, nightSt = 0, totFr = 0;
             dayAtt.forEach(a => {
-                let isAlt = (a.machine === 'ALTER' || getPaymentMode(a.mode).bonusType === 'alter');
+                let isAlt = isAlterMachine(a.machine, a.mode);
                 if (a.machine && a.machine !== 'NONE' && !isAlt) {
                     if ((a.shift || 'Day') === 'Night') nightSt += (a.qty || 0); else daySt += (a.qty || 0);
                     totFr += (a.frame || 0);
                 }
-                if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE' && a.extraMachine !== 'ALTER') {
+                if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE' && !isAlterMachine(a.extraMachine, a.extraMode)) {
                     if ((a.shift || 'Day') === 'Night') nightSt += (a.extraQty || 0); else daySt += (a.extraQty || 0);
                     totFr += (a.extraFrame || 0);
                 }
@@ -1389,7 +1357,7 @@
             let cont = document.getElementById('m_rate_slabs_container'); if (!cont) return;
             if (fromVal === undefined) { let rows = cont.querySelectorAll('.slab-row'); fromVal = rows.length ? rows[rows.length - 1].querySelector('.slab-to').value : 0; }
             let row = document.createElement('div'); row.className = 'slab-row grid grid-cols-12 gap-2 items-center';
-            row.innerHTML = `<input type="number" step="any" min="0" value="${fromVal}" placeholder="0" class="slab-from col-span-4 border p-1.5 rounded bg-white text-sm"><input type="number" step="any" min="0" value="${toVal||''}" placeholder="Upar Sab" class="slab-to col-span-4 border p-1.5 rounded bg-white text-sm"><input type="number" step="0.01" min="0" value="${rateVal||''}" placeholder="₹/1000" class="slab-rate col-span-3 border p-1.5 rounded bg-white text-sm font-bold"><button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-500 font-bold"><i class="fa-solid fa-xmark"></i></button>`;
+            row.innerHTML = `<input type="number" step="any" min="0" value="${fromVal}" placeholder="0" class="slab-from col-span-4 border p-1.5 rounded bg-white text-sm"><input type="number" step="any" min="0" value="${toVal||''}" placeholder="Upar Sab" class="slab-to col-span-4 border p-1.5 rounded bg-white text-sm"><input type="number" step="0.01" min="0" value="${rateVal||''}" placeholder="Rate ₹" class="slab-rate col-span-3 border p-1.5 rounded bg-white text-sm font-bold"><button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-500 font-bold"><i class="fa-solid fa-xmark"></i></button>`;
             cont.appendChild(row);
         }
         function readRateSlabsFromForm() {
@@ -1402,7 +1370,7 @@
             });
             return slabs.sort((a, b) => a.from - b.from);
         }
-        function formatSlabsSummary(slabs) { return (!Array.isArray(slabs) || !slabs.length) ? '' : slabs.map(s => `${s.to ? s.from + '–' + s.to : s.from + '+'}: ₹${s.rate}/1k`).join(' | '); }
+        function formatSlabsSummary(slabs, unit = '/1k') { return (!Array.isArray(slabs) || !slabs.length) ? '' : slabs.map(s => `${s.to ? s.from + '–' + s.to : s.from + '+'}: ₹${s.rate}${unit}`).join(' | '); }
 
         function setupChartSlider(scrollId, innerId, sliderWrapId, sliderId, itemCount, isPie = false) {
             const scrollEl = document.getElementById(scrollId), innerEl = document.getElementById(innerId), wrapEl = document.getElementById(sliderWrapId), sliderEl = document.getElementById(sliderId);
@@ -1452,6 +1420,7 @@
             maintenanceLogs = getSafeData('karkhana_maint', []);
             if (migrateWorkersData()) saveAllLocal();
         }
+
         function initApp() {
             loadDataSafely();
             checkLoginStatus();
@@ -1592,7 +1561,7 @@
             let dfc = document.getElementById('dash_filter_cat'); if (dfc) { let pv = dfc.value; dfc.innerHTML = `<option value="ALL">All Categories</option>` + tHtml; if (pv) dfc.value = pv; }
         }
 
-        // ====== DAILY PRODUCTION + CLICKABLE PENDING + DAY VS NIGHT COMPARISON ======
+        // ====== DAILY PRODUCTION + CATEGORY-WISE PENDING HAZIRI + DAY VS NIGHT ======
         function openPendingWorkerAtt(wId, dateStr) {
             switchTab('attendance');
             switchAttMode('single');
@@ -1616,12 +1585,12 @@
             allDayAtt.forEach(a => {
                 if (!a) return;
                 let sh = (a.shift || 'Day') === 'Night' ? 'night' : 'day';
-                if (a.machine && a.machine !== 'NONE' && a.machine !== 'ALTER') {
+                if (a.machine && a.machine !== 'NONE' && !isAlterMachine(a.machine, a.mode)) {
                     let k = (a.machineNo && a.machineNo !== '-') ? a.machineNo : 'Unassigned';
                     if (!map[k]) map[k] = { no: k, day: 0, night: 0, dayFr: 0, nightFr: 0 };
                     map[k][sh] += (a.qty || 0); map[k][sh + 'Fr'] += (a.frame || 0);
                 }
-                if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE' && a.extraMachine !== 'ALTER') {
+                if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE' && !isAlterMachine(a.extraMachine, a.extraMode)) {
                     let ek = (a.extraMachineNo && a.extraMachineNo !== '-') ? a.extraMachineNo : 'Unassigned';
                     if (!map[ek]) map[ek] = { no: ek, day: 0, night: 0, dayFr: 0, nightFr: 0 };
                     map[ek][sh] += (a.extraQty || 0); map[ek][sh + 'Fr'] += (a.extraFrame || 0);
@@ -1695,36 +1664,6 @@
             out.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4"><div class="p-3 bg-indigo-50 rounded-xl border border-indigo-200"><div class="text-[11px] font-bold text-indigo-700">Present (${dStr})</div><div class="text-xl font-black text-indigo-900">${dayAtt.filter(a=>a.status!=='Absent').length} / ${dayAtt.length}</div></div><div class="p-3 bg-teal-50 rounded-xl border border-teal-200"><div class="text-[11px] font-bold text-teal-700">Total Stitches</div><div class="text-xl font-black text-teal-900">${totSt.toLocaleString('en-IN')}${totAlt>0?` (+${totAlt}hr)`:''}</div></div><div class="p-3 bg-sky-50 rounded-xl border border-sky-200"><div class="text-[11px] font-bold text-sky-700">Total Frames</div><div class="text-xl font-black text-sky-900">${totFr}</div></div><div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200"><div class="text-[11px] font-bold text-emerald-700">Day Bonus</div><div class="text-xl font-black text-emerald-800">₹${totBon.toFixed(0)}</div></div><div class="p-3 bg-red-50 rounded-xl border border-red-200"><div class="text-[11px] font-bold text-red-700">Notes</div><div class="text-xl font-black text-red-700">${notesCount}</div></div></div><div class="overflow-x-auto max-h-[65vh] border rounded-xl"><table class="w-full text-left text-xs md:text-sm border-collapse min-w-[780px]"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-3 border-b">Worker, Shift & Category</th><th class="p-3 border-b">Status</th><th class="p-3 border-b">Machine & Designs</th><th class="p-3 border-b text-right">Stitches/Hrs</th><th class="p-3 border-b text-right">Frame</th><th class="p-3 border-b text-red-700">Remarks / Notes</th><th class="p-3 border-b text-right">Bonus</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
         }
 
-            renderDayVsNightComparison(dStr, allDayAtt);
-
-            let dayAtt = allDayAtt.filter(a => shiftFilter === 'ALL' || (a.shift || 'Day') === shiftFilter);
-            if (onlyNotes) dayAtt = dayAtt.filter(a => a.note && a.note !== '-');
-            if (!dayAtt.length) { out.innerHTML = `<div class="p-6 text-center text-sm text-gray-400 bg-slate-50 rounded-xl border"><b>${dStr}</b> ko koi ${onlyNotes ? 'Note wali ' : ''}entry nahi mili.</div>`; return; }
-
-            let totSt = 0, totAlt = 0, totFr = 0, totBon = 0, notesCount = 0;
-            let rowsHtml = dayAtt.map(a => {
-                let w = workers.find(x => x && x.id === a.workerId), wLbl = w ? `<span class="text-indigo-600 font-bold">[${getWorkerCode(w)}]</span> ${w.name}` : 'Unknown';
-                let pm = getPaymentMode(a.mode), isAlt = (a.machine === 'ALTER' || pm.bonusType === 'alter'), isM = (a.machine && a.machine !== 'NONE');
-                if (isM) { if (isAlt) totAlt += (a.qty || 0); else totSt += (a.qty || 0); totFr += (a.frame || 0); }
-                totBon += (a.finalBonus || 0);
-                let hasNote = a.note && a.note !== '-'; if (hasNote) notesCount++;
-                let shBadge = (a.shift || 'Day') === 'Night' ? '<span class="bg-indigo-900 text-yellow-300 px-1.5 py-0.5 rounded text-[10px] font-bold">🌙 Night</span>' : '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded text-[10px] font-bold">☀️ Day</span>';
-                let mDet = !isM ? '<span class="text-gray-400">Fixed Worker</span>' : `${a.machineNo ? `<span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${a.machineNo}</span>` : ''}<b>${a.machine}</b><div class="mt-0.5">${formatDesignSummaryHtml(a)}</div>`;
-                let qDet = !isM ? '-' : `${(a.qty || 0).toLocaleString('en-IN')} ${isAlt ? 'hr' : 'st'}`, fDet = !isM ? '-' : (a.frame || 0);
-                if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') {
-                    let ePm = getPaymentMode(a.extraMode), eAlt = (a.extraMachine === 'ALTER' || ePm.bonusType === 'alter');
-                    if (eAlt) totAlt += (a.extraQty || 0); else totSt += (a.extraQty || 0); totFr += (a.extraFrame || 0);
-                    mDet += `<div class="text-[11px] text-amber-700 font-semibold mt-1">+ Extra: ${a.extraMachineNo?'['+a.extraMachineNo+'] ':''}${a.extraMachine}/${a.extraDesign||'-'}</div>`;
-                    qDet += `<div class="text-[11px] text-amber-700 font-semibold mt-1">${(a.extraQty || 0).toLocaleString('en-IN')} ${eAlt ? 'hr' : 'st'}</div>`;
-                    fDet += `<div class="text-[11px] text-amber-700 font-semibold mt-1">${a.extraFrame || 0}</div>`;
-                }
-                let noteCell = hasNote ? `<span class="inline-block bg-red-50 border border-red-200 text-red-700 px-2 py-1 rounded-md font-semibold text-xs">${a.note}</span>` : '<span class="text-gray-300">-</span>';
-                return `<tr class="border-b hover:bg-slate-50 ${hasNote ? 'bg-red-50/20' : ''}"><td class="p-3 font-semibold">${wLbl}<div class="mt-0.5">${shBadge}</div></td><td class="p-3 font-bold ${a.status==='Absent'?'text-red-600':(a.status==='Half'?'text-amber-600':'text-emerald-700')}">${a.status}</td><td class="p-3 text-xs">${mDet}</td><td class="p-3 text-right font-bold">${qDet}</td><td class="p-3 text-right">${fDet}</td><td class="p-3">${noteCell}</td><td class="p-3 text-right font-bold text-emerald-600">₹${(a.finalBonus || 0).toFixed(0)}</td></tr>`;
-            }).join('');
-
-            out.innerHTML = `<div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4"><div class="p-3 bg-indigo-50 rounded-xl border border-indigo-200"><div class="text-[11px] font-bold text-indigo-700">Present (${dStr})</div><div class="text-xl font-black text-indigo-900">${dayAtt.filter(a=>a.status!=='Absent').length} / ${dayAtt.length}</div></div><div class="p-3 bg-teal-50 rounded-xl border border-teal-200"><div class="text-[11px] font-bold text-teal-700">Total Stitches</div><div class="text-xl font-black text-teal-900">${totSt.toLocaleString('en-IN')}${totAlt>0?` (+${totAlt}hr)`:''}</div></div><div class="p-3 bg-sky-50 rounded-xl border border-sky-200"><div class="text-[11px] font-bold text-sky-700">Total Frames</div><div class="text-xl font-black text-sky-900">${totFr}</div></div><div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200"><div class="text-[11px] font-bold text-emerald-700">Day Bonus</div><div class="text-xl font-black text-emerald-800">₹${totBon.toFixed(0)}</div></div><div class="p-3 bg-red-50 rounded-xl border border-red-200"><div class="text-[11px] font-bold text-red-700">Notes</div><div class="text-xl font-black text-red-700">${notesCount}</div></div></div><div class="overflow-x-auto max-h-[65vh] border rounded-xl"><table class="w-full text-left text-xs md:text-sm border-collapse min-w-[780px]"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-3 border-b">Worker & Shift</th><th class="p-3 border-b">Status</th><th class="p-3 border-b">Machine & Designs</th><th class="p-3 border-b text-right">Stitches/Hrs</th><th class="p-3 border-b text-right">Frame</th><th class="p-3 border-b text-red-700">Remarks / Notes</th><th class="p-3 border-b text-right">Bonus</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
-        }
-
         // ====== WORKER SEARCH + LEAVE & NOTES SUMMARY ======
         function renderWorkerSearchPanel() {
             let out = document.getElementById('dash_worker_output'); if (!out) return;
@@ -1740,9 +1679,9 @@
                 let notesList = wA.filter(a => a.note && a.note !== '-');
                 let wSt = 0, wAlt = 0, wFr = 0;
                 wA.forEach(a => {
-                    let isAlt = (a.machine === 'ALTER' || getPaymentMode(a.mode).bonusType === 'alter');
+                    let isAlt = isAlterMachine(a.machine, a.mode);
                     if (a.machine && a.machine !== 'NONE') { if (isAlt) wAlt += (a.qty || 0); else wSt += (a.qty || 0); wFr += (a.frame || 0); }
-                    if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') { let eAlt = (a.extraMachine === 'ALTER' || getPaymentMode(a.extraMode).bonusType === 'alter'); if (eAlt) wAlt += (a.extraQty || 0); else wSt += (a.extraQty || 0); wFr += (a.extraFrame || 0); }
+                    if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') { let eAlt = isAlterMachine(a.extraMachine, a.extraMode); if (eAlt) wAlt += (a.extraQty || 0); else wSt += (a.extraQty || 0); wFr += (a.extraFrame || 0); }
                 });
                 let notesBox = notesList.length ? `<div class="mb-3 bg-red-50/70 border border-red-200 rounded-lg p-2.5 text-xs"><div class="font-bold text-red-800 mb-1">📝 Is Mahine Ke Notes / Chutti Remarks (${notesList.length}):</div><div class="flex flex-wrap gap-1.5">${notesList.map(n => `<span class="bg-white border border-red-200 text-red-700 px-2 py-0.5 rounded font-semibold">${n.date} (${n.status}): ${n.note}</span>`).join('')}</div></div>` : '';
                 return `<div class="border border-indigo-200 rounded-xl p-4 mb-4 bg-indigo-50/20"><div class="flex flex-wrap justify-between items-center gap-2 mb-3"><div><span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-xs font-bold mr-1.5">${getWorkerCode(w)}</span><span class="font-bold text-lg">${w.name}</span></div><div class="flex flex-wrap gap-1.5 text-xs font-bold"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">✅ Full: ${fullC}</span><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded">🌗 Half: ${halfC}</span><span class="bg-red-100 text-red-700 px-2 py-0.5 rounded">❌ Absent: ${absC}</span><span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">Rate: ₹${getWorkerSalaryForMonth(w, selM)}</span></div></div><div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3"><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Stitches</div><div class="text-sm font-black text-teal-800">${wSt.toLocaleString('en-IN')}${wAlt>0?` (+${wAlt}hr)`:''}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Frames</div><div class="text-sm font-black text-sky-800">${wFr}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Days & Base</div><div class="text-sm font-black text-indigo-800">${eff}d (₹${base.toFixed(0)})</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Total Bonus</div><div class="text-sm font-black text-emerald-700">₹${bon.toFixed(0)}</div></div><div class="bg-white p-2.5 rounded-lg border"><div class="text-[10px] text-gray-500 font-bold">Month Upad</div><div class="text-sm font-black text-red-600">₹${upd.toFixed(0)}</div></div></div>${notesBox}<div class="overflow-x-auto max-h-64 border rounded-lg bg-white"><table class="w-full text-left text-xs border-collapse"><thead class="bg-slate-100 sticky top-0"><tr><th class="p-2 border-b">Date & Shift</th><th class="p-2 border-b">Status</th><th class="p-2 border-b">M/C & Designs</th><th class="p-2 border-b text-right">Qty</th><th class="p-2 border-b text-right">Frame</th><th class="p-2 border-b text-red-600">Note</th><th class="p-2 border-b text-right">Bonus</th></tr></thead><tbody>${wA.length ? wA.map(a => { let isM = (a.machine && a.machine !== 'NONE'); return `<tr class="border-b"><td class="p-2">${a.date} <span class="text-[10px] text-gray-500">(${a.shift||'Day'})</span></td><td class="p-2 font-bold">${a.status}</td><td class="p-2">${!isM?'Fixed':`${a.machineNo?'['+a.machineNo+'] ':''}${a.machine}: ${formatDesignSummaryHtml(a)}`}</td><td class="p-2 text-right font-bold">${isM?(a.qty||0).toLocaleString('en-IN'):'-'}</td><td class="p-2 text-right">${isM?(a.frame||0):'-'}</td><td class="p-2 text-red-600 font-semibold">${a.note!=='-'?a.note:'-'}</td><td class="p-2 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td></tr>`; }).join('') : '<tr><td colspan="7" class="p-3 text-center text-gray-400">No entries.</td></tr>'}</tbody></table></div></div>`;
@@ -1799,7 +1738,7 @@
             el.innerHTML = maintenanceLogs.slice(0, 50).map(m => `<div class="p-3 rounded-xl border ${m.status==='Stopped'?'border-red-300 bg-red-50/40':'border-emerald-200 bg-emerald-50/30'} flex flex-wrap justify-between items-center gap-2 text-xs"><div><span class="bg-teal-700 text-white px-2 py-0.5 rounded font-bold mr-1">${m.machineNo}</span><span class="font-semibold text-slate-600 mr-2">${m.date}</span><button type="button" onclick="toggleMaintenanceStatus('${m.id}')" class="px-2 py-0.5 rounded font-bold ${m.status==='Stopped'?'bg-red-600 text-white':'bg-emerald-600 text-white'}">${m.status==='Stopped'?'🔴 Band Hai (Click to Fix)':'🟢 Chalu Hai'}</button><div class="mt-1 font-bold text-slate-800">${m.reason}</div><div class="text-[11px] text-slate-600 mt-0.5">Band Time: <b>${m.hrs} Hr</b> | Mechanic/Part: <b>${m.mechanic}</b> | Kharcha: <b class="text-rose-700">₹${m.cost}</b></div></div><button type="button" onclick="deleteMaintenanceLog('${m.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></div>`).join('');
         }
 
-        // ====== SINGLE ATTENDANCE HELPERS & BONUS ENGINE (ALTER FIXED!) ======
+        // ====== SINGLE ATTENDANCE HELPERS & BONUS ENGINE (MERGED MACHINE + ALTER) ======
         function toggleWorker2() { let m = document.getElementById('h_mode'), w2 = document.getElementById('worker2_div'); if (m && w2) w2.classList.toggle('hidden', !getPaymentMode(m.value).isShared); }
         function toggleExtraMachineBox() { let cb = document.getElementById('h_has_extra'), box = document.getElementById('extra_machine_box'); if (cb && box) box.classList.toggle('hidden', !cb.checked); toggleExtraWorker2(); }
         function toggleExtraWorker2() { let cb = document.getElementById('h_has_extra'), em = document.getElementById('h_extra_mode'), ew2 = document.getElementById('extra_worker2_div'); if (em && ew2) ew2.classList.toggle('hidden', !(cb?.checked && getPaymentMode(em.value).isShared)); }
@@ -1820,7 +1759,7 @@
             histSection.classList.remove('hidden');
             sumDiv.innerHTML = `✅ Total Attendance: ${calcEffDays(wAtt)} Days | Last: ${wAtt[wAtt.length - 1].date}`;
             histBody.innerHTML = wAtt.map(a => {
-                let pm = getPaymentMode(a.mode), unit = (a.machine === 'ALTER' || pm.bonusType === 'alter') ? 'hr' : 'st';
+                let unit = isAlterMachine(a.machine, a.mode) ? 'hr' : 'st';
                 let det = (!isM || a.machine === 'NONE') ? 'Fixed Salary Worker' : `${a.machineNo?`<span class="bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold mr-1">${a.machineNo}</span>`:''}<b>${a.machine}</b> (${a.qty||0} ${unit}) <div class="mt-0.5">${formatDesignSummaryHtml(a)}</div>`;
                 if (a.hasExtraMachine && a.extraMachine) det += `<div class="text-[11px] text-amber-700 font-semibold mt-0.5">+ Extra: ${a.extraMachineNo?'['+a.extraMachineNo+'] ':''}${a.extraMachine}/${a.extraDesign||'-'} (${a.extraQty||0})</div>`;
                 return `<tr class="border-b hover:bg-slate-50"><td class="p-3">${a.date} <span class="text-[10px] text-gray-500">(${a.shift||'Day'})</span></td><td class="p-3 font-bold">${a.status}</td><td class="p-3 text-xs text-gray-600">${det}</td><td class="p-3 text-red-500 text-xs font-semibold">${a.note!=='-'?a.note:''}</td><td class="p-3 text-right font-bold text-emerald-600">₹${(a.finalBonus||0).toFixed(0)}</td><td class="p-3 text-center whitespace-nowrap"><button type="button" onclick="triggerEditAttendance('${a.id}')" class="text-indigo-600 mr-3"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAttendance('${a.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;
@@ -1918,14 +1857,14 @@
                 machineNo = document.getElementById('h_machine_no').value || ''; machine = document.getElementById('h_machine').value;
                 designItems = readAttDesignRows(); qty = designItems.reduce((s, it) => s + it.qty, 0); frame = designItems.reduce((s, it) => s + it.frame, 0);
                 let desNames = designItems.map(it => it.design).filter(d => d && d !== '-'); designCode = desNames.length ? desNames.join(', ') : '-';
-                if (prodMode !== 'optional' && (pmObj.bonusType === 'stitch' || pmObj.bonusType === 'alter' || machine === 'ALTER') && !qty && status !== 'Absent') { alert("Stitches / Hours likhna zaroori hai!"); return; }
+                if (prodMode !== 'optional' && (pmObj.bonusType === 'stitch' || pmObj.bonusType === 'alter' || isAlterMachine(machine, mode)) && !qty && status !== 'Absent') { alert("Stitches / Hours likhna zaroori hai!"); return; }
                 primaryBonus = calcProductionBonus(pmObj, machine, designCode, qty, frame, date, status, designItems);
                 hasExtraMachine = document.getElementById('h_has_extra').checked && status !== 'Absent';
                 if (hasExtraMachine) {
                     extraMode = document.getElementById('h_extra_mode').value; extraPmObj = getPaymentMode(extraMode);
                     extraMachineNo = document.getElementById('h_extra_machine_no').value || ''; extraMachine = document.getElementById('h_extra_machine').value;
                     extraDesign = document.getElementById('h_extra_design').value || "-"; extraQty = parseFloat(document.getElementById('h_extra_qty').value) || 0; extraFrame = parseFloat(document.getElementById('h_extra_frame').value) || 0;
-                    if ((extraPmObj.bonusType === 'stitch' || extraPmObj.bonusType === 'alter' || extraMachine === 'ALTER') && !extraQty) { alert("Extra Machine ke Stitches/Hrs dalein!"); return; }
+                    if ((extraPmObj.bonusType === 'stitch' || extraPmObj.bonusType === 'alter' || isAlterMachine(extraMachine, extraMode)) && !extraQty) { alert("Extra Machine ke Stitches/Hrs dalein!"); return; }
                     extraBonus = calcProductionBonus(extraPmObj, extraMachine, extraDesign, extraQty, extraFrame, date, status);
                     if (extraPmObj.isShared) extraW2 = document.getElementById('h_extra_worker2')?.value || '';
                 }
@@ -2029,7 +1968,7 @@
                 if (!isM) entries.push({ id: `A_${ts}_${i}`, workerId: wId, date, shift, status, lotNo: '', mode: 'Normal', machineNo: '', machine: 'NONE', design: '-', designItems: [], frame: 0, qty: 0, customBonus: 0, note, finalBonus: 0, hasExtraMachine: false });
                 else {
                     let mode = tr.querySelector('.b-mode').value, pmObj = getPaymentMode(mode), machineNo = tr.querySelector('.b-machno').value || '', machine = tr.querySelector('.b-machine').value, baseVal = (tr.querySelector('.b-base')?.value || '').trim(), design = tr.querySelector('.b-design').value || baseVal || '-', qty = parseFloat(tr.querySelector('.b-qty').value) || 0, frame = parseFloat(tr.querySelector('.b-frame').value) || 0, customBonus = parseFloat(tr.querySelector('.b-custom').value) || 0;
-                    if (pMode !== 'optional' && (pmObj.bonusType === 'stitch' || pmObj.bonusType === 'alter' || machine === 'ALTER') && !qty && status !== 'Absent') { errs.push(`${getWorkerLabel(w)}: Stitches/Hrs dalein.`); return; }
+                    if (pMode !== 'optional' && (pmObj.bonusType === 'stitch' || pmObj.bonusType === 'alter' || isAlterMachine(machine, mode)) && !qty && status !== 'Absent') { errs.push(`${getWorkerLabel(w)}: Stitches/Hrs dalein.`); return; }
                     let bon = calcProductionBonus(pmObj, machine, design, qty, frame, date, status) + customBonus;
                     entries.push({ id: `A_${ts}_${i}`, workerId: wId, date, shift, status, lotNo: '', mode, machineNo, machine, design, designItems: [{ design, qty, frame }], frame, qty, customBonus, note, finalBonus: bon, hasExtraMachine: false });
                 }
@@ -2098,7 +2037,7 @@
         function deleteMachineNumber(id) { if (!checkAdmin() || !confirm("Delete?")) return; machineNumbers = machineNumbers.filter(m => m.id !== id); localStorage.setItem('karkhana_machineNumbers', JSON.stringify(machineNumbers)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
         function generateMachineNumbers() { let p = document.getElementById('mn_prefix').value || '', s = parseInt(document.getElementById('mn_start').value, 10), e = parseInt(document.getElementById('mn_end').value, 10), dt = document.getElementById('mn_bulk_type').value || '', add = 0; for (let i = s; i <= e; i++) { let no = p + i; if (!machineNumbers.some(m => m.no.toLowerCase() === no.toLowerCase())) { machineNumbers.push({ id: `MN_${Date.now()}_${i}`, no, defaultType: dt }); add++; } } if (add) { localStorage.setItem('karkhana_machineNumbers', JSON.stringify(machineNumbers)); refreshDropdowns(); renderMasterLists(); syncToSheet(); showToast(`✅ ${add} Added!`); } }
 
-        // CATEGORY SAVE WITH AUTO WORKER RENAME SYNC (ERROR 3 FIXED!)
+        // CATEGORY SAVE WITH AUTO WORKER RENAME SYNC
         function saveWorkerType(e) {
             e.preventDefault();
             let id = document.getElementById('c_edit_id').value, n = document.getElementById('c_name').value.trim(), pm = document.getElementById('c_hasProd').value;
@@ -2124,7 +2063,7 @@
         function cancelEditCategory() { document.getElementById('c_edit_id').value = ''; document.getElementById('c_form').reset(); document.getElementById('c_btn_cancel').classList.add('hidden'); }
         function deleteWorkerType(id) { if (!checkAdmin() || !confirm("Delete?")) return; workerTypes = workerTypes.filter(t => t.id !== id); localStorage.setItem('karkhana_workerTypes', JSON.stringify(workerTypes)); refreshDropdowns(); renderMasterLists(); syncToSheet(); }
 
-        // SEPARATE LOT SERIES MASTER + LIVE LOT TRACKER (ERROR 2 FIXED!)
+        // SEPARATE LOT SERIES MASTER + LIVE LOT TRACKER
         function onLotMasterModeChange() {
             let m = document.getElementById('lot_mode')?.value || 'parts', inp = document.getElementById('lot_parts');
             if (inp) inp.value = (m === 'allover') ? 'ALL OVER' : 'C, P, K, B';
@@ -2247,6 +2186,7 @@
         function deleteDesign(id) { if (!checkAdmin() || !confirm("Delete?")) return; designs = designs.filter(d => d.id !== id); localStorage.setItem('karkhana_designs', JSON.stringify(designs)); refreshDropdowns(); resetAttDesignRows(); renderMasterLists(); syncToSheet(); }
         function filterMasterDesigns(q) { q = (q || '').toLowerCase(); document.querySelectorAll('#designList .m-design-row').forEach(el => el.style.display = (el.dataset.key || '').includes(q) ? '' : 'none'); }
 
+        // MERGED MACHINE & ALTER RULES CRUD
         function onMachineUnitTypeChange() {
             let isAlt = document.getElementById('m_unitType')?.value === 'alter';
             let mMin = document.getElementById('m_min'), mRate = document.getElementById('m_rate'), st = document.getElementById('m_slab_title');
@@ -2309,12 +2249,12 @@
             document.getElementById('machineRuleList').innerHTML = machineRules.map(m => {
                 let isAlt = m.unitType === 'alter';
                 let badge = isAlt ? '<span class="bg-rose-100 text-rose-800 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1">⏱️ ALTER</span>' : '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1">🧵 STITCH</span>';
-                let desc = (m.rateMode === 'slabs' && m.rateSlabs?.length) ? formatSlabsSummary(m.rateSlabs) : `Min:${m.min}, ₹${m.rate}${isAlt ? '/Hr' : '/1k'}`;
+                let desc = (m.rateMode === 'slabs' && m.rateSlabs?.length) ? formatSlabsSummary(m.rateSlabs, isAlt ? '/Hr' : '/1k') : `Min:${m.min}, ₹${m.rate}${isAlt ? '/Hr' : '/1k'}`;
                 return `<div class="p-3 border-b flex justify-between items-center"><div>${badge}<b>${m.name}</b> <div class="text-xs text-slate-600 mt-0.5">${desc}</div></div><div><button type="button" onclick="editMachineRule('${m.id}')" class="text-blue-600 mr-4"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteRule('${m.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`;
             }).join('');
         }
 
-        // ====== CALCULATIONS, DASHBOARD, REPORTS (+ DESIGN-WISE SUMMARY) & PDF ======
+        // ====== CALCULATIONS, DASHBOARD, REPORTS (+ DESIGN-WISE & LOT TRACKING) & PDF ======
         function calcEffDays(wAtt) { return wAtt.reduce((s, a) => s + (((a.status || 'Full') === 'Full' ? 1 : (a.status === 'Half' ? 0.5 : 0)) * (getPaymentMode(a.mode).dayMult ?? 1)), 0); }
         function calculateEarnedSalary(worker, effDays, monthStr) {
             let tDays = getDaysInMonth(monthStr), div = tDays;
@@ -2354,7 +2294,7 @@
                 if (a.machine && a.machine !== 'NONE') {
                     let k = (a.machineNo && a.machineNo !== '-') ? a.machineNo : 'Unassigned';
                     if (!map[k]) map[k] = { no: k, defaultType: '', entries: [], totalStitches: 0, totalAlterHrs: 0, totalFrames: 0, totalBonus: 0, types: new Set() };
-                    let isAlt = (a.machine === 'ALTER' || getPaymentMode(a.mode).bonusType === 'alter'), mb = (a.finalBonus || 0) - (a.extraBonus || 0);
+                    let isAlt = isAlterMachine(a.machine, a.mode), mb = (a.finalBonus || 0) - (a.extraBonus || 0);
                     map[k].entries.push({ date: a.date, shift: sh, workerLabel: wLbl, machineType: a.machine, design: a.design || '-', qty: a.qty || 0, frame: a.frame || 0, bonus: mb, isAlter: isAlt, isExtra: false });
                     if (isAlt) map[k].totalAlterHrs += (a.qty || 0); else map[k].totalStitches += (a.qty || 0);
                     map[k].totalFrames += (a.frame || 0); map[k].totalBonus += mb; map[k].types.add(a.machine);
@@ -2362,7 +2302,7 @@
                 if (a.hasExtraMachine && a.extraMachine && a.extraMachine !== 'NONE') {
                     let ek = (a.extraMachineNo && a.extraMachineNo !== '-') ? a.extraMachineNo : 'Unassigned';
                     if (!map[ek]) map[ek] = { no: ek, defaultType: '', entries: [], totalStitches: 0, totalAlterHrs: 0, totalFrames: 0, totalBonus: 0, types: new Set() };
-                    let isAlt = (a.extraMachine === 'ALTER' || getPaymentMode(a.extraMode).bonusType === 'alter'), eb = a.extraBonus || 0;
+                    let isAlt = isAlterMachine(a.extraMachine, a.extraMode), eb = a.extraBonus || 0;
                     map[ek].entries.push({ date: a.date, shift: sh, workerLabel: wLbl, machineType: a.extraMachine, design: a.extraDesign || '-', qty: a.extraQty || 0, frame: a.extraFrame || 0, bonus: eb, isAlter: isAlt, isExtra: true });
                     if (isAlt) map[ek].totalAlterHrs += (a.extraQty || 0); else map[ek].totalStitches += (a.extraQty || 0);
                     map[ek].totalFrames += (a.extraFrame || 0); map[ek].totalBonus += eb; map[ek].types.add(a.extraMachine);
@@ -2557,7 +2497,7 @@
             let eff = calcEffDays(wA), base = calculateEarnedSalary(w, eff, selM), bon = wA.reduce((s, a) => s + (a.finalBonus || 0), 0), upd = wU.reduce((s, u) => s + (u.amount || 0), 0), prev = calculatePreviousBalance(w, selM), mSal = getWorkerSalaryForMonth(w, selM);
             document.getElementById('slip_month').innerText = getMonthName(selM); document.getElementById('slip_code').innerText = getWorkerCode(w); document.getElementById('slip_name').innerText = w.name; document.getElementById('slip_cat').innerText = w.type || '-'; document.getElementById('slip_rule').innerText = w.rule; document.getElementById('slip_salary').innerText = mSal; document.getElementById('slip_days').innerText = eff;
             document.getElementById('slip_daily_logs').innerHTML = !wA.length ? '<tr><td colspan="6" style="text-align:center;">No Data</td></tr>' : wA.map(a => {
-                let st = a.status || 'Full', db = 0, isM = (a.machine && a.machine !== 'NONE'), pm = getPaymentMode(a.mode), unit = (a.machine === 'ALTER' || pm.bonusType === 'alter') ? 'hr' : 'st';
+                let st = a.status || 'Full', db = 0, isM = (a.machine && a.machine !== 'NONE'), pm = getPaymentMode(a.mode), unit = isAlterMachine(a.machine, a.mode) ? 'hr' : 'st';
                 let desText = (Array.isArray(a.designItems) && a.designItems.length > 1) ? a.designItems.map(it => `${it.design}(${it.qty})`).join(', ') : (a.design || '-');
                 let det = !isM ? 'Fixed Worker' : `${a.machineNo ? '['+a.machineNo+'] ' : ''}${a.machine} / ${desText}`;
                 if (st !== 'Absent') { let d = getDaysInMonth(selM), div = d; if (w.rule === 'SundayOff') { let s = 0, [y, m] = selM.split('-'); for (let i = 1; i <= d; i++) if (new Date(y, m - 1, i).getDay() === 0) s++; div = d - s; } else if (w.rule === '2Leaves') div = d - 2; db = ((mSal / (div <= 0 ? 1 : div)) * (st === 'Full' ? 1 : 0.5)) * (pm.dayMult ?? 1); }
@@ -2579,7 +2519,7 @@
         }
 
         // ====== WORKER STITCH ENTRY & MANAGER APPROVAL (EDIT + PHOTO PROOF + HANDOVER) ======
-       function getWorkerMachineOptionsHtml() { return machineRules.map(m => m ? `<option value="${m.name}">${m.unitType==='alter'?'⏱️ ':''}${m.name}</option>` : '').join(''); }
+        function getWorkerMachineOptionsHtml() { return machineRules.map(m => m ? `<option value="${m.name}">${m.unitType==='alter'?'⏱️ ':''}${m.name}</option>` : '').join(''); }
         function updateWeLinkedDesignPreview() {
             let lp = document.getElementById('we_linked_design_preview'); if (!lp) return;
             let names = [];
