@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <!-- WORKER ONLY STITCH ENTRY + AI DISPLAY SCANNER + PHOTO PROOF + EXTRA MACHINE -->
+    <!-- WORKER ONLY STITCH ENTRY + HD AI DISPLAY SCANNER + PHOTO PROOF + EXTRA MACHINE -->
     <div id="worker_entry_screen" class="hidden fixed inset-0 bg-slate-100 z-[9998] overflow-y-auto p-4">
         <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border border-teal-200 overflow-hidden my-4">
             <div class="bg-teal-700 text-white p-4 flex justify-between items-center">
@@ -74,8 +74,8 @@
                         <span id="scan_btn_text">📷 Machine Display Scan Karein</span>
                         <input type="file" id="we_scan_input" accept="image/*" capture="environment" onchange="scanMachineDisplay(event, false)" class="hidden">
                     </label>
-                    <p id="scan_status_msg" class="text-[11px] text-indigo-700 font-semibold mt-1.5">Photo khinche — Stitches, Design aur Frame apne aap bhar jayenge (+ Photo Proof)</p>
-                    <img id="we_photo_preview" class="hidden mt-2 mx-auto max-h-28 rounded-lg border border-indigo-200 shadow-sm" alt="Scan Proof">
+                    <p id="scan_status_msg" class="text-[11px] text-indigo-700 font-semibold mt-1.5">Photo khinche — Stitches, Design aur Frame apne aap bhar jayenge (+ HD Photo Proof)</p>
+                    <img id="we_photo_preview" class="hidden mt-2 mx-auto max-h-36 rounded-lg border border-indigo-200 shadow-sm cursor-pointer" onclick="openPhotoZoom(this.src)" alt="Scan Proof">
                 </div>
 
                 <div id="we_dup_warn" class="hidden bg-red-50 border-2 border-red-300 text-red-700 p-2.5 rounded-xl text-xs font-bold"></div>
@@ -267,10 +267,10 @@
                 <div id="dash_worker_output"></div>
             </div>
 
-            <!-- PANEL 3: MANAGER APPROVALS (WITH EDIT + PHOTO PROOF) -->
+            <!-- PANEL 3: MANAGER APPROVALS (WITH EDIT + HD PHOTO PROOF) -->
             <div id="d_approval" class="dash-panel bg-white p-5 rounded-xl shadow-sm border border-amber-300">
                 <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                    <h3 class="font-bold text-lg text-amber-900"><i class="fa-solid fa-user-check text-amber-600"></i> Worker Stitch Approvals (Edit & Photo Proof)</h3>
+                    <h3 class="font-bold text-lg text-amber-900"><i class="fa-solid fa-user-check text-amber-600"></i> Worker Stitch Approvals (Edit & HD Photo Proof)</h3>
                     <button type="button" onclick="syncFromSheet(true)" class="bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
                 </div>
                 <div id="dash_approval_list" class="space-y-3"></div>
@@ -843,7 +843,7 @@
         </div>
     </div>
 
-    <!-- MANAGER APPROVAL EDIT + PHOTO PROOF MODAL -->
+    <!-- MANAGER APPROVAL EDIT + HD PHOTO PROOF MODAL -->
     <div id="editApprovalModal" class="modal fixed inset-0 bg-black bg-opacity-60 z-[130] items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden max-h-[92vh] flex flex-col">
             <div class="bg-amber-600 text-white p-4 flex justify-between items-center shrink-0">
@@ -853,8 +853,8 @@
             <form onsubmit="saveAndApprovePending(event)" class="p-4 space-y-3 overflow-y-auto flex-1 text-xs">
                 <input type="hidden" id="ea_id">
                 <div id="ea_photo_wrap" class="hidden text-center bg-slate-100 p-2 rounded-xl border">
-                    <div class="text-[11px] font-bold text-indigo-800 mb-1">📷 Worker Display Scan Photo Proof</div>
-                    <img id="ea_photo_img" class="mx-auto max-h-44 rounded-lg border shadow cursor-pointer" onclick="openPhotoZoom(this.src)" alt="Proof">
+                    <div class="text-[11px] font-bold text-indigo-800 mb-1">📷 Worker Display Scan Photo Proof (Click to Zoom)</div>
+                    <img id="ea_photo_img" class="mx-auto max-h-48 rounded-lg border shadow cursor-pointer" onclick="openPhotoZoom(this.src)" alt="Proof">
                 </div>
                 <div class="grid grid-cols-2 gap-2.5">
                     <div><label class="block font-bold mb-1">Date</label><input type="date" id="ea_date" required class="w-full border p-2 rounded-lg font-bold"></div>
@@ -946,8 +946,8 @@
             { id: 'ExtraShared50', name: 'Extra Machine 50-50 (2 Workers Shared)', dayMult: 0, bonusType: 'stitch', bonusMult: 0.5, flatBonus: 0, isShared: true }
         ];
 
-        let adminPassword = localStorage.getItem('karkhana_adminPass') || '1234';
-        let managerPassword = localStorage.getItem('karkhana_managerPass') || '5678';
+        let adminPassword = String(localStorage.getItem('karkhana_adminPass') || '1234').trim();
+        let managerPassword = String(localStorage.getItem('karkhana_managerPass') || '5678').trim();
         let ownerWa = localStorage.getItem('karkhana_ownerWa') || '';
         let alterRate = parseFloat(localStorage.getItem('karkhana_alterRate')); if (isNaN(alterRate)) alterRate = 120;
         let alterRule = { rate: alterRate, minHrs: 0, lim1: 0, bon1: 0, lim2: 0, bon2: 0, lim3: 0, bon3: 0 };
@@ -955,7 +955,7 @@
         let paymentModes = [], machineNumbers = [], workerTypes = [], workers = [], lots = [], designs = [], machineRules = [], attendance = [], advanceData = [], pendingEntries = [], handoverNotes = [], maintenanceLogs = [];
         let bonusChart, compareChart, currentReportType = 'company', currentDashPanel = 'd_daily';
 
-        // ====== LOGIN & ROLE LOCK ======
+        // ====== LOGIN & ROLE LOCK (STRING-SAFE PASSWORD CHECK) ======
         function checkLoginStatus() {
             let screen = document.getElementById('login_screen'); if (!screen) return;
             if (sessionStorage.getItem('karkhana_unlocked') === 'true') {
@@ -968,8 +968,10 @@
         }
         function handleAppLogin(e) {
             e.preventDefault();
-            let entered = document.getElementById('login_pass_input').value, errEl = document.getElementById('login_err');
-            if (entered === adminPassword) {
+            let entered = String(document.getElementById('login_pass_input').value || '').trim();
+            let savedPass = String(adminPassword || '1234').trim();
+            let errEl = document.getElementById('login_err');
+            if (entered === savedPass) {
                 sessionStorage.setItem('karkhana_unlocked', 'true');
                 sessionStorage.setItem('karkhana_role', 'admin');
                 document.getElementById('login_screen').style.display = 'none';
@@ -1003,8 +1005,8 @@
         function setSyncBadge(text, colorClass) { document.querySelectorAll('.sync-status-text').forEach(el => el.innerText = text); document.querySelectorAll('.sync-badge').forEach(el => { el.classList.remove('text-emerald-300','text-yellow-300','text-red-300','text-gray-300'); el.classList.add(colorClass); }); }
 
         function saveAllLocal() {
-            localStorage.setItem('karkhana_adminPass', adminPassword);
-            localStorage.setItem('karkhana_managerPass', managerPassword);
+            localStorage.setItem('karkhana_adminPass', String(adminPassword));
+            localStorage.setItem('karkhana_managerPass', String(managerPassword));
             localStorage.setItem('karkhana_ownerWa', ownerWa);
             localStorage.setItem('karkhana_alterRate', String(alterRule.rate));
             localStorage.setItem('karkhana_alterRule', JSON.stringify(alterRule));
@@ -1036,9 +1038,9 @@
             reader.onload = function(ev) {
                 try {
                     let d = JSON.parse(ev.target.result);
-                    if (d.adminPassword) adminPassword = d.adminPassword;
-                    if (d.managerPassword) managerPassword = d.managerPassword;
-                    if (d.ownerWa !== undefined) ownerWa = d.ownerWa;
+                    if (d.adminPassword !== undefined && d.adminPassword !== '') adminPassword = String(d.adminPassword).trim();
+                    if (d.managerPassword !== undefined && d.managerPassword !== '') managerPassword = String(d.managerPassword).trim();
+                    if (d.ownerWa !== undefined) ownerWa = String(d.ownerWa);
                     if (d.alterRule) { alterRule = { ...alterRule, ...d.alterRule }; alterRate = parseFloat(alterRule.rate) || 120; }
                     else if (d.alterRate !== undefined) { alterRate = parseFloat(d.alterRate) || 120; alterRule.rate = alterRate; }
                     if (Array.isArray(d.paymentModes)) paymentModes = d.paymentModes;
@@ -1065,7 +1067,7 @@
             if (!isCloudConfigured()) { setSyncBadge('Local Only', 'text-gray-300'); if (showNotify) alert('Pehle Settings > Security & Sync mein URL paste karein!'); return; }
             setSyncBadge('Saving...', 'text-yellow-300');
             try {
-                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword, managerPassword, ownerWa, alterRate: alterRule.rate, alterRule, paymentModes, machineNumbers, workerTypes, workers, lots, designs, machineRules, attendance, advanceData, pendingEntries, handoverNotes, maintenanceLogs, updatedAt: new Date().toISOString() };
+                let payload = { appName: 'Mahi and Devansh co.', ownerEmail: 'mahifashion0128@gmail.com', adminPassword: String(adminPassword), managerPassword: String(managerPassword), ownerWa, alterRate: alterRule.rate, alterRule, paymentModes, machineNumbers, workerTypes, workers, lots, designs, machineRules, attendance, advanceData, pendingEntries, handoverNotes, maintenanceLogs, updatedAt: new Date().toISOString() };
                 let res = await fetch(getScriptUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
                 let result = await res.json();
                 if (result.status === 'ok') { setSyncBadge('🟢 Synced', 'text-emerald-300'); if (showNotify) showToast('Sheet mein upload ho gaya!'); }
@@ -1080,9 +1082,9 @@
                 let result = await res.json();
                 if (result.status === 'ok' && result.data) {
                     let d = result.data;
-                    if (d.adminPassword) adminPassword = d.adminPassword;
-                    if (d.managerPassword) managerPassword = d.managerPassword;
-                    if (d.ownerWa !== undefined) ownerWa = d.ownerWa;
+                    if (d.adminPassword !== undefined && d.adminPassword !== '') adminPassword = String(d.adminPassword).trim();
+                    if (d.managerPassword !== undefined && d.managerPassword !== '') managerPassword = String(d.managerPassword).trim();
+                    if (d.ownerWa !== undefined) ownerWa = String(d.ownerWa);
                     if (d.alterRule) { alterRule = { ...alterRule, ...d.alterRule }; alterRate = parseFloat(alterRule.rate) || 120; }
                     else if (d.alterRate !== undefined && !isNaN(parseFloat(d.alterRate))) { alterRate = parseFloat(d.alterRate); alterRule.rate = alterRate; }
                     if (Array.isArray(d.paymentModes) && d.paymentModes.length) paymentModes = d.paymentModes;
@@ -1439,11 +1441,16 @@
         }
 
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isCloudConfigured()) syncFromSheet(false); });
-        function saveAdminPassword(e) { e.preventDefault(); adminPassword = document.getElementById('admin_pass').value; localStorage.setItem('karkhana_adminPass', adminPassword); showToast("Admin Password Updated!"); document.getElementById('admin_pass').value = ''; syncToSheet(); }
+        function saveAdminPassword(e) { e.preventDefault(); adminPassword = String(document.getElementById('admin_pass').value || '').trim(); localStorage.setItem('karkhana_adminPass', adminPassword); showToast("Admin Password Updated!"); document.getElementById('admin_pass').value = ''; syncToSheet(); }
         function getSelMonth() { return document.getElementById('app_month').value; }
         function getMonthName(ymStr) { if (!ymStr) return ""; return new Date(ymStr + "-01").toLocaleString('en-IN', { month: 'long', year: 'numeric' }); }
         function getDaysInMonth(ymStr) { if (!ymStr) return 30; let p = ymStr.split('-'); return new Date(p[0], p[1], 0).getDate(); }
-        function checkAdmin() { let p = prompt("Enter Admin Password:"); if (p !== adminPassword) { alert("Wrong Password!"); return false; } return true; }
+        function checkAdmin() {
+            let p = prompt("Enter Admin Password:");
+            if (p === null) return false;
+            if (String(p).trim() !== String(adminPassword || '1234').trim()) { alert("Wrong Password!"); return false; }
+            return true;
+        }
 
         function getPaymentMode(modeId) {
             if (!modeId || modeId === 'Full') modeId = 'Normal';
@@ -2518,7 +2525,7 @@
             html2pdf().set({ margin: 10, filename: `MahiAndDevanshCo_Machine_${m.no}_${selM}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.style.display = 'none');
         }
 
-        // ====== WORKER STITCH ENTRY & MANAGER APPROVAL (EDIT + PHOTO PROOF + HANDOVER) ======
+        // ====== WORKER STITCH ENTRY & MANAGER APPROVAL (EDIT + HD PHOTO PROOF + HANDOVER) ======
         function getWorkerMachineOptionsHtml() { return machineRules.map(m => m ? `<option value="${m.name}">${m.unitType==='alter'?'⏱️ ':''}${m.name}</option>` : '').join(''); }
         function updateWeLinkedDesignPreview() {
             let lp = document.getElementById('we_linked_design_preview'); if (!lp) return;
@@ -2613,7 +2620,7 @@
                 let estBonus = calcProductionBonus(getPaymentMode('Normal'), p.machine, p.design, p.qty, p.frame, p.date, 'Full', items);
                 let exBonus = p.hasExtraMachine ? calcProductionBonus(getPaymentMode('ExtraStitch'), p.extraMachine, p.extraDesign, p.extraQty, p.extraFrame, p.date, 'Full') : 0;
                 let extraHtml = p.hasExtraMachine ? `<div class="text-xs text-amber-800 bg-amber-100/70 border border-amber-300 px-2 py-1 rounded mt-1.5 font-semibold">+ Extra M/C: [${p.extraMachineNo || '-'}] ${p.extraMachine} | Design: ${p.extraDesign} | Stitches: ${p.extraQty.toLocaleString('en-IN')} | Frame: ${p.extraFrame}</div>` : '';
-                let photoHtml = p.photoThumb ? `<img src="${p.photoThumb}" onclick="openPhotoZoom(this.src)" class="w-16 h-16 object-cover rounded-lg border-2 border-indigo-300 shadow cursor-pointer shrink-0" title="Click to Zoom Display Photo">` : '';
+                let photoHtml = p.photoThumb ? `<img src="${p.photoThumb}" onclick="openPhotoZoom(this.src)" class="w-16 h-16 object-cover rounded-lg border-2 border-indigo-300 shadow cursor-pointer shrink-0" title="Click to Zoom HD Display Photo">` : '';
                 return `<div class="p-4 rounded-xl border-2 border-amber-200 bg-amber-50/40 flex flex-wrap justify-between items-center gap-3">
                     <div class="flex items-start gap-3">
                         ${photoHtml}
@@ -2711,25 +2718,19 @@
                     reader.onload = function(ev) {
                         let img = new Image();
                         img.onload = function() {
-                            img.onload = function() {
-                            // 1. AI Scanner ke liye High-Res Photo (1600px, 92% Quality)
                             let c1 = document.createElement('canvas'), s1 = img.width > 1600 ? 1600 / img.width : 1;
                             c1.width = Math.round(img.width * s1); c1.height = Math.round(img.height * s1);
                             let ctx1 = c1.getContext('2d');
                             ctx1.imageSmoothingEnabled = true; ctx1.imageSmoothingQuality = 'high';
                             ctx1.drawImage(img, 0, 0, c1.width, c1.height);
 
-                            // 2. Manager Proof ke liye Clear HD Photo (950px, 82% Quality)
                             let c2 = document.createElement('canvas'), s2 = img.width > 950 ? 950 / img.width : 1;
                             c2.width = Math.round(img.width * s2); c2.height = Math.round(img.height * s2);
                             let ctx2 = c2.getContext('2d');
                             ctx2.imageSmoothingEnabled = true; ctx2.imageSmoothingQuality = 'high';
                             ctx2.drawImage(img, 0, 0, c2.width, c2.height);
 
-                            resolve({
-                                fullB64: c1.toDataURL('image/jpeg', 0.92).split(',')[1],
-                                thumbDataUrl: c2.toDataURL('image/jpeg', 0.82)
-                            });
+                            resolve({ fullB64: c1.toDataURL('image/jpeg', 0.92).split(',')[1], thumbDataUrl: c2.toDataURL('image/jpeg', 0.82) });
                         };
                         img.onerror = reject; img.src = ev.target.result;
                     };
@@ -2771,7 +2772,7 @@
                 }
             } catch (err) {
                 let errTxt = err?.message || 'Scan fail hua';
-                if (!isExtra && statusMsg) statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ ${errTxt} (Photo Proof save ho gaya hai, number manually bharein).</span>`;
+                if (!isExtra && statusMsg) statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ ${errTxt} (HD Photo Proof save ho gaya hai, number manually bharein).</span>`;
                 else showToast('❌ ' + errTxt);
             } finally {
                 if (btnText) btnText.innerText = isExtra ? '📷 Extra Machine Display Scan Karein' : '📷 Machine Display Scan Karein';
@@ -2779,22 +2780,26 @@
             }
         }
 
-        // ====== SEPARATE MANAGER PANEL ======
-        function saveManagerPassword(e) { e.preventDefault(); managerPassword = document.getElementById('manager_pass').value; localStorage.setItem('karkhana_managerPass', managerPassword); document.getElementById('manager_pass').value = ''; showToast("Manager Password Updated!"); syncToSheet(); }
+        // ====== SEPARATE MANAGER PANEL (STRING-SAFE PASSWORD) ======
+        function saveManagerPassword(e) { e.preventDefault(); managerPassword = String(document.getElementById('manager_pass').value || '').trim(); localStorage.setItem('karkhana_managerPass', managerPassword); document.getElementById('manager_pass').value = ''; showToast("Manager Password Updated!"); syncToSheet(); }
         function handleManagerLogin() {
-            let entered = document.getElementById('login_pass_input').value.trim();
-            if (!entered) entered = prompt("Manager Password dalein:");
-            if (entered === managerPassword) {
+            let entered = String(document.getElementById('login_pass_input').value || '').trim();
+            if (!entered) {
+                let p = prompt("Manager Password dalein:");
+                if (p === null) return;
+                entered = String(p).trim();
+            }
+            if (entered === String(managerPassword || '5678').trim()) {
                 sessionStorage.setItem('karkhana_unlocked', 'true'); sessionStorage.setItem('karkhana_role', 'manager');
                 document.getElementById('login_screen').style.display = 'none'; document.getElementById('login_pass_input').value = ''; document.getElementById('login_err').classList.add('hidden');
                 applyRoleUI('manager'); switchTab('dashboard'); openDashPanel('d_approval'); showToast("👔 Manager Panel Open!");
-            } else if (entered !== null) alert("Galat Manager Password!");
+            } else alert("Galat Manager Password!");
         }
         function applyRoleUI(role) {
             let isMgr = (role === 'manager');
             document.querySelectorAll('nav button').forEach(btn => {
                 let oc = btn.getAttribute('onclick') || '';
-                if (oc.includes("'advance'") || oc.includes("'reports'") || oc.includes("'master'")) btn.style.display = isMgr ? 'none' : '';
+                if (oc.includes("'advance'") || oc.includes("'reports'") || oc.includes("'master'") || oc.includes("openLotTrackingTab")) btn.style.display = isMgr ? 'none' : '';
             });
             ['dbtn_d_charts', 'dbtn_d_balance', 'dash_total_pagar'].forEach(id => {
                 let el = document.getElementById(id);
