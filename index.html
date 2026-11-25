@@ -2697,24 +2697,39 @@
         }
         function rejectPendingEntry(pId) { if (!confirm("Is entry ko Reject (Delete) karein?")) return; pendingEntries = pendingEntries.filter(x => x.id !== pId); saveAllLocal(); renderPendingApprovals(); syncToSheet(); showToast("❌ Entry Rejected!"); }
 
-        // ====== AI MACHINE DISPLAY SCANNER + PHOTO PROOF THUMBNAIL ======
+        // ====== AI MACHINE DISPLAY SCANNER + HD PHOTO PROOF ======
         async function scanMachineDisplay(e, isExtra = false) {
             let file = e.target.files[0]; if (!file) return;
             if (!isCloudConfigured()) { alert("Pehle Settings mein Google Sheet Sync URL save karein!"); e.target.value = ''; return; }
             let btnText = document.getElementById(isExtra ? 'scan_ex_btn_text' : 'scan_btn_text'), statusMsg = document.getElementById('scan_status_msg');
             if (btnText) btnText.innerText = '⏳ Display Padh Raha Hai...';
             if (!isExtra && statusMsg) statusMsg.innerText = 'Photo scan ho rahi hai, 2-3 second rukein...';
+            const cleanNum = v => { let s = String(v ?? '').replace(/[^\d.]/g, ''); return s ? parseFloat(s) : 0; };
             try {
                 let { fullB64, thumbDataUrl } = await new Promise((resolve, reject) => {
                     let reader = new FileReader();
                     reader.onload = function(ev) {
                         let img = new Image();
                         img.onload = function() {
-                            let c1 = document.createElement('canvas'), s1 = img.width > 1024 ? 1024 / img.width : 1;
-                            c1.width = img.width * s1; c1.height = img.height * s1; c1.getContext('2d').drawImage(img, 0, 0, c1.width, c1.height);
-                            let c2 = document.createElement('canvas'), s2 = img.width > 320 ? 320 / img.width : 1;
-                            c2.width = img.width * s2; c2.height = img.height * s2; c2.getContext('2d').drawImage(img, 0, 0, c2.width, c2.height);
-                            resolve({ fullB64: c1.toDataURL('image/jpeg', 0.75).split(',')[1], thumbDataUrl: c2.toDataURL('image/jpeg', 0.55) });
+                            img.onload = function() {
+                            // 1. AI Scanner ke liye High-Res Photo (1600px, 92% Quality)
+                            let c1 = document.createElement('canvas'), s1 = img.width > 1600 ? 1600 / img.width : 1;
+                            c1.width = Math.round(img.width * s1); c1.height = Math.round(img.height * s1);
+                            let ctx1 = c1.getContext('2d');
+                            ctx1.imageSmoothingEnabled = true; ctx1.imageSmoothingQuality = 'high';
+                            ctx1.drawImage(img, 0, 0, c1.width, c1.height);
+
+                            // 2. Manager Proof ke liye Clear HD Photo (950px, 82% Quality)
+                            let c2 = document.createElement('canvas'), s2 = img.width > 950 ? 950 / img.width : 1;
+                            c2.width = Math.round(img.width * s2); c2.height = Math.round(img.height * s2);
+                            let ctx2 = c2.getContext('2d');
+                            ctx2.imageSmoothingEnabled = true; ctx2.imageSmoothingQuality = 'high';
+                            ctx2.drawImage(img, 0, 0, c2.width, c2.height);
+
+                            resolve({
+                                fullB64: c1.toDataURL('image/jpeg', 0.92).split(',')[1],
+                                thumbDataUrl: c2.toDataURL('image/jpeg', 0.82)
+                            });
                         };
                         img.onerror = reject; img.src = ev.target.result;
                     };
@@ -2728,21 +2743,36 @@
                 let result = await res.json();
                 if (result.status === 'ok' && result.data) {
                     let d = result.data;
+                    let items = Array.isArray(d.items) ? d.items.map(it => ({
+                        design: String(it.design || '').trim(),
+                        frame: cleanNum(it.frame) || '',
+                        qty: cleanNum(it.qty) || ''
+                    })).filter(it => it.design || it.frame || it.qty) : [];
+                    let totalSt = cleanNum(d.stitches);
+                    if (!totalSt && items.length) totalSt = items.reduce((s, it) => s + (parseFloat(it.qty) || 0), 0);
+                    let totalFr = cleanNum(d.frame);
+                    if (!totalFr && items.length) totalFr = items.reduce((s, it) => s + (parseFloat(it.frame) || 0), 0);
+
                     if (isExtra) {
-                        if (d.stitches) document.getElementById('we_ex_qty').value = d.stitches;
-                        if (d.frame) document.getElementById('we_ex_frame').value = d.frame;
-                        if (Array.isArray(d.items) && d.items.length) document.getElementById('we_ex_design').value = d.items.map(it => it.design).filter(Boolean).join(', ');
+                        if (totalSt) document.getElementById('we_ex_qty').value = totalSt;
+                        if (totalFr) document.getElementById('we_ex_frame').value = totalFr;
+                        if (items.length) document.getElementById('we_ex_design').value = items.map(it => it.design).filter(Boolean).join(', ');
                         showToast('✅ Extra Machine Display Scan Ho Gaya!');
                     } else {
-                        if (d.stitches) document.getElementById('we_qty').value = d.stitches;
-                        if (Array.isArray(d.items) && d.items.length) resetWeDesignRows(d.items);
-                        if (statusMsg) statusMsg.innerHTML = `<span class="text-emerald-700 font-bold">✅ Scan Complete + Photo Proof Attached! Check karke Submit karein.</span>`;
+                        if (items.length) resetWeDesignRows(items);
+                        else if (totalSt || totalFr) resetWeDesignRows([{ design: String(d.design || ''), frame: totalFr || '', qty: totalSt || '' }]);
+                        if (totalSt) document.getElementById('we_qty').value = totalSt;
+                        else syncWeTotalQty();
+                        if (statusMsg) statusMsg.innerHTML = `<span class="text-emerald-700 font-bold">✅ Scan Complete! Stitches: ${totalSt || 'Check karein'} | Designs: ${items.length || 1}</span>`;
                         showToast('✅ Display Scan Ho Gaya!');
                     }
-                } else throw new Error('Scan fail');
+                } else {
+                    throw new Error(result.message || 'Display se number nahi mil paya');
+                }
             } catch (err) {
-                if (!isExtra && statusMsg) statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ Scan nahi ho paya (Photo Proof save ho gaya hai, number manually bharein).</span>`;
-                else showToast('❌ Extra Display scan fail hua!');
+                let errTxt = err?.message || 'Scan fail hua';
+                if (!isExtra && statusMsg) statusMsg.innerHTML = `<span class="text-red-600 font-bold">❌ ${errTxt} (Photo Proof save ho gaya hai, number manually bharein).</span>`;
+                else showToast('❌ ' + errTxt);
             } finally {
                 if (btnText) btnText.innerText = isExtra ? '📷 Extra Machine Display Scan Karein' : '📷 Machine Display Scan Karein';
                 e.target.value = '';
